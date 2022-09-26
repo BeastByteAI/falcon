@@ -1,0 +1,31 @@
+[build-system]
+
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dependencies = [
+"oldest-supported-numpy",
+"onnx>=1.12.0",
+"onnxruntime>=1.12.1",
+"skl2onnx",
+"scikit-learn>=1.1.0",
+"pandas>=1.0.0", 
+"imbalanced-learn>=0.8.1"
+]
+name = "falcon"
+version = "0.1.0"
+authors = [
+  { name="Oleg Kostromin", email="kostromin97@gmail.com" },
+  { name="Iryna Kondrashchenko", email="iryna230520@gmail.com" },
+  { name="Marco Pasini", email="marco.pasini.98@gmail.com" },
+]
+description = "AutoML library for fast experementations."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
