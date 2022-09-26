@@ -26,7 +26,7 @@ The easiest way to use the library is to use the highest level API as shown belo
     from falcon import AutoML
 
     AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
-
+    
 
 This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save as ONNX file for future inference. 
 
