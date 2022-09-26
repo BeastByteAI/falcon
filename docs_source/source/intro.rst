@@ -49,7 +49,7 @@ It is also possible to provide train/test data as a pandas dataframe or numpy ar
     df = pd.read_csv('titanic.csv')
 
     manager = AutoML(task = 'tabular_classification', train_data = df, test_data = 'titanic_test.csv', features = ['sex', 'gender', 'class', 'age'], target = 'survived')
-
+    
 
 While AutoML function enables extremely fast experementation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using :code:`initialize` helper function.
 
