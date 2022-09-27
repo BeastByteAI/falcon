@@ -12,15 +12,15 @@ from falcon import AutoML
 AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
 ```
 
-## Installation 💾 <hr/>
+## Installation 💾 
 ```bash
 pip install git+https://github.com/OKUA1/falcon
 ```
 
-## Documentation 📚 <hr/>
+## Documentation 📚
 You can find a more detailed guide as well as an API reference in our [official docs](https://okua1.github.io/falcon/intro.html#).
 
-## Authors & Contributors ✨ <hr/>
+## Authors & Contributors ✨
 <table>
   <tbody>
     <tr>
