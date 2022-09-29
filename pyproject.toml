@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 dependencies = [
-"oldest-supported-numpy",
+"skl2onnx>=1.12.0",
+"scikit-learn>=1.1.0",
+"numpy>=1.18.0",
 "onnx>=1.12.0",
 "onnxruntime>=1.12.1",
-"skl2onnx",
-"scikit-learn>=1.1.0",
 "pandas>=1.0.0", 
 "imbalanced-learn>=0.8.1"
 ]
@@ -23,7 +23,7 @@ authors = [
 description = "AutoML library for fast experementations."
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
