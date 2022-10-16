@@ -12,7 +12,7 @@ dependencies = [
 "onnxruntime>=1.12.1",
 "pandas>=1.0.0", 
 "imbalanced-learn>=0.8.1", 
-"pymongo>=4.0.0", 
+"pymongo>=3.9.0", 
 "pyarrow>=8.0.0"
 ]
 name = "falcon"
