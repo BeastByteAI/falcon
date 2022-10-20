@@ -4,7 +4,7 @@
 
 
 # FALCON: Lightweight AutoML Library
-Falcon is a lightweight python library that allows to train production ready machine learning models in a single line of code. 
+Falcon is a lightweight python library that allows to train production-ready machine learning models in a single line of code. 
 
 ```python
 from falcon import AutoML
