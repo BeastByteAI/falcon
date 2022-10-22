@@ -23,8 +23,8 @@ def eval_saved_model(manager, is_regr=False, format="onnx"):
         eq_ = np.equal(pred, pred_)
         return not False in eq_
     else:
-        ac = np.allclose(pred, pred_)
-        return ac
+        ac = np.allclose(pred, pred_, atol = 0.01)
+        return ac, (pred, pred_)
 
 
 def test_inference_classification():
@@ -34,7 +34,7 @@ def test_inference_classification():
     manager.train(pre_eval=False)
     assert eval_saved_model(manager=manager, is_regr=False, format="onnx")
     assert eval_saved_model(manager=manager, is_regr=False, format="falcon")
-
+    
 
 def test_inference_regression():
     manager = initialize(
@@ -44,5 +44,9 @@ def test_inference_regression():
         target="Price",
     )
     manager.train(pre_eval=False)
-    assert eval_saved_model(manager=manager, is_regr=True, format="onnx")
-    assert eval_saved_model(manager=manager, is_regr=True, format="falcon")
+    ac, data =  eval_saved_model(manager=manager, is_regr=True, format="onnx")
+    print(data)
+    assert ac is True
+    ac, data = eval_saved_model(manager=manager, is_regr=True, format="falcon")
+    print(data)
+    assert ac is True

@@ -10,6 +10,7 @@ import pandas as pd
 from falcon.utils import print_, set_verbosity_level
 from sklearn.model_selection import train_test_split
 import os
+import pandas as pd
 
 class TabularTaskManager(TaskManager):
     """
@@ -66,6 +67,8 @@ class TabularTaskManager(TaskManager):
             target=target,
         )
 
+        self._eval_set = None
+
     def _prepare_data(
         self, data: Union[str, npt.NDArray, pd.DataFrame], training: bool = True
     ) -> Tuple[npt.NDArray, npt.NDArray, List[bool]]:
@@ -114,50 +117,66 @@ class TabularTaskManager(TaskManager):
         """
         options = {"mask": self._data[2]}
         return options
+    
+    def _pre_eval_pipeline(self) -> float: 
+        print_("Pre-evaluation of model performance")
+        # TODO make `no_print` context manager
+        old_verbosity_level = int(os.getenv("FALCON_VERBOSITYLEVEL", "1"))
+        set_verbosity_level(0)
+        if (
+            self._data[0].shape[0] * self._data[0].shape[1] < 50000
+            or self._data[0].shape[0] < 500
+        ):
+            score = tab_cv_score(
+                self._pipeline, self._data[0], self._data[1], self.task
+            )
+            avg_score = float(np.mean(score))
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(
+                self._data[0], self._data[1], test_size=0.25
+            )
+            copied_pipeline = deepcopy(self._pipeline)
+            copied_pipeline.fit(X_train, y_train)
+            pred = copied_pipeline.predict(X_test)
+            avg_score = calculate_model_score(y_test, pred, self.task)
+        set_verbosity_level(old_verbosity_level)
+        return avg_score
 
-    def train(self, pre_eval: bool = True, **kwargs: Any) -> TabularTaskManager:
+
+    def train(self, make_eval_subset: bool = True, pre_eval: bool = False, **kwargs: Any) -> TabularTaskManager:
         """
         Invokes the training procedure of an underlying pipeline. Print an expected model performance if available.
 
         Parameters
         ----------
-        pre_eval : bool, optional
-            If True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default True
-
+        pre_eval : bool
+            If True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default False.
+            Setting pre_eval = True is not reccomended as it pre-evaluates the pipeline as a whole which has lots of random elements therefore the results might be non reproducable.
+        make_eval_subset: bool
+            Controls whether a dedicated eval set should be allocated for performance report, by default True. 
+            If True, overwrites the value of `pre_eval` to False.
         Returns
         -------
         TabularTaskManager
             self
         """
-        if pre_eval:
-            print_("Beginning training")
-
-            print_("Pre-evaluation of model performance")
-            # TODO make `no_print` context manager
-            old_verbosity_level = int(os.getenv("FALCON_VERBOSITYLEVEL", "1"))
-            set_verbosity_level(0)
-            if (
-                self._data[0].shape[0] * self._data[0].shape[1] < 50000
-                or self._data[0].shape[0] < 500
-            ):
-                score = tab_cv_score(
-                    self._pipeline, self._data[0], self._data[1], self.task
-                )
-                avg_score = float(np.mean(score))
-            else:
-                X_train, X_test, y_train, y_test = train_test_split(
+        print_("Beginning training")
+        if make_eval_subset:
+            if self._eval_set is None:
+                X_train, X_eval, y_train, y_eval = train_test_split(
                     self._data[0], self._data[1], test_size=0.25
                 )
-                copied_pipeline = deepcopy(self._pipeline)
-                copied_pipeline.fit(X_train, y_train)
-                pred = copied_pipeline.predict(X_test)
-                avg_score = calculate_model_score(y_test, pred, self.task)
-            set_verbosity_level(old_verbosity_level)
+                self._data = (X_train, y_train, self._data[2])
+                self._eval_set = (X_eval, y_eval)
+            else: 
+                print('Evaluation set is already available.')
+        elif pre_eval:
+            print("Setting `pre_eval = True` is not reccomended as it pre evaluates the whole pipeline, can be lenghty and innacurate")
+            preeval_score = self._pre_eval_pipeline()
+            print(f"Pre evaluation score: {preeval_score}")
         print_("Beginning the main training phase")
         self._pipeline.fit(self._data[0], self._data[1])
         print_("Finished training")
-        if pre_eval:
-            print(f"Score: {avg_score}")
         return self
 
     def predict(self, data: Union[str, npt.NDArray, pd.DataFrame]) -> npt.NDArray:
@@ -180,19 +199,60 @@ class TabularTaskManager(TaskManager):
             data = np.asarray(data, dtype=np.object_)
         return self._pipeline.predict(data)
 
-    def predict_train_set(self) -> npt.NDArray:
+    def predict_stored_subset(self, subset = 'train') -> npt.NDArray:
         """
-        Obtain predictions on the train set.
+        Makes a prediction on a stored subset (`train` or `eval`).
+
+        Parameters
+        ----------
+        subset : str, optional
+            subset to predict on (train or eval), by default 'train'
 
         Returns
         -------
         npt.NDArray
-            predictions
+            predicted values
         """
-        return self.predict(self._data[0])
+        if subset == 'train': 
+            return self.predict(self._data[0])
+        elif subset == 'eval':
+            if self._eval_set is None: 
+                raise RuntimeError('validation set is not available') 
+            return self.predict(self._eval_set[0])
+        else:
+            raise ValueError('subset should be either `train` or `eval`')
 
+    def performance_summary(self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame]]) -> dict:
+        """
+        Prints a performance summary of the model. 
+        The summary always includes metrics calculated for the train set. 
+        If the train/eval split was done during training, the summary includes metrics calculated on eval set. 
+        If test set is provided as an argument, the performance includes metrics calculated on test set.
 
-    def evaluate(self, test_data: Union[str, npt.NDArray, pd.DataFrame]) -> None:
+        Parameters
+        ----------
+        test_data : Optional[Union[str, npt.NDArray, pd.DataFrame]]
+            data to be used as test set, by default None.
+
+        Returns
+        -------
+        dict
+            metrics for each subset
+        """
+        metrics_ = {}
+        report_fn = print_classification_report if self.task == 'tabular_classification' else print_regression_report
+        y_hat_train = self.predict_stored_subset('train')
+        y_hat_eval = self.predict_stored_subset('eval')
+        metrics_['train'] = report_fn(self._data[1], y_hat_train, silent = True)
+        if self._eval_set is not None: 
+            metrics_['eval'] = report_fn(self._eval_set[1], y_hat_eval, silent = True)
+        if test_data is not None: 
+            metrics_['test'] = self.evaluate(test_data, silent = True)
+        df = pd.DataFrame.from_dict(metrics_, orient = 'index')
+        print("\n", df, "\n")
+        return metrics_
+
+    def evaluate(self, test_data: Union[str, npt.NDArray, pd.DataFrame], silent = False) -> None:
         """
         Perfoms and prints the evaluation report on the given dataset.
 
@@ -200,11 +260,13 @@ class TabularTaskManager(TaskManager):
         ----------
         test_data : Union[str, npt.NDArray, pd.DataFrame]
             Dataset to be used for evaluation.
+        silent: bool
+            Controls whether the metrics are printed on screen, by default False.
         """
         print("The evaluation report will be provided here")
         X, y, _ = self._prepare_data(test_data, training = False)
         y_hat = self.predict(X)
         if self.task == "tabular_classification":
-            print_classification_report(y, y_hat)
+            return print_classification_report(y, y_hat, silent = silent)
         else:
-            print_regression_report(y, y_hat)
+            return print_regression_report(y, y_hat, silent = silent)

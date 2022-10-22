@@ -168,11 +168,34 @@ If <cite>features</cite> argument is not None, target should be specified explic
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.TabularTaskManager.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.evaluate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.evaluate" title="Permalink to this definition"></a></dt>
 <dd><p>Perfoms and prints the evaluation report on the given dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>test_data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>npt.NDArray</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – Dataset to be used for evaluation.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_data</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>npt.NDArray</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – Dataset to be used for evaluation.</p></li>
+<li><p><strong>silent</strong> (<em>bool</em>) – Controls whether the metrics are printed on screen, by default False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="falcon.tabular.TabularTaskManager.performance_summary">
+<span class="sig-name descname"><span class="pre">performance_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.performance_summary" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a performance summary of the model.
+The summary always includes metrics calculated for the train set.
+If the train/eval split was done during training, the summary includes metrics calculated on eval set.
+If test set is provided as an argument, the performance includes metrics calculated on test set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_data</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>npt.NDArray</em><em>, </em><em>pd.DataFrame</em><em>]</em><em>]</em>) – data to be used as test set, by default None.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>metrics for each subset</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -195,15 +218,18 @@ If <cite>features</cite> argument is not None, target should be specified explic
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.TabularTaskManager.predict_train_set">
-<span class="sig-name descname"><span class="pre">predict_train_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.predict_train_set" title="Permalink to this definition"></a></dt>
-<dd><p>Obtain predictions on the train set.</p>
+<dt class="sig sig-object py" id="falcon.tabular.TabularTaskManager.predict_stored_subset">
+<span class="sig-name descname"><span class="pre">predict_stored_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'train'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.predict_stored_subset" title="Permalink to this definition"></a></dt>
+<dd><p>Makes a prediction on a stored subset (<cite>train</cite> or <cite>eval</cite>).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>predictions</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>subset</strong> (<em>str</em><em>, </em><em>optional</em>) – subset to predict on (train or eval), by default ‘train’</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>npt.NDArray</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>npt.NDArray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -233,11 +259,16 @@ if filename is not specified, the model is not saved on disk and only returned a
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.TabularTaskManager.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre_eval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#falcon.tabular.TabularTaskManager" title="falcon.tabular.tabular_manager.TabularTaskManager"><span class="pre">TabularTaskManager</span></a></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.train" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">make_eval_subset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_eval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#falcon.tabular.TabularTaskManager" title="falcon.tabular.tabular_manager.TabularTaskManager"><span class="pre">TabularTaskManager</span></a></span></span><a class="headerlink" href="#falcon.tabular.TabularTaskManager.train" title="Permalink to this definition"></a></dt>
 <dd><p>Invokes the training procedure of an underlying pipeline. Print an expected model performance if available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pre_eval</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default True</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pre_eval</strong> (<em>bool</em>) – If True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default False.
+Setting pre_eval = True is not reccomended as it pre-evaluates the pipeline as a whole which has lots of random elements therefore the results might be non reproducable.</p></li>
+<li><p><strong>make_eval_subset</strong> (<em>bool</em>) – Controls whether a dedicated eval set should be allocated for performance report, by default True.
+If True, overwrites the value of <cite>pre_eval</cite> to False.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
