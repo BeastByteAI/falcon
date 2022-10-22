@@ -1,6 +1,7 @@
 from __future__ import annotations
 from falcon.abstract import TaskManager, Pipeline
 from falcon.tabular.pipelines.simple_tabular_pipeline import SimpleTabularPipeline
+from falcon.tabular.utils import convert_to_np_obj
 from .reporting import print_classification_report, print_regression_report
 from falcon.tabular.utils import *
 from falcon import types as ft
@@ -67,10 +68,10 @@ class TabularTaskManager(TaskManager):
             target=target,
         )
 
-        self._eval_set = None
+        self._eval_set: Optional[Tuple] = None
 
     def _prepare_data(
-        self, data: Union[str, npt.NDArray, pd.DataFrame], training: bool = True
+        self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
     ) -> Tuple[npt.NDArray, npt.NDArray, List[bool]]:
         """
         Initial data preparation. 
@@ -81,8 +82,8 @@ class TabularTaskManager(TaskManager):
 
         Parameters
         ----------
-        data : Union[str, npt.NDArray, pd.DataFrame]
-            Path to data file or pandas dataframe or numpy array.
+        data : Union[str, npt.NDArray, pd.DataFrame, Tuple]
+            Path to data file or pandas dataframe or numpy array or Tuple(X,y).
 
         Returns
         -------
@@ -91,7 +92,19 @@ class TabularTaskManager(TaskManager):
         """
         if isinstance(data, str):
             data = read_data(data)
-        X, y = split_features(data, features=self.features, target=self.target)
+        if isinstance(data, tuple):
+            if self.features is not None or self.target is not None: 
+                print('When data is passed as tuple of (X, y) all columns are used regardless the values of `features` or `target` arguments.')
+            if len(data) != 2: 
+                raise ValueError('When passing data as tuple, it should contain exactly 2 elements: `X` and `y`.')
+            X, y = data
+            if len(y.shape) > 3 or len(X.shape) > 3: 
+                raise ValueError('Invalid data shape.')
+            if len(y.shape) > 1 and y.shape[-1] != 1: 
+                raise ValueError('The target should contain only one column.')
+            X, y = convert_to_np_obj(X), convert_to_np_obj(y)
+        else:
+            X, y = split_features(data, features=self.features, target=self.target)
         X, y = clean_data_split(X, y)
         mask: List[bool]
         if training:
@@ -199,7 +212,7 @@ class TabularTaskManager(TaskManager):
             data = np.asarray(data, dtype=np.object_)
         return self._pipeline.predict(data)
 
-    def predict_stored_subset(self, subset = 'train') -> npt.NDArray:
+    def predict_stored_subset(self, subset: str = 'train') -> npt.NDArray:
         """
         Makes a prediction on a stored subset (`train` or `eval`).
 
@@ -222,7 +235,7 @@ class TabularTaskManager(TaskManager):
         else:
             raise ValueError('subset should be either `train` or `eval`')
 
-    def performance_summary(self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame]]) -> dict:
+    def performance_summary(self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]]) -> dict:
         """
         Prints a performance summary of the model. 
         The summary always includes metrics calculated for the train set. 
@@ -231,7 +244,7 @@ class TabularTaskManager(TaskManager):
 
         Parameters
         ----------
-        test_data : Optional[Union[str, npt.NDArray, pd.DataFrame]]
+        test_data : Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]]
             data to be used as test set, by default None.
 
         Returns
@@ -242,9 +255,9 @@ class TabularTaskManager(TaskManager):
         metrics_ = {}
         report_fn = print_classification_report if self.task == 'tabular_classification' else print_regression_report
         y_hat_train = self.predict_stored_subset('train')
-        y_hat_eval = self.predict_stored_subset('eval')
         metrics_['train'] = report_fn(self._data[1], y_hat_train, silent = True)
         if self._eval_set is not None: 
+            y_hat_eval = self.predict_stored_subset('eval')
             metrics_['eval'] = report_fn(self._eval_set[1], y_hat_eval, silent = True)
         if test_data is not None: 
             metrics_['test'] = self.evaluate(test_data, silent = True)
@@ -252,13 +265,13 @@ class TabularTaskManager(TaskManager):
         print("\n", df, "\n")
         return metrics_
 
-    def evaluate(self, test_data: Union[str, npt.NDArray, pd.DataFrame], silent = False) -> None:
+    def evaluate(self, test_data: Union[str, npt.NDArray, pd.DataFrame, Tuple], silent: bool = False) -> Dict:
         """
         Perfoms and prints the evaluation report on the given dataset.
 
         Parameters
         ----------
-        test_data : Union[str, npt.NDArray, pd.DataFrame]
+        test_data : Union[str, npt.NDArray, pd.DataFrame, Tuple]
             Dataset to be used for evaluation.
         silent: bool
             Controls whether the metrics are printed on screen, by default False.

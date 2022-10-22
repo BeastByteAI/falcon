@@ -4,7 +4,7 @@ import numpy as np
 from sklearn import metrics
 from falcon.tabular.utils import calculate_model_score
 
-def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool = False) -> None:
+def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool = False) -> Dict:
     y = y.astype(np.str_)
     classification_report = metrics.classification_report(y, y_hat, output_dict=True)
     metrics_ = {
@@ -89,7 +89,7 @@ def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool
     return metrics_
 
 
-def print_regression_report(y: npt.NDArray, y_hat: npt.NDArray, silent = False) -> Dict:
+def print_regression_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool = False) -> Dict:
     metrics_ = {
         'R2': metrics.r2_score(y, y_hat), 
         'RMSE': np.sqrt(np.mean((y - y_hat) ** 2)), 
