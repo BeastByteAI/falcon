@@ -15,7 +15,7 @@ dependencies = [
 "pymongo>=3.9.0", 
 "pyarrow>=8.0.0"
 ]
-name = "falcon"
+name = "falcon-ml"
 version = "0.1.0"
 authors = [
   { name="Oleg Kostromin", email="kostromin97@gmail.com" },
