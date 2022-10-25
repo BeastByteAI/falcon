@@ -55,7 +55,6 @@ def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
 
         prev = combined_model
     print_("Serialization completed.")
-    print(type(prev))
     return prev
 
 

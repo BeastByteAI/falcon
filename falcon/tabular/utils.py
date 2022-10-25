@@ -146,9 +146,10 @@ def calculate_model_score(y: npt.NDArray, y_hat: npt.NDArray, task: str) -> floa
     if task == "tabular_classification":
         return balanced_accuracy_score(y.astype(np.str_), y_hat)
     else:
-        score = (r2_score(y, y_hat) + 1) / 2
+        score = r2_score(y, y_hat)
         if score < 0:
             score = 0
+        score = (score + 1) / 2
         return score
 
 

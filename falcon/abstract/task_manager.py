@@ -179,3 +179,21 @@ class TaskManager(ABC):
             Evaluation metric or None
         """
         pass
+
+    @abstractmethod
+    def performance_summary(self, test_data: Any) -> Any: 
+        """
+        Prints the performance summary of the trained pipeline
+    
+
+        Parameters
+        ----------
+        test_data : Any
+            test set, optional
+
+        Returns
+        -------
+        Any
+            Relevant metrics or None
+        """
+        pass

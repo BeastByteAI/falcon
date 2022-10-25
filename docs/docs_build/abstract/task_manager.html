@@ -172,6 +172,23 @@ Warning: initial data preparation (e.g. reading, cleaning) and data preprocessin
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="falcon.abstract.TaskManager.performance_summary">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">performance_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#falcon.abstract.TaskManager.performance_summary" title="Permalink to this definition"></a></dt>
+<dd><p>Prints the performance summary of the trained pipeline</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_data</strong> (<em>Any</em>) – test set, optional</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Relevant metrics or None</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="falcon.abstract.TaskManager.predict">
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#falcon.abstract.TaskManager.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Calls predict methods of the pipeline.</p>

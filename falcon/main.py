@@ -110,10 +110,9 @@ def AutoML(
         Task Manager object for the corresponding task
     """
     manager = initialize(task=task, data=train_data, features=features, target=target)
-    pre_eval = True if test_data is None else False
-    manager.train(pre_eval = pre_eval)
-    if test_data is not None:
-        manager.evaluate(test_data)
+    make_eval_subset = True if test_data is None else False
+    manager.train(pre_eval = False, make_eval_subset = make_eval_subset)
+    manager.performance_summary(test_data = test_data)
     ts = datetime.datetime.now().strftime('%Y%m%d.%H%M%S')
     filename = f"falcon_{ts}.onnx"
     manager.save_model(format = 'onnx', filename = filename)
