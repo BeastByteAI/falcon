@@ -26,16 +26,13 @@ def eval_saved_model(manager, is_regr=False, format="onnx"):
         eq_ = np.equal(pred, pred_)
         return not False in eq_
     else:
-        if os.name != 'nt':
-            ac = np.allclose(pred, pred_)
-        else: 
-            ac = np.isclose(pred, pred_)
-            ac = len(ac[ac == False]) 
-            print(ac, len(pred))
-            ac = ac / len(pred) < 0.5
+        ac = np.isclose(pred, pred_)
+        ac = len(ac[ac == False]) 
+        print(ac, len(pred))
+        ac = ac / len(pred) < 0.5
         me1 = r2_score(pred, y)
         me2 = r2_score(pred_, y)
-        mset = 0.005 if os.name == 'nt' else 0.0001
+        mset = 0.005
         msec = np.abs(me1 - me2) < mset
         print(me1, me2, np.abs(me1 - me2), msec)
         print(ac)
