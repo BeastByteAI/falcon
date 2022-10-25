@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/source/logo_cropped.png" width="256" height="217"/>
+  <img src="https://raw.githubusercontent.com/OKUA1/falcon/main/docs/source/logo_cropped.png" width="256" height="217"/>
 </p>
 
 
@@ -13,6 +13,13 @@ AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
 ```
 
 ## Installation 💾 
+
+Stable release from PyPi
+```bash 
+pip install falcon-ml
+```
+
+Latest version from GitHub
 ```bash
 pip install git+https://github.com/OKUA1/falcon
 ```

@@ -16,7 +16,7 @@ dependencies = [
 "pyarrow>=8.0.0"
 ]
 name = "falcon-ml"
-version = "0.1.0"
+version = "0.2.2"
 authors = [
   { name="Oleg Kostromin", email="kostromin97@gmail.com" },
   { name="Iryna Kondrashchenko", email="iryna230520@gmail.com" },
