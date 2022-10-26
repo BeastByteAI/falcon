@@ -43,7 +43,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         Parameters
         ----------
         X : npt.NDArray
-            Labels to be encoded as integers.
+            labels to be encoded as integers
         _ : Any, optional
             dummy argument, by default None
         """
@@ -51,7 +51,7 @@ class LabelDecoder(Processor, ONNXConvertible):
 
     def predict(self, X: npt.NDArray, inverse: bool = True) -> npt.NDArray:
         """
-        Equivalent of `.transform()`
+        Equivalent of `.transform()`.
 
         Parameters
         ----------
@@ -109,12 +109,11 @@ class LabelDecoder(Processor, ONNXConvertible):
     def to_onnx(self) -> SerializedModelTuple:
         """
         Serializes the encoder to onnx. 
-        Each feature in the original dataset is mapped to its own input node (`float32` for numerical or string for `categorical`)
 
         Returns
         -------
         SerializedModelTuple
-            Tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types for each input node, list of initial shapes for each input node).
+            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types for each input node, list of initial shapes for each input node)
         """
         inputs = [h.make_tensor_value_info("encoded_labels", TensorProto.INT64, [None])]
         outputs = [
@@ -137,7 +136,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         self, X: npt.NDArray
     ) -> npt.NDArray:  # Inside pipeline used as post-processor to decode labels back to strings
         """
-        Equivalent to `.transform(X, inverse=True)`
+        Equivalent to `.transform(X, inverse=True)`.
 
         Parameters
         ----------

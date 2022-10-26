@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>High level functions &mdash; Falcon  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+  <title>High level functions &mdash; Falcon  documentation</title><link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -75,44 +71,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="high-level-functions">
-<h1>High level functions<a class="headerlink" href="#high-level-functions" title="Permalink to this heading"></a></h1>
+  <div class="section" id="high-level-functions">
+<h1>High level functions<a class="headerlink" href="#high-level-functions" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="falcon.AutoML">
-<span class="sig-prename descclassname"><span class="pre">falcon.</span></span><span class="sig-name descname"><span class="pre">AutoML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="abstract/task_manager.html#falcon.abstract.TaskManager" title="falcon.abstract.task_manager.TaskManager"><span class="pre">TaskManager</span></a></span></span><a class="headerlink" href="#falcon.AutoML" title="Permalink to this definition"></a></dt>
+<dt id="falcon.AutoML">
+<code class="sig-prename descclassname"><span class="pre">falcon.</span></code><code class="sig-name descname"><span class="pre">AutoML</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">falcon.abstract.task_manager.TaskManager</span><a class="headerlink" href="#falcon.AutoML" title="Permalink to this definition">¶</a></dt>
 <dd><p>High level API for one line model training and evaluation.</p>
-<dl>
+<dl class="simple">
 <dt>When calling the following steps will be executed:</dt><dd><ol class="arabic simple">
-<li><p>task manager object will be initialized</p></li>
+<li><p>task manager object will be initialized;</p></li>
+<li><p>the model will be trained;</p></li>
+<li><p>performance summary table is printed (if test set is not provided, random split is done);</p></li>
+<li><p>the model is saved as an onnx file.</p></li>
 </ol>
-<p>2) the model will be trained
-3.1) [If test set is not provided]: the model performance will be evaluated either by CV (for small datasets) or on validation subset (for big datasets).</p>
-<blockquote>
-<div><p>After pre-evaluation of performance, the model will be re-trained on the whole training set.</p>
-</div></blockquote>
-<p>3.2) [If the test set is provided]: detailed evaluation report on the test set generated and printed.
-4) The model is saved as an onnx file.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>task</strong> (<em>str</em>) – type of the task
-currently supported tasks are [<cite>tabular_classification</cite>, <cite>tabular_regression</cite>]</p></li>
-<li><p><strong>train_data</strong> (<em>Any</em>) – data to be used for training
-for tabular classification and regression this can be: path to .csv or .parquet file, pandas dataframe, numpy array</p></li>
-<li><p><strong>test_data</strong> (<em>Any</em><em>, </em><em>optional</em>) – data to be used for evaluation
-for tabular classification and regression this can be: path to .csv or .parquet file, pandas dataframe, numpy array</p></li>
-<li><p><strong>features</strong> (<em>Any</em><em>, </em><em>optional</em>) – features to be used for training
-for tabular classification and regression this can be: list of column names or indexes
-by default None</p></li>
-<li><p><strong>target</strong> (<em>Any</em><em>, </em><em>optional</em>) – target to be used for training
-for tabular classification and regression this can be: column name or index
-by default None</p></li>
+<li><p><strong>task</strong> (<em>str</em>) – type of the task, currently supported tasks are [<cite>tabular_classification</cite>, <cite>tabular_regression</cite>]</p></li>
+<li><p><strong>train_data</strong> (<em>Any</em>) – data to be used for training, for tabular classification and regression this can be: path to .csv or .parquet file, pandas dataframe, numpy array, tuple (X,y)</p></li>
+<li><p><strong>test_data</strong> (<em>Any</em><em>, </em><em>optional</em>) – data to be used for evaluation, for tabular classification and regression this can be: path to .csv or .parquet file, pandas dataframe, numpy array, tuple (X,y)</p></li>
+<li><p><strong>features</strong> (<em>Any</em><em>, </em><em>optional</em>) – features to be used for training, for tabular classification and regression this can be: list of column names or indexes, by default None</p></li>
+<li><p><strong>target</strong> (<em>Any</em><em>, </em><em>optional</em>) – target to be used for training, for tabular classification and regression this can be: column name or index, by default None</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Task Manager object for the corresponding task</p>
+<dd class="field-even"><p>Task Manager object for the corresponding task.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="abstract/task_manager.html#falcon.abstract.TaskManager" title="falcon.abstract.TaskManager">TaskManager</a></p>
@@ -121,8 +106,8 @@ by default None</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="falcon.initialize">
-<span class="sig-prename descclassname"><span class="pre">falcon.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="abstract/pipeline.html#falcon.abstract.Pipeline" title="falcon.abstract.task_pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_pipeline_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="abstract/task_manager.html#falcon.abstract.TaskManager" title="falcon.abstract.task_manager.TaskManager"><span class="pre">TaskManager</span></a></span></span><a class="headerlink" href="#falcon.initialize" title="Permalink to this definition"></a></dt>
+<dt id="falcon.initialize">
+<code class="sig-prename descclassname"><span class="pre">falcon.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">falcon.abstract.task_pipeline.Pipeline</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_pipeline_options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">falcon.abstract.task_manager.TaskManager</span><a class="headerlink" href="#falcon.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes and returns a task manager object for a given task.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -130,11 +115,11 @@ by default None</p></li>
 <li><p><strong>task</strong> (<em>str</em>) – type of the task</p></li>
 <li><p><strong>data</strong> (<em>Any</em>) – data to be used for training</p></li>
 <li><p><strong>pipeline</strong> (<em>Optional</em><em>[</em><em>Type</em><em>[</em><a class="reference internal" href="abstract/pipeline.html#falcon.abstract.Pipeline" title="falcon.abstract.Pipeline"><em>Pipeline</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – class to be used as pipeline, by default None</p></li>
-<li><p><strong>pipeline_options</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Arguments to be passed to the pipeline, by default None.
-These options will overwrite the ones from <cite>default_pipeline_options</cite> attribute.</p></li>
-<li><p><strong>extra_pipeline_options</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Arguments to be passed to the pipeline, by default None.
+<li><p><strong>pipeline_options</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – arguments to be passed to the pipeline, by default None.
+These options will overwrite the ones from <cite>default_pipeline_options</cite> attribute</p></li>
+<li><p><strong>extra_pipeline_options</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – arguments to be passed to the pipeline, by default None.
 These options will be passed in addition to the ones from <cite>default_pipeline_options</cite> attribute.
-This argument is ignored if <cite>pipeline_options</cite> is not None.</p></li>
+This argument is ignored if <cite>pipeline_options</cite> is not None</p></li>
 <li><p><strong>features</strong> (<em>Any</em><em>, </em><em>optional</em>) – features to be used for training, by default None</p></li>
 <li><p><strong>target</strong> (<em>Any</em><em>, </em><em>optional</em>) – target to be used for training, by default None</p></li>
 </ul>
@@ -148,7 +133,7 @@ This argument is ignored if <cite>pipeline_options</cite> is not None.</p></li>
 </dl>
 </dd></dl>
 
-</section>
+</div>
 
 
            </div>

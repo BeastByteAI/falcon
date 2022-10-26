@@ -19,7 +19,7 @@ class TaskManager(ABC):
         features: Any = None,
         target: Any = None,
     ):
-        """_summary_
+        """
 
         Parameters
         ----------
@@ -138,17 +138,14 @@ class TaskManager(ABC):
         Parameters
         ----------
         format : str, optional
-            either "onnx" or "falcon"
-            "falcon" format should only be used in rare cases when converting to onnx is not possible
-            by default "onnx"
+            either "onnx" or "falcon"; "falcon" format should only be used in rare cases when converting to onnx is not possible, by default "onnx"
         filename : Optional[str], optional
-            filename for the model file, by default None
-            if filename is not specified, the model is not saved on disk and only returned as bytes object
+            filename for the model file, by default None. If filename is not specified, the model is not saved on disk and only returned as bytes object
 
         Returns
         -------
         bytes
-            Serialized model
+            serialized model
         """
         if format not in {"falcon", "onnx"}:
             raise ValueError(
@@ -170,20 +167,20 @@ class TaskManager(ABC):
         Parameters
         ----------
         test_data : Any
-            Data to be used for evaluation
+            data to be used for evaluation
             
 
         Returns
         -------
         Any
-            Evaluation metric or None
+            evaluation metric or None
         """
         pass
 
     @abstractmethod
     def performance_summary(self, test_data: Any) -> Any: 
         """
-        Prints the performance summary of the trained pipeline
+        Prints the performance summary of the trained pipeline.
     
 
         Parameters
@@ -194,6 +191,6 @@ class TaskManager(ABC):
         Returns
         -------
         Any
-            Relevant metrics or None
+            relevant metrics or None
         """
         pass

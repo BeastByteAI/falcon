@@ -4,6 +4,7 @@ Abstract
 .. currentmodule:: falcon.abstract
 
 .. autosummary::
+   
    TaskManager
    Model
    Pipeline

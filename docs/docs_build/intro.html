@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; Falcon  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+  <title>Getting started &mdash; Falcon  documentation</title><link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -69,56 +65,71 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p><strong>Train a powerful Machine Learning model in a single line of code with Falcon!</strong></p>
 <p>Falcon is a simple and lightweight AutoML library designed for people who want to train a model on a custom dataset in an instant even without specific data-science knowledge. Simply give Falcon your dataset and specify which feature you want the ML model to predict. Falcon will do the rest!</p>
 <p>Falcon allows the trained models to be immediately used in production by saving them in the widely used ONNX format. No need to write custom code to save complicated models to ONNX anymore!</p>
-</section>
-<section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Stable release from <a class="reference external" href="https://pypi.org/project/falcon-ml/">PyPi</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install falcon-ml
+</pre></div>
+</div>
+<p>Latest version from <a class="reference external" href="https://github.com/OKUA1/falcon">GitHub</a></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/OKUA1/falcon
 </pre></div>
 </div>
-</section>
-<section id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
+<p>Installing some of the dependencies on <strong>Apple Silicon Macs</strong> might not work, the workaround is to create an X86 environment using <a class="reference external" href="https://docs.conda.io/en/latest/">Conda</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n falcon_env
+conda activate falcon_env
+conda config --env --set subdir osx-64
+conda install <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+pip3 install falcon-ml
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <p>Currently, Falcon supports only tabular datasets and two tasks: ‘tabular_classification’ and ‘tabular_regression’.</p>
-<p>The easiest way to use the library is to use the highest level API as shown below:</p>
+<p>The easiest way to use the library is by using the highest level API as shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
 
 <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="s1">&#39;titanic.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save as ONNX file for future inference.</p>
-<p>Additionally, it is also possible to explicitly specify the feature and target columns (otherwise the last column will be used as target and all other as features) and test data for evaluation report.</p>
+<p>This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save it as ONNX file for future inference.</p>
+<p>Additionally, it is also possible to explicitly specify the feature/target columns (otherwise the last column will be used as target and all other as features) and test data (otherwise 25% of training set will be kept) for evaluation report.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="s1">&#39;titanic.csv&#39;</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="s1">&#39;titanic_test.csv&#39;</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">],</span> <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;survived&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>It is also possible to provide train/test data as a pandas dataframe or numpy array. In order to do it, simply pass the required object as an argument. This might be relevant in cases where custom data preparation is needed or data itself comes from non conventional source.</p>
+<p>It is also possible to provide train/test data as a pandas dataframe, numpy array, or tuple containing X and y. In order to do that, simply pass the required object as an argument. This might be relevant in cases when custom data preparation is needed or data itself comes from non-conventional source.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;titanic.csv&#39;</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;X_test.csv&#39;</span><span class="p">)</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;y_test.csv&#39;</span><span class="p">)</span>
 
-<span class="n">manager</span> <span class="o">=</span> <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="s1">&#39;titanic_test.csv&#39;</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">],</span> <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;survived&#39;</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span> <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">],</span> <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;survived&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>While AutoML function enables extremely fast experementation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using <code class="code docutils literal notranslate"><span class="pre">initialize</span></code> helper function.</p>
+<p>While AutoML function enables extremely fast experimentation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using <code class="code docutils literal notranslate"><span class="pre">initialize</span></code> helper function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">initialize</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;titanic_test.csv&#39;</span><span class="p">)</span>
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;titanic.csv&#39;</span><span class="p">)</span>
-<span class="n">manager</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">pre_eval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">manager</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">make_eval_subset</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">performance_summary</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When using <code class="code docutils literal notranslate"><span class="pre">initialize</span></code> function it is also possible to provide a custom configuration or even a custom pipeline. For more details please check the API reference section.</p>
-</section>
+</div>
 
 
            </div>

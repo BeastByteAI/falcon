@@ -33,7 +33,7 @@ class PipelineElement(Model):
 
     def forward(self, X: Any) -> Any:
         """
-        Equivalent of `predict` method that is used for elements chaing inside pipeline during inference.
+        Equivalent of `predict` method that is used for elements chaining inside pipeline during inference.
 
         Parameters
         ----------
@@ -50,7 +50,7 @@ class PipelineElement(Model):
 
     def fit_pipe(self, X: Any, y: Any) -> Any:
         """
-        Equivalent of `fit` method that is used for elements chainign inisde pipeline during training.
+        Equivalent of `fit` method that is used for elements chaining inisde pipeline during training.
 
         Parameters
         ----------
@@ -62,7 +62,7 @@ class PipelineElement(Model):
         Returns
         -------
         Any
-            Ususally None
+            usually None
         """
         self.fit(X, y)
 

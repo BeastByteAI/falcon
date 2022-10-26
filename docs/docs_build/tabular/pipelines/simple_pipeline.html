@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SimpleTabularPipeline &mdash; Falcon  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/customStyles.css" type="text/css" />
+  <title>SimpleTabularPipeline &mdash; Falcon  documentation</title><link rel="stylesheet" href="../../_static/customStyles.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -83,24 +79,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="simpletabularpipeline">
-<h1>SimpleTabularPipeline<a class="headerlink" href="#simpletabularpipeline" title="Permalink to this heading"></a></h1>
+  <div class="section" id="simpletabularpipeline">
+<h1>SimpleTabularPipeline<a class="headerlink" href="#simpletabularpipeline" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">falcon.tabular.pipelines.</span></span><span class="sig-name descname"><span class="pre">SimpleTabularPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">str,</span> <span class="pre">mask:</span> <span class="pre">~typing.List[bool],</span> <span class="pre">learner:</span> <span class="pre">~typing.Type[~falcon.abstract.learner.Learner]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'falcon.tabular.learners.super_learner.SuperLearner'&gt;,</span> <span class="pre">learner_kwargs:</span> <span class="pre">~typing.Optional[~typing.Dict]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline" title="Permalink to this definition"></a></dt>
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">falcon.tabular.pipelines.</span></code><code class="sig-name descname"><span class="pre">SimpleTabularPipeline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">str,</span> <span class="pre">mask:</span> <span class="pre">List[bool],</span> <span class="pre">learner:</span> <span class="pre">Type[falcon.abstract.learner.Learner]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'falcon.tabular.learners.super_learner.SuperLearner'&gt;,</span> <span class="pre">learner_kwargs:</span> <span class="pre">Optional[Dict]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default tabular pipeline.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">str,</span> <span class="pre">mask:</span> <span class="pre">~typing.List[bool],</span> <span class="pre">learner:</span> <span class="pre">~typing.Type[~falcon.abstract.learner.Learner]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'falcon.tabular.learners.super_learner.SuperLearner'&gt;,</span> <span class="pre">learner_kwargs:</span> <span class="pre">~typing.Optional[~typing.Dict]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Default tabular pipeline. On a high level it simply chains a preprocessor and model learner (by default Super Learner).
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">str,</span> <span class="pre">mask:</span> <span class="pre">List[bool],</span> <span class="pre">learner:</span> <span class="pre">Type[falcon.abstract.learner.Learner]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'falcon.tabular.learners.super_learner.SuperLearner'&gt;,</span> <span class="pre">learner_kwargs:</span> <span class="pre">Optional[Dict]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default tabular pipeline. On a high level it simply chains a preprocessor and model learner (by default <cite>SuperLearner</cite>).
 For classification tasks, the labels are also encoded as integers (while predictions are decoded back to strings).
 Internally, all numerical features are scaled to 0 mean and 1 std. All categorical features are one-hot encoded (this approach might not be suitable for features with very high cardinality).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>task</strong> (<em>str</em>) – <cite>tabular_classification</cite> or <cite>tabular_regression</cite></p></li>
-<li><p><strong>mask</strong> (<em>List</em><em>[</em><em>bool</em><em>]</em>) – List of booleans where True indicates a categorical feature and False indicates a numerical feature.</p></li>
-<li><p><strong>learner</strong> (<a class="reference internal" href="../../abstract/learner.html#falcon.abstract.Learner" title="falcon.abstract.Learner"><em>Learner</em></a><em>, </em><em>optional</em>) – Learner class to be used, by default SuperLearner</p></li>
+<li><p><strong>mask</strong> (<em>List</em><em>[</em><em>bool</em><em>]</em>) – list of booleans where True indicates a categorical feature and False indicates a numerical feature</p></li>
+<li><p><strong>learner</strong> (<a class="reference internal" href="../../abstract/learner.html#falcon.abstract.Learner" title="falcon.abstract.Learner"><em>Learner</em></a><em>, </em><em>optional</em>) – learner class to be used, by default <cite>SuperLearner</cite></p></li>
 <li><p><strong>learner_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – arguments to be passed to the learner, by default None</p></li>
 </ul>
 </dd>
@@ -108,8 +104,8 @@ Internally, all numerical features are scaled to 0 mean and 1 std. All categoric
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.add_element">
-<span class="sig-name descname"><span class="pre">add_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../abstract/pipeline_element.html#falcon.abstract.PipelineElement" title="falcon.abstract.task_pipeline.PipelineElement"><span class="pre">PipelineElement</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.add_element" title="Permalink to this definition"></a></dt>
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline.add_element">
+<code class="sig-name descname"><span class="pre">add_element</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">falcon.abstract.task_pipeline.PipelineElement</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.add_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds element to pipeline. The input type of added element should match the output type of the last element in the pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -119,23 +115,23 @@ Internally, all numerical features are scaled to 0 mean and 1 std. All categoric
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.fit" title="Permalink to this definition"></a></dt>
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the pipeline by consecutively calling <cite>.fit_pipe()</cite> method of each element in pipeline.
-For tabular classification, LabelDecoder is applied to targets before actual training occurs.</p>
+For tabular classification, <cite>LabelDecoder</cite> is applied to targets before actual training occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>npt.NDArray</em>) – Train featrues</p></li>
-<li><p><strong>y</strong> (<em>npt.NDArray</em>) – Train targets.</p></li>
+<li><p><strong>X</strong> (<em>npt.NDArray</em>) – train featrues</p></li>
+<li><p><strong>y</strong> (<em>npt.NDArray</em>) – train targets</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.predict" title="Permalink to this definition"></a></dt>
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts the label of passed data points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,8 +147,8 @@ For tabular classification, LabelDecoder is applied to targets before actual tra
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'onnx'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.save" title="Permalink to this definition"></a></dt>
+<dt id="falcon.tabular.pipelines.SimpleTabularPipeline.save">
+<code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'onnx'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Serializes the model to string. For more details please refer to the documentation of <cite>TaskManager.save_model(…)</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -169,7 +165,7 @@ For tabular classification, LabelDecoder is applied to targets before actual tra
 
 </dd></dl>
 
-</section>
+</div>
 
 
            </div>

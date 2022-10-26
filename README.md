@@ -14,14 +14,24 @@ AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
 
 ## Installation 💾 
 
-Stable release from PyPi
+Stable release from [PyPi](https://pypi.org/project/falcon-ml/)
 ```bash 
 pip install falcon-ml
 ```
 
-Latest version from GitHub
+Latest version from [GitHub](https://github.com/OKUA1/falcon)
 ```bash
 pip install git+https://github.com/OKUA1/falcon
+```
+
+Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using [Conda](https://docs.conda.io/en/latest/)
+
+```bash 
+    conda create -n falcon_env
+    conda activate falcon_env
+    conda config --env --set subdir osx-64
+    conda install python=3.9
+    pip3 install falcon-ml
 ```
 
 ## Documentation 📚

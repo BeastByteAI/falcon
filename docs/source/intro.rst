@@ -10,16 +10,34 @@ Falcon allows the trained models to be immediately used in production by saving 
 Installation
 ===================
 
+Stable release from `PyPi <https://pypi.org/project/falcon-ml/>`_
+
+..  code-block:: bash
+
+    pip install falcon-ml
+
+Latest version from `GitHub <https://github.com/OKUA1/falcon>`_
+
 ..  code-block:: bash
 
     pip install git+https://github.com/OKUA1/falcon
+
+Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using `Conda <https://docs.conda.io/en/latest/>`_
+
+..  code-block:: bash
+
+    conda create -n falcon_env
+    conda activate falcon_env
+    conda config --env --set subdir osx-64
+    conda install python=3.9
+    pip3 install falcon-ml
 
 Usage
 ==================
 
 Currently, Falcon supports only tabular datasets and two tasks: 'tabular_classification' and 'tabular_regression'. 
 
-The easiest way to use the library is to use the highest level API as shown below: 
+The easiest way to use the library is by using the highest level API as shown below: 
 
 ..  code-block:: python
 
@@ -28,9 +46,9 @@ The easiest way to use the library is to use the highest level API as shown belo
     AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
     
 
-This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save as ONNX file for future inference. 
+This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save it as ONNX file for future inference. 
 
-Additionally, it is also possible to explicitly specify the feature and target columns (otherwise the last column will be used as target and all other as features) and test data for evaluation report.
+Additionally, it is also possible to explicitly specify the feature/target columns (otherwise the last column will be used as target and all other as features) and test data (otherwise 25% of training set will be kept) for evaluation report.
 
 ..  code-block:: python
 
@@ -39,7 +57,7 @@ Additionally, it is also possible to explicitly specify the feature and target c
     manager = AutoML(task = 'tabular_classification', train_data = 'titanic.csv', test_data = 'titanic_test.csv', features = ['sex', 'gender', 'class', 'age'], target = 'survived')
 
 
-It is also possible to provide train/test data as a pandas dataframe or numpy array. In order to do it, simply pass the required object as an argument. This might be relevant in cases where custom data preparation is needed or data itself comes from non conventional source. 
+It is also possible to provide train/test data as a pandas dataframe, numpy array, or tuple containing X and y. In order to do that, simply pass the required object as an argument. This might be relevant in cases when custom data preparation is needed or data itself comes from non-conventional source. 
 
 ..  code-block:: python
 
@@ -47,11 +65,13 @@ It is also possible to provide train/test data as a pandas dataframe or numpy ar
     import pandas as pd 
 
     df = pd.read_csv('titanic.csv')
+    X_test = pd.read_csv('X_test.csv')
+    y_test = pd.read_csv('y_test.csv')
 
-    manager = AutoML(task = 'tabular_classification', train_data = df, test_data = 'titanic_test.csv', features = ['sex', 'gender', 'class', 'age'], target = 'survived')
+    manager = AutoML(task = 'tabular_classification', train_data = df, test_data = (X_test, y_test), features = ['sex', 'gender', 'class', 'age'], target = 'survived')
 
 
-While AutoML function enables extremely fast experementation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using :code:`initialize` helper function.
+While AutoML function enables extremely fast experimentation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using :code:`initialize` helper function.
 
 ..  code-block:: python
 
@@ -61,8 +81,8 @@ While AutoML function enables extremely fast experementation, it does not provid
     test_df = pd.read_csv('titanic_test.csv')
 
     manager = initialize(task='tabular_classification', data='titanic.csv')
-    manager.train(pre_eval = True)
-    manager.evaluate(test_df)
+    manager.train(make_eval_subset = True)
+    manager.performance_summary(test_df)
     
 
 When using :code:`initialize` function it is also possible to provide a custom configuration or even a custom pipeline. For more details please check the API reference section.

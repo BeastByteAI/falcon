@@ -15,7 +15,7 @@ class SimpleTabularPipeline(Pipeline):
     """
     def __init__(self, task: str, mask: List[bool], learner: Type[Learner] = SuperLearner, learner_kwargs: Optional[Dict] = None):
         """
-        Default tabular pipeline. On a high level it simply chains a preprocessor and model learner (by default Super Learner). 
+        Default tabular pipeline. On a high level it simply chains a preprocessor and model learner (by default `SuperLearner`). 
         For classification tasks, the labels are also encoded as integers (while predictions are decoded back to strings).
         Internally, all numerical features are scaled to 0 mean and 1 std. All categorical features are one-hot encoded (this approach might not be suitable for features with very high cardinality). 
 
@@ -24,9 +24,9 @@ class SimpleTabularPipeline(Pipeline):
         task : str
             `tabular_classification` or `tabular_regression`
         mask : List[bool]
-            List of booleans where True indicates a categorical feature and False indicates a numerical feature.
+            list of booleans where True indicates a categorical feature and False indicates a numerical feature
         learner : Learner, optional
-            Learner class to be used, by default SuperLearner
+            learner class to be used, by default `SuperLearner`
         learner_kwargs : Optional[Dict], optional
             arguments to be passed to the learner, by default None
         """
@@ -47,14 +47,14 @@ class SimpleTabularPipeline(Pipeline):
     def fit(self, X: npt.NDArray, y: npt.NDArray) -> None:
         """
         Fits the pipeline by consecutively calling `.fit_pipe()` method of each element in pipeline.
-        For tabular classification, LabelDecoder is applied to targets before actual training occurs.
+        For tabular classification, `LabelDecoder` is applied to targets before actual training occurs.
 
         Parameters
         ----------
         X : npt.NDArray
-            Train featrues
+            train featrues
         y : npt.NDArray
-            Train targets.
+            train targets
         """
         print_('Fitting the pipeline...')
         if self.task == "tabular_classification":

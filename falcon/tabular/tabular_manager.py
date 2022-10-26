@@ -21,7 +21,7 @@ class TabularTaskManager(TaskManager):
     def __init__(
         self,
         task: str,
-        data: Union[str, npt.NDArray, pd.DataFrame],  # TODO add support for Tuple[X, y]
+        data: Union[str, npt.NDArray, pd.DataFrame, Tuple],  # TODO add support for Tuple[X, y]
         pipeline: Optional[Type[Pipeline]] = None,
         pipeline_options: Optional[Dict] = None,
         extra_pipeline_options: Optional[Dict] = None,
@@ -35,26 +35,26 @@ class TabularTaskManager(TaskManager):
         ----------
         task : str
             `tabular_classification` or `tabular_regression`
-        data : Union[str, npt.NDArray, pd.DataFrame]
-            Path to data file or pandas dataframe or numpy array.
+        data : Union[str, npt.NDArray, pd.DataFrame, Tuple]
+            path to data file or pandas dataframe or numpy array or tuple (X,y)
         pipeline: Optional[Type[Pipeline]] 
-            class to be used as pipeline, by default None
-            if None, SimpleTabularPipeline will be used
+            class to be used as pipeline, by default None.
+            If None, `SimpleTabularPipeline` will be used
         pipeline_options : Optional[Dict], optional
-            Arguments to be passed to the pipeline, by default None.
+            arguments to be passed to the pipeline, by default None.
             These options will overwrite the ones from `default_pipeline_options` attribute.
         extra_pipeline_options : Optional[Dict], optional
-            Arguments to be passed to the pipeline, by default None.
+            arguments to be passed to the pipeline, by default None.
             These options will be passed in addition to the ones from `default_pipeline_options` attribute.
-            This argument is ignored if `pipeline_options` is not None.
+            This argument is ignored if `pipeline_options` is not None
         features : Optional[ft.ColumnsList], optional
-            Names or indices of columns to be used as features, by default None.
+            names or indices of columns to be used as features, by default None.
             If None, all columns except the last one will be used.
-            If `target` argument is not None, features should be passed explicitly as well.
+            If `target` argument is not None, features should be passed explicitly as well
         target : Optional[Union[str, int]], optional
-            Name or index of column to be used as target, by default None.
+            name or index of column to be used as target, by default None.
             If None, the last column will be used as target.
-            If `features` argument is not None, target should be specified explicitly as well.
+            If `features` argument is not None, target should be specified explicitly as well
         """
         print_(f"\nInitializing a new TabularTaskManager for task `{task}`")
 
@@ -74,21 +74,21 @@ class TabularTaskManager(TaskManager):
         self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
     ) -> Tuple[npt.NDArray, npt.NDArray, List[bool]]:
         """
-        Initial data preparation. 
-            1) Optional: read data from the specified location
-            2) Split into features and targets. By default it is assumed that the last column is the target.
-            3) Clean data
-            4) Determine numerical and categorical features (create categorical mask).
+        Initial data preparation: 
+        1) optional: read data from the specified location;
+        2) split into features and targets. By default it is assumed that the last column is the target;
+        3) clean data;
+        4) determine numerical and categorical features (create categorical mask).
 
         Parameters
         ----------
         data : Union[str, npt.NDArray, pd.DataFrame, Tuple]
-            Path to data file or pandas dataframe or numpy array or Tuple(X,y).
+            path to data file or pandas dataframe or numpy array or Tuple(X,y)
 
         Returns
         -------
         Tuple[npt.NDArray, npt.NDArray, List[bool]]
-            Tuple of features, target and categorical mask for features.
+            tuple of features, target and categorical mask for features
         """
         if isinstance(data, str):
             data = read_data(data)
@@ -118,7 +118,7 @@ class TabularTaskManager(TaskManager):
     @property
     def default_pipeline(self) -> Type[Pipeline]:
         """
-        default pipeline class
+        Default pipeline class.
         """
 
         return SimpleTabularPipeline
@@ -126,7 +126,7 @@ class TabularTaskManager(TaskManager):
     @property
     def default_pipeline_options(self) -> Dict:
         """
-        default options for pipeline
+        Default options for pipeline.
         """
         options = {"mask": self._data[2]}
         return options
@@ -163,15 +163,15 @@ class TabularTaskManager(TaskManager):
         Parameters
         ----------
         pre_eval : bool
-            If True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default False.
-            Setting pre_eval = True is not reccomended as it pre-evaluates the pipeline as a whole which has lots of random elements therefore the results might be non reproducable.
+            if True, first estimate model perfromance via 10 folds CV for small datasets or 25% test split for large datasets, by default False.
+            Setting pre_eval = True is not reccomended as it pre-evaluates the pipeline as a whole which has lots of random elements therefore the results might be non reproducable
         make_eval_subset: bool
-            Controls whether a dedicated eval set should be allocated for performance report, by default True. 
-            If True, overwrites the value of `pre_eval` to False.
+            controls whether a dedicated eval set should be allocated for performance report, by default True. 
+            If True, overwrites the value of `pre_eval` to False
         Returns
         -------
         TabularTaskManager
-            self
+            `self`
         """
         print_("Beginning training")
         if make_eval_subset:
@@ -194,12 +194,12 @@ class TabularTaskManager(TaskManager):
 
     def predict(self, data: Union[str, npt.NDArray, pd.DataFrame]) -> npt.NDArray:
         """
-        Perform prediction on new data.
+        Performs prediction on new data.
 
         Parameters
         ----------
         data : Union[str, npt.NDArray, pd.DataFrame]
-             Path to data file or pandas dataframe or numpy array.
+             path to data file or pandas dataframe or numpy array
 
         Returns
         -------
@@ -245,7 +245,7 @@ class TabularTaskManager(TaskManager):
         Parameters
         ----------
         test_data : Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]]
-            data to be used as test set, by default None.
+            data to be used as test set, by default None
 
         Returns
         -------
@@ -272,9 +272,9 @@ class TabularTaskManager(TaskManager):
         Parameters
         ----------
         test_data : Union[str, npt.NDArray, pd.DataFrame, Tuple]
-            Dataset to be used for evaluation.
+            dataset to be used for evaluation
         silent: bool
-            Controls whether the metrics are printed on screen, by default False.
+            controls whether the metrics are printed on screen, by default False
         """
         print("The evaluation report will be provided here")
         X, y, _ = self._prepare_data(test_data, training = False)

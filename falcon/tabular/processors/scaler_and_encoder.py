@@ -24,7 +24,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         Parameters
         ----------
         mask : List[bool]
-            Boolean mask with True/False for categorical/numerical features.
+            boolean mask with True/False for categorical/numerical features
         """
         self.booleans_list = mask
 
@@ -35,7 +35,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         Parameters
         ----------
         X : npt.NDArray
-            Data to encode
+            data to encode
         _ : Any, optional
             dummy argument to keep compatibility with pipeline training, by default None
         """
@@ -60,12 +60,12 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         Parameters
         ----------
         X : npt.NDArray
-            Input data
+            input data
 
         Returns
         -------
         npt.NDArray
-            Encoded data
+            encoded data
         """
         return self.ct.transform(X).astype(dtype=np.float32)
 
@@ -95,24 +95,24 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         Parameters
         ----------
         X : npt.NDArray[np.object_]
-            _description_
+            data to process
 
         Returns
         -------
         npt.NDArray
-            _description_
+            processed data
         """
         return self.transform(X)
 
     def to_onnx(self) -> SerializedModelTuple:
         """
         Serializes the encoder to onnx. 
-        Each feature in the original dataset is mapped to its own input node (`float32` for numerical or string for `categorical`)
+        Each feature in the original dataset is mapped to its own input node (`float32` for numerical or `string` for categorical).
 
         Returns
         -------
         SerializedModelTuple
-            Tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node)).
+            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))
         """
         initial_types = []
         initial_types_str: List[str] = []

@@ -4,6 +4,7 @@ Tabular
 .. currentmodule:: falcon.tabular
 
 .. autosummary::
+   
    TabularTaskManager
    pipelines.SimpleTabularPipeline
    processors.ScalerAndEncoder

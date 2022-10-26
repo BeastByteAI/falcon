@@ -298,6 +298,7 @@ class SuperLearner(Learner, ONNXConvertible):
 
     def predict(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
         """
+        Makes a prediction for given X.
 
         Parameters
         ----------
@@ -365,7 +366,7 @@ class SuperLearner(Learner, ONNXConvertible):
         Returns
         -------
         SerializedModelTuple
-            Tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node)).
+            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))
         """
         return self.model.to_onnx()
         
