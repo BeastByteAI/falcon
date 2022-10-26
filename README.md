@@ -27,11 +27,11 @@ pip install git+https://github.com/OKUA1/falcon
 Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using [Conda](https://docs.conda.io/en/latest/)
 
 ```bash 
-    conda create -n falcon_env
-    conda activate falcon_env
-    conda config --env --set subdir osx-64
-    conda install python=3.9
-    pip3 install falcon-ml
+conda create -n falcon_env
+conda activate falcon_env
+conda config --env --set subdir osx-64
+conda install python=3.9
+pip3 install falcon-ml
 ```
 
 ## Documentation 📚
