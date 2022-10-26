@@ -14,6 +14,8 @@ import onnx
 from onnx import TensorProto, helper as h, OperatorSetIdProto
 from falcon.types import ModelsList
 import os
+import sys
+import warnings
 
 
 def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
@@ -214,3 +216,9 @@ def is_notebook() -> bool:
             return True  # Other
     except NameError:
         return False
+
+def disable_warnings(): 
+    #print('disabling warnings')
+    if not sys.warnoptions:
+        warnings.simplefilter('ignore')
+        os.environ["PYTHONWARNINGS"] = 'ignore'
