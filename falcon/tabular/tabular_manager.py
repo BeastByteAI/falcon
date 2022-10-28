@@ -146,7 +146,7 @@ class TabularTaskManager(TaskManager):
             avg_score = float(np.mean(score))
         else:
             X_train, X_test, y_train, y_test = train_test_split(
-                self._data[0], self._data[1], test_size=0.25
+                self._data[0], self._data[1], test_size=0.25, stratify = self._data[1] if self.task == 'tabular_classification' else None
             )
             copied_pipeline = deepcopy(self._pipeline)
             copied_pipeline.fit(X_train, y_train)
@@ -177,7 +177,7 @@ class TabularTaskManager(TaskManager):
         if make_eval_subset:
             if self._eval_set is None:
                 X_train, X_eval, y_train, y_eval = train_test_split(
-                    self._data[0], self._data[1], test_size=0.25
+                    self._data[0], self._data[1], test_size=0.25, stratify = self._data[1] if self.task == 'tabular_classification' else None
                 )
                 self._data = (X_train, y_train, self._data[2])
                 self._eval_set = (X_eval, y_eval)
