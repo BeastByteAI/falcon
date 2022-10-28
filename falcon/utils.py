@@ -204,7 +204,7 @@ def print_(*args: Any) -> None:
             print(a)
 
 
-# TODO test in different env
+# TODO RUN TESTS
 def is_notebook() -> bool:
     try:
         shell = get_ipython().__class__.__name__ # type: ignore
@@ -217,8 +217,7 @@ def is_notebook() -> bool:
     except NameError:
         return False
 
-def disable_warnings(): 
-    #print('disabling warnings')
+def disable_warnings() -> None: 
     if not sys.warnoptions:
         warnings.simplefilter('ignore')
         os.environ["PYTHONWARNINGS"] = 'ignore'

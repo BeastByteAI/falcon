@@ -21,7 +21,7 @@ class TabularTaskManager(TaskManager):
     def __init__(
         self,
         task: str,
-        data: Union[str, npt.NDArray, pd.DataFrame, Tuple],  # TODO add support for Tuple[X, y]
+        data: Union[str, npt.NDArray, pd.DataFrame, Tuple], 
         pipeline: Optional[Type[Pipeline]] = None,
         pipeline_options: Optional[Dict] = None,
         extra_pipeline_options: Optional[Dict] = None,
@@ -72,7 +72,7 @@ class TabularTaskManager(TaskManager):
 
     def _prepare_data(
         self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
-    ) -> Tuple[npt.NDArray, npt.NDArray, List[bool]]:
+    ) -> Tuple[npt.NDArray, npt.NDArray, List[int]]:
         """
         Initial data preparation: 
         1) optional: read data from the specified location;
@@ -87,7 +87,7 @@ class TabularTaskManager(TaskManager):
 
         Returns
         -------
-        Tuple[npt.NDArray, npt.NDArray, List[bool]]
+        Tuple[npt.NDArray, npt.NDArray, List[int]]
             tuple of features, target and categorical mask for features
         """
         if isinstance(data, str):
@@ -106,7 +106,7 @@ class TabularTaskManager(TaskManager):
         else:
             X, y = split_features(data, features=self.features, target=self.target)
         X, y = clean_data_split(X, y)
-        mask: List[bool]
+        mask: List[int]
         if training:
             mask = get_cat_mask(X)
         else: 

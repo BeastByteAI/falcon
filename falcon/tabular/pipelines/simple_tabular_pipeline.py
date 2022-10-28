@@ -13,7 +13,7 @@ class SimpleTabularPipeline(Pipeline):
     """
     Default tabular pipeline.
     """
-    def __init__(self, task: str, mask: List[bool], learner: Type[Learner] = SuperLearner, learner_kwargs: Optional[Dict] = None):
+    def __init__(self, task: str, mask: List[int], learner: Type[Learner] = SuperLearner, learner_kwargs: Optional[Dict] = None):
         """
         Default tabular pipeline. On a high level it simply chains a preprocessor and model learner (by default `SuperLearner`). 
         For classification tasks, the labels are also encoded as integers (while predictions are decoded back to strings).
@@ -23,8 +23,8 @@ class SimpleTabularPipeline(Pipeline):
         ----------
         task : str
             `tabular_classification` or `tabular_regression`
-        mask : List[bool]
-            list of booleans where True indicates a categorical feature and False indicates a numerical feature
+        mask : List[int]
+            list of ints where 1/2 indicates a low/high cardinality categorical feature and 0 indicates a numerical feature
         learner : Learner, optional
             learner class to be used, by default `SuperLearner`
         learner_kwargs : Optional[Dict], optional

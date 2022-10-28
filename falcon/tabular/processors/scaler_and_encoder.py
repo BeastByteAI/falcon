@@ -1,3 +1,4 @@
+from ast import Or
 import numpy as np
 from numpy import typing as npt
 from falcon.types import Float32Array
@@ -10,23 +11,25 @@ from skl2onnx.common.data_types import FloatTensorType, StringTensorType
 from falcon.config import ONNX_OPSET_VERSION
 from typing import List, Optional, Type, Any
 from falcon.types import SerializedModelTuple
+from sklearn.pipeline import Pipeline as SKLPipeline
+from sklearn.preprocessing import MaxAbsScaler, OrdinalEncoder
 
 
 class ScalerAndEncoder(Processor, ONNXConvertible):
     """
-    Applies OneHotEncoder on categorical features and StandardScaler on numerical features.
+    Applies OneHotEncoder/OrdinalEncoder on low/high cardinality categorical features and StandardScaler on numerical features.
     """
     
     def __init__(
-        self, mask: List[bool]
-    ) -> None:  # [True -> categorical, False -> numerical]
+        self, mask: List[int]
+    ) -> None:  # [1/2 -> low/high cardinality categorical, 0 -> numerical]
         """
         Parameters
         ----------
-        mask : List[bool]
+        mask : List[int]
             boolean mask with True/False for categorical/numerical features
         """
-        self.booleans_list = mask
+        self.mask = mask
 
     def fit(self, X: npt.NDArray, _: Any = None) -> None:
         """
@@ -40,14 +43,17 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
             dummy argument to keep compatibility with pipeline training, by default None
         """
         transformers = []
-        for i, v in enumerate(self.booleans_list):
-            if v == True:
-                self.method = OneHotEncoder(
+        for i, v in enumerate(self.mask):
+            if v == 1:
+                method = OneHotEncoder(
                     categories="auto", sparse=False, handle_unknown="ignore"
                 )
+            elif v == 0:
+                method = StandardScaler(with_mean=True, with_std=True)
             else:
-                self.method = StandardScaler(with_mean=True, with_std=True)
-            t = (f"input {i}", self.method, [i])
+                method = SKLPipeline(steps=[('ord_enc', OrdinalEncoder(categories="auto", handle_unknown = "use_encoded_value", unknown_value = -1)), ('sc', MaxAbsScaler())])
+            
+            t = (f"input {i}", method, [i])
             transformers.append(t)
 
         self.ct = ColumnTransformer(transformers)
@@ -117,8 +123,8 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         initial_types = []
         initial_types_str: List[str] = []
         initial_shapes: List[List[Optional[int]]] = []
-        for i, t in enumerate(self.booleans_list):
-            if t == True:
+        for i, t in enumerate(self.mask):
+            if t == 1 or t == 2:
                 tensor = StringTensorType([None, 1])
                 initial_types_str.append("STRING")
             else:
@@ -133,7 +139,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
                 target_opset=ONNX_OPSET_VERSION,
                 options={StandardScaler: {"div": "div_cast"}},
             ).SerializeToString(),
-            len(self.booleans_list),
+            len(self.mask),
             1,
             initial_types_str,
             initial_shapes,

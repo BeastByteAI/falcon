@@ -124,9 +124,10 @@ def split_features(
     return convert_to_np_obj(X), convert_to_np_obj(y)
 
 
-def get_cat_mask(data: npt.NDArray) -> List[bool]:
+def get_cat_mask(data: npt.NDArray) -> List[int]:
     num_cat_threshold: int = 10
-    mask: List[bool] = []  # True -> cat ; False -> num
+    high_cardinality_threshold: int = 100
+    mask: List[int] = []  # True -> cat ; False -> num
     tmp_df: pd.DataFrame = pd.DataFrame(data).infer_objects()
     for col in range(tmp_df.shape[-1]):
         if isinstance(
@@ -134,12 +135,15 @@ def get_cat_mask(data: npt.NDArray) -> List[bool]:
             (int, float, np.int32, np.int64, np.float32, np.float64),
         ):
             if len(tmp_df.iloc[:, col].unique().tolist()) > num_cat_threshold:
-                mask.append(False)
+                mask.append(0)
             else:
-                mask.append(True)
+                mask.append(1)
         else:
-            mask.append(True)
-    return mask
+            if len(tmp_df.iloc[:, col].unique().tolist()) > high_cardinality_threshold:
+                mask.append(2)
+            else: 
+                mask.append(1)
+    return mask # 0 - numerical, 1 - cat low cardinality, 2 - cat high cardinality
 
 
 def calculate_model_score(y: npt.NDArray, y_hat: npt.NDArray, task: str) -> float:
