@@ -13,7 +13,7 @@ from typing import List, Optional, Type, Any
 from falcon.types import SerializedModelTuple
 from sklearn.pipeline import Pipeline as SKLPipeline
 from sklearn.preprocessing import MaxAbsScaler, OrdinalEncoder
-
+from skl2onnx.sklapi import CastTransformer
 
 class ScalerAndEncoder(Processor, ONNXConvertible):
     """
@@ -49,7 +49,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
                     categories="auto", sparse=False, handle_unknown="ignore"
                 )
             elif v == 0:
-                method = StandardScaler(with_mean=True, with_std=True)
+                method = SKLPipeline(steps = [('cast64', CastTransformer(dtype=np.float64)),('scaler', StandardScaler(with_mean=True, with_std=True)),('cast32', CastTransformer())])
             else:
                 method = SKLPipeline(steps=[('ord_enc', OrdinalEncoder(categories="auto", handle_unknown = "use_encoded_value", unknown_value = -1)), ('sc', MaxAbsScaler())])
             
