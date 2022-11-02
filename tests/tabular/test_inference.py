@@ -24,9 +24,11 @@ def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
     if not is_regr:
         eq_ = np.equal(pred, pred_)
         print(eq_)
-        return len(eq_[eq_ == False]) / len(eq_) < 0.1
+        return False not in eq_
     else:
         ac = np.isclose(pred, pred_)
+        print(ac, np.max(pred - pred_))
+        assert False not in ac
         ac = len(ac[ac == False]) 
         print(ac, len(pred))
         ac = ac / len(pred) < 0.1
