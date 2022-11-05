@@ -3,9 +3,8 @@ from numpy import typing as npt
 from onnx import ModelProto, load_from_string
 import onnxruntime as ort
 from onnx.compose import add_prefix, merge_models
-from onnx import OperatorSetIdProto
 from onnx.helper import make_model
-from falcon.config import ONNX_OPSET_VERSION
+from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 import numpy as np
 from typing import Any, Dict, Union
 import bson
@@ -26,7 +25,7 @@ def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
     models = [load_from_string(m[0][0]) for m in models_]
     for i, model in enumerate(models):
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
-        op2 = h.make_operatorsetid("ai.onnx.ml", 2)
+        op2 = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
         updated_model = make_model(model.graph, opset_imports=[op1, op2])
         updated_model = add_prefix(updated_model, prefix=f"falcon_pl_{i}/")
         updated_models.append(updated_model)

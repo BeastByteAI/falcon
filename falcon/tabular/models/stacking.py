@@ -14,7 +14,7 @@ from numpy import typing as npt
 import numpy as np
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import TensorType, FloatTensorType
-from falcon.config import ONNX_OPSET_VERSION
+from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 
 
 class _StackingBase(Model, ONNXConvertible):
@@ -90,7 +90,7 @@ class _StackingBase(Model, ONNXConvertible):
         onnx_model = convert_sklearn(
             self.estimator,
             initial_types=initial_type,
-            target_opset=ONNX_OPSET_VERSION,
+            target_opset={'': ONNX_OPSET_VERSION, 'ai.onnx.ml': ML_ONNX_OPSET_VERSION},
             # final_types=self._get_onnx_final_types(),
             options=options,
         )

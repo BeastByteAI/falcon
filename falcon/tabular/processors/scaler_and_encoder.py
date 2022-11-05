@@ -1,4 +1,3 @@
-from ast import Or
 import numpy as np
 from numpy import typing as npt
 from falcon.types import Float32Array
@@ -8,7 +7,7 @@ from sklearn.preprocessing import OneHotEncoder
 from falcon.abstract import Processor, ONNXConvertible
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType, StringTensorType
-from falcon.config import ONNX_OPSET_VERSION
+from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 from typing import List, Optional, Type, Any
 from falcon.types import SerializedModelTuple
 from sklearn.pipeline import Pipeline as SKLPipeline
@@ -136,7 +135,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
             convert_sklearn(
                 self.ct,
                 initial_types=initial_types,
-                target_opset=ONNX_OPSET_VERSION,
+                target_opset={'': ONNX_OPSET_VERSION, 'ai.onnx.ml': ML_ONNX_OPSET_VERSION},
                 options={StandardScaler: {"div": "div_cast"}},
             ).SerializeToString(),
             len(self.mask),
