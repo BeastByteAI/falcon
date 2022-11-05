@@ -42,7 +42,7 @@ def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
 
 
 def test_inference_classification():
-    for i in range(3):
+    for i in range(2):
         random.seed(42+i)
         np.random.seed(42+i)
         print(i)
@@ -55,7 +55,7 @@ def test_inference_classification():
     
 
 def test_inference_regression():
-    for i in range(3):
+    for i in range(2):
         random.seed(42+i)
         np.random.seed(42+i)
         manager = initialize(
