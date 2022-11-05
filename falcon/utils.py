@@ -28,7 +28,7 @@ def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
         op2 = h.make_operatorsetid("ai.onnx.ml", 2)
         updated_model = make_model(model.graph, opset_imports=[op1, op2])
-        updated_model = add_prefix(updated_model, prefix=f"m{i}/")
+        updated_model = add_prefix(updated_model, prefix=f"falcon_pl_{i}/")
         updated_models.append(updated_model)
         # onnx.save(updated_model, f"{i}_model.onnx")
 
@@ -180,12 +180,12 @@ def run_onnx(
     if outputs == "final" and len(ort_sess.get_outputs()) > 1:
         idx_ = []
         for name in output_names:
-            if not name[0] == "m":
+            if not name[0:10] == "falcon_pl_":
                 raise RuntimeError("One of the output nodes has an invalid name.")
-            idx = int(name.split("/")[0][1:])
+            idx = int(name.split("/")[0][10:])
             idx_.append(idx)
         max_idx = max(idx_)
-        output_names = [n for n in output_names if n.startswith(f"m{max_idx}")]
+        output_names = [n for n in output_names if n.startswith(f"falcon_pl_{max_idx}")]
     pred_onnx = ort_sess.run(output_names, inputs)
 
     return pred_onnx

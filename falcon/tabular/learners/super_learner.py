@@ -1,6 +1,3 @@
-from optparse import Option
-from re import L
-from threading import main_thread
 from typing import Callable
 from sklearn.ensemble import (
     AdaBoostRegressor,
@@ -10,7 +7,7 @@ from sklearn.ensemble import (
 from sklearn.linear_model import ElasticNet, LinearRegression
 from sklearn.base import BaseEstimator as SklearnBaseEstimator
 from sklearn.svm import NuSVR, SVR
-from falcon.abstract import Learner, PipelineElement
+from falcon.abstract import Learner
 from falcon.abstract.onnx_convertible import ONNXConvertible
 from falcon.types import Float32Array, Int64Array, SerializedModelTuple
 from typing import Dict, List, Tuple, Callable, Optional, List, Type, Any, Union
@@ -18,7 +15,7 @@ from typing import Dict, List, Tuple, Callable, Optional, List, Type, Any, Union
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.discriminant_analysis import (
     LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
+    #QuadraticDiscriminantAnalysis, # DO NOT USE
 )
 from sklearn.ensemble import (
     AdaBoostClassifier,
@@ -34,16 +31,13 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
-from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.linear_model import ElasticNet, LinearRegression, LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
-from sklearn.model_selection import KFold, StratifiedKFold, RepeatedStratifiedKFold
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import roc_auc_score, r2_score, balanced_accuracy_score
+from sklearn.metrics import r2_score, balanced_accuracy_score
 
 from falcon.tabular.models import StackingRegressor, StackingClassifier
 from falcon.utils import print_
@@ -62,11 +56,15 @@ _default_estimators: Dict = {
             ("SVR", SVR, {}),
             ("NuSVR", NuSVR, {}),
             ("DecisionTreeRegressor", DecisionTreeRegressor, {}),
-            ("HistGradientBoostingRegressor", HistGradientBoostingRegressor, {}),
-            ("GradientBoostingRegressor", GradientBoostingRegressor, {}),
-            ("AdaBoostRegressor", AdaBoostRegressor, {}),
             (
-                "BaggingRegressor",
+                "HistGradientBoostingRegressor",
+                HistGradientBoostingRegressor,
+                {"min_samples_leaf": 2},
+            ),
+            ("GradientBoostingRegressor_100", GradientBoostingRegressor, {}),
+            ("AdaBoostRegressor_50", AdaBoostRegressor, {}),
+            (
+                "BaggingRegressor_10",
                 BaggingRegressor,
                 {
                     "base_estimator": DecisionTreeRegressor(min_samples_split=2),
@@ -75,24 +73,176 @@ _default_estimators: Dict = {
                 },
             ),
             (
-                "RandomForestRegressor",
+                "RandomForestRegressor_100",
                 RandomForestRegressor,
                 {"min_samples_split": 2, "n_jobs": -1, "verbose": _SKLEARN_VERBOSE},
             ),
             (
-                "ExtraTreesRegressor",
+                "ExtraTreesRegressor_100",
                 ExtraTreesRegressor,
                 {"min_samples_split": 2, "n_jobs": -1, "verbose": _SKLEARN_VERBOSE},
+            ),
+            ("SVR_linear", SVR, {"C": 0.025, "kernel": "linear"}),
+            (
+                "GradientBoostingRegressor_10",
+                GradientBoostingRegressor,
+                {"n_estimators": 10},
+            ),
+            (
+                "GradientBoostingRegressor_25",
+                GradientBoostingRegressor,
+                {"n_estimators": 25},
+            ),
+            (
+                "GradientBoostingRegressor_50",
+                GradientBoostingRegressor,
+                {"n_estimators": 50},
+            ),
+            (
+                "GradientBoostingRegressor_200",
+                GradientBoostingRegressor,
+                {"n_estimators": 200},
+            ),
+            ("AdaBoostRegressor_10", AdaBoostRegressor, {"n_estimators": 10}),
+            ("AdaBoostRegressor_25", AdaBoostRegressor, {"n_estimators": 25}),
+            ("AdaBoostRegressor_100", AdaBoostRegressor, {"n_estimators": 100}),
+            (
+                "BaggingRegressor_25",
+                BaggingRegressor,
+                {
+                    "n_estimators": 25,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingRegressor_50",
+                BaggingRegressor,
+                {
+                    "n_estimators": 50,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingRegressor_100",
+                BaggingRegressor,
+                {
+                    "n_estimators": 100,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_10",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_25",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_50",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_200",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 200,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_10",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_25",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_50",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_200",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 200,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
         "mid": [
             ("ElasticNet", ElasticNet, {}),
-            ("DecisionTreeRegressor", DecisionTreeRegressor, {}),
-            ("HistGradientBoostingRegressor", HistGradientBoostingRegressor, {}),
-            ("GradientBoostingRegressor", GradientBoostingRegressor, {}),
-            ("AdaBoostRegressor", AdaBoostRegressor, {}),
             (
-                "BaggingRegressor",
+                "DecisionTreeRegressor",
+                DecisionTreeRegressor,
+                {"min_samples_split": 0.001},
+            ),
+            (
+                "HistGradientBoostingRegressor_150",
+                HistGradientBoostingRegressor,
+                {"max_iter": 150},
+            ),
+            ("HistGradientBoostingRegressor", HistGradientBoostingRegressor, {}),
+            (
+                "HistGradientBoostingRegressor_50",
+                HistGradientBoostingRegressor,
+                {"max_iter": 50},
+            ),
+            (
+                "GradientBoostingRegressor_100",
+                GradientBoostingRegressor,
+                {"min_samples_split": 0.003},
+            ),
+            ("AdaBoostRegressor_50", AdaBoostRegressor, {}),
+            (
+                "BaggingRegressor_10",
                 BaggingRegressor,
                 {
                     "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
@@ -101,14 +251,121 @@ _default_estimators: Dict = {
                 },
             ),
             (
-                "RandomForestRegressor",
+                "RandomForestRegressor_100",
                 RandomForestRegressor,
                 {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
             ),
             (
-                "ExtraTreesRegressor",
+                "ExtraTreesRegressor_100",
                 ExtraTreesRegressor,
                 {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+            ),
+            (
+                "GradientBoostingRegressor_10",
+                GradientBoostingRegressor,
+                {"n_estimators": 10, "min_samples_split": 0.003},
+            ),
+            (
+                "GradientBoostingRegressor_25",
+                GradientBoostingRegressor,
+                {"n_estimators": 25, "min_samples_split": 0.003},
+            ),
+            (
+                "GradientBoostingRegressor_50",
+                GradientBoostingRegressor,
+                {"n_estimators": 50, "min_samples_split": 0.003},
+            ),
+            ("AdaBoostRegressor_25", AdaBoostRegressor, {"n_estimators": 25}),
+            ("AdaBoostRegressor_100", AdaBoostRegressor, {"n_estimators": 100}),
+            (
+                "BaggingRegressor_25",
+                BaggingRegressor,
+                {
+                    "n_estimators": 25,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingRegressor_50",
+                BaggingRegressor,
+                {
+                    "n_estimators": 50,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingRegressor_100",
+                BaggingRegressor,
+                {
+                    "n_estimators": 100,
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_10",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_25",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_50",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_10",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_25",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_50",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
         "large": [
@@ -120,23 +377,110 @@ _default_estimators: Dict = {
                 {"max_iter": 200},
             ),
             (
-                "BaggingRegressor",
+                "BaggingRegressor_10",
                 BaggingRegressor,
                 {
+                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_100",
+                RandomForestRegressor,
+                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+            ),
+            (
+                "ExtraTreesRegressor_100",
+                ExtraTreesRegressor,
+                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+            ),
+            (
+                "GradientBoostingRegressor_10",
+                GradientBoostingRegressor,
+                {"n_estimators": 10},
+            ),
+            (
+                "GradientBoostingRegressor_25",
+                GradientBoostingRegressor,
+                {"n_estimators": 25},
+            ),
+            (
+                "GradientBoostingRegressor_50",
+                GradientBoostingRegressor,
+                {"n_estimators": 50},
+            ),
+            ("AdaBoostRegressor_10", AdaBoostRegressor, {"n_estimators": 10}),
+            ("AdaBoostRegressor_25", AdaBoostRegressor, {"n_estimators": 25}),
+            (
+                "BaggingRegressor_25",
+                BaggingRegressor,
+                {
+                    "n_estimators": 25,
                     "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
                     "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
             (
-                "RandomForestRegressor",
+                "RandomForestRegressor_10",
                 RandomForestRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
             (
-                "ExtraTreesRegressor",
+                "RandomForestRegressor_25",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestRegressor_50",
+                RandomForestRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_10",
                 ExtraTreesRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_25",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesRegressor_50",
+                ExtraTreesRegressor,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": 1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
     },
@@ -147,17 +491,20 @@ _default_estimators: Dict = {
             ("SVC", SVC, {}),
             ("NuSVC", NuSVC, {}),
             ("GaussianNB", GaussianNB, {}),
-            ("LinearDiscriminantAnalysis", LinearDiscriminantAnalysis, {}),
-            ("AdaBoostClassifier", AdaBoostClassifier, {}),
-            ("GradientBoostingClassifier", GradientBoostingClassifier, {}),
-            ("HistGradientBoostingClassifier", HistGradientBoostingClassifier, {}),
+            ("AdaBoostClassifier_50", AdaBoostClassifier, {}),
+            ("GradientBoostingClassifier_100", GradientBoostingClassifier, {}),
             (
-                "RandomForestClassifier",
+                "HistGradientBoostingClassifier",
+                HistGradientBoostingClassifier,
+                {"min_samples_leaf": 2},
+            ),
+            (
+                "RandomForestClassifier_100",
                 RandomForestClassifier,
                 {"min_samples_split": 0.003, "n_jobs": -1, "verbose": _SKLEARN_VERBOSE},
             ),
             (
-                "BaggingClassifier",
+                "BaggingClassifier_10",
                 BaggingClassifier,
                 {
                     "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
@@ -166,26 +513,180 @@ _default_estimators: Dict = {
                 },
             ),
             (
-                "ExtraTreesClassifier",
+                "ExtraTreesClassifier_100",
                 ExtraTreesClassifier,
                 {"min_samples_split": 0.003, "n_jobs": -1, "verbose": _SKLEARN_VERBOSE},
+            ),
+            ("SVC_linear", SVC, {"C": 0.025, "kernel": "linear"}),
+            ("LinearDiscriminantAnalysis", LinearDiscriminantAnalysis, {}),
+            #("QuadraticDiscriminantAnalysis", QuadraticDiscriminantAnalysis, {}), # this breaks onnx
+            ("AdaBoostClassifier_10", AdaBoostClassifier, {"n_estimators": 10}),
+            ("AdaBoostClassifier_25", AdaBoostClassifier, {"n_estimators": 25}),
+            ("AdaBoostClassifier_100", AdaBoostClassifier, {"n_estimators": 100}),
+            (
+                "GradientBoostingClassifier_10",
+                GradientBoostingClassifier,
+                {"n_estimators": 10},
+            ),
+            (
+                "GradientBoostingClassifier_25",
+                GradientBoostingClassifier,
+                {"n_estimators": 25},
+            ),
+            (
+                "GradientBoostingClassifier_50",
+                GradientBoostingClassifier,
+                {"n_estimators": 50},
+            ),
+            (
+                "GradientBoostingClassifier_200",
+                GradientBoostingClassifier,
+                {"n_estimators": 200},
+            ),
+            (
+                "RandomForestClassifier_10",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_25",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_50",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_200",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 200,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_25",
+                BaggingClassifier,
+                {
+                    "n_estimators": 25,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_50",
+                BaggingClassifier,
+                {
+                    "n_estimators": 50,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_100",
+                BaggingClassifier,
+                {
+                    "n_estimators": 100,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_10",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_25",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_50",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_200",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 200,
+                    "min_samples_split": 2,
+                    "n_jobs": -1,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
         "mid": [
             ("LogisticRegression", LogisticRegression, {"max_iter": 150}),
-            ("DecisionTreeClassifier", DecisionTreeClassifier, {}),
+            (
+                "DecisionTreeClassifier",
+                DecisionTreeClassifier,
+                {"min_samples_split": 0.001},
+            ),
             ("GaussianNB", GaussianNB, {}),
             ("LinearDiscriminantAnalysis", LinearDiscriminantAnalysis, {}),
-            ("AdaBoostClassifier", AdaBoostClassifier, {}),
-            ("GradientBoostingClassifier", GradientBoostingClassifier, {}),
+            ("AdaBoostClassifier_50", AdaBoostClassifier, {}),
+            (
+                "GradientBoostingClassifier_100",
+                GradientBoostingClassifier,
+                {"min_samples_split": 0.003},
+            ),
+            (
+                "HistGradientBoostingClassifier_50",
+                HistGradientBoostingClassifier,
+                {"max_iter": 50},
+            ),
             ("HistGradientBoostingClassifier", HistGradientBoostingClassifier, {}),
             (
-                "RandomForestClassifier",
+                "HistGradientBoostingClassifier_150",
+                HistGradientBoostingClassifier,
+                {"max_iter": 150},
+            ),
+            (
+                "RandomForestClassifier_100",
                 RandomForestClassifier,
                 {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
             ),
             (
-                "BaggingClassifier",
+                "BaggingClassifier_10",
                 BaggingClassifier,
                 {
                     "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
@@ -194,9 +695,116 @@ _default_estimators: Dict = {
                 },
             ),
             (
-                "ExtraTreesClassifier",
+                "ExtraTreesClassifier_100",
                 ExtraTreesClassifier,
                 {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+            ),
+            ("AdaBoostClassifier_25", AdaBoostClassifier, {"n_estimators": 25}),
+            ("AdaBoostClassifier_100", AdaBoostClassifier, {"n_estimators": 100}),
+            (
+                "GradientBoostingClassifier_10",
+                GradientBoostingClassifier,
+                {"n_estimators": 10, "min_samples_split": 0.003},
+            ),
+            (
+                "GradientBoostingClassifier_25",
+                GradientBoostingClassifier,
+                {"n_estimators": 25, "min_samples_split": 0.003},
+            ),
+            (
+                "GradientBoostingClassifier_50",
+                GradientBoostingClassifier,
+                {"n_estimators": 50, "min_samples_split": 0.003},
+            ),
+            (
+                "RandomForestClassifier_10",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_25",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_50",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_25",
+                BaggingClassifier,
+                {
+                    "n_estimators": 25,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_50",
+                BaggingClassifier,
+                {
+                    "n_estimators": 50,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_100",
+                BaggingClassifier,
+                {
+                    "n_estimators": 100,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_10",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_25",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_50",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 4,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
         "large": [
@@ -210,12 +818,17 @@ _default_estimators: Dict = {
                 {"max_iter": 200},
             ),
             (
-                "RandomForestClassifier",
+                "HistGradientBoostingClassifier_50",
+                HistGradientBoostingClassifier,
+                {"max_iter": 50},
+            ),
+            (
+                "RandomForestClassifier_100",
                 RandomForestClassifier,
                 {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
             ),
             (
-                "BaggingClassifier",
+                "BaggingClassifier_10",
                 BaggingClassifier,
                 {
                     "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
@@ -224,9 +837,80 @@ _default_estimators: Dict = {
                 },
             ),
             (
-                "ExtraTreesClassifier",
+                "ExtraTreesClassifier_100",
                 ExtraTreesClassifier,
                 {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
+            ),
+            ("AdaBoostClassifier_200", AdaBoostClassifier, {"n_estimators": 200}),
+            (
+                "RandomForestClassifier_10",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_25",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "RandomForestClassifier_50",
+                RandomForestClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "BaggingClassifier_25",
+                BaggingClassifier,
+                {
+                    "n_estimators": 25,
+                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_10",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 10,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_25",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 25,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
+            ),
+            (
+                "ExtraTreesClassifier_50",
+                ExtraTreesClassifier,
+                {
+                    "n_estimators": 50,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 2,
+                    "verbose": _SKLEARN_VERBOSE,
+                },
             ),
         ],
     },
