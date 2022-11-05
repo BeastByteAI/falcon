@@ -104,6 +104,7 @@ def AutoML(
     make_eval_subset = True if test_data is None else False
     manager.train(pre_eval = False, make_eval_subset = make_eval_subset)
     manager.performance_summary(test_data = test_data)
+    print('Saving the model ...')
     ts = datetime.datetime.now().strftime('%Y%m%d.%H%M%S')
     filename = f"falcon_{ts}.onnx"
     manager.save_model(format = 'onnx', filename = filename)
