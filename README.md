@@ -20,7 +20,8 @@ Alternatively, you can use one of the available demo datasets.
 
 ```python
 from falcon import AutoML
-from falcon.datasets import load_churn_dataset, load_insurance_dataset # churn -> classification; insurance -> regression
+from falcon.datasets import load_churn_dataset, load_insurance_dataset 
+# churn -> classification; insurance -> regression
 
 df = load_churn_dataset()
 
