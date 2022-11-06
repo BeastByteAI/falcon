@@ -3,9 +3,8 @@ from numpy import typing as npt
 from onnx import ModelProto, load_from_string
 import onnxruntime as ort
 from onnx.compose import add_prefix, merge_models
-from onnx import OperatorSetIdProto
 from onnx.helper import make_model
-from falcon.config import ONNX_OPSET_VERSION
+from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 import numpy as np
 from typing import Any, Dict, Union
 import bson
@@ -26,9 +25,9 @@ def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
     models = [load_from_string(m[0][0]) for m in models_]
     for i, model in enumerate(models):
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
-        op2 = h.make_operatorsetid("ai.onnx.ml", 2)
+        op2 = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
         updated_model = make_model(model.graph, opset_imports=[op1, op2])
-        updated_model = add_prefix(updated_model, prefix=f"m{i}/")
+        updated_model = add_prefix(updated_model, prefix=f"falcon_pl_{i}/")
         updated_models.append(updated_model)
         # onnx.save(updated_model, f"{i}_model.onnx")
 
@@ -180,12 +179,12 @@ def run_onnx(
     if outputs == "final" and len(ort_sess.get_outputs()) > 1:
         idx_ = []
         for name in output_names:
-            if not name[0] == "m":
+            if not name[0:10] == "falcon_pl_":
                 raise RuntimeError("One of the output nodes has an invalid name.")
-            idx = int(name.split("/")[0][1:])
+            idx = int(name.split("/")[0][10:])
             idx_.append(idx)
         max_idx = max(idx_)
-        output_names = [n for n in output_names if n.startswith(f"m{max_idx}")]
+        output_names = [n for n in output_names if n.startswith(f"falcon_pl_{max_idx}")]
     pred_onnx = ort_sess.run(output_names, inputs)
 
     return pred_onnx
@@ -204,7 +203,7 @@ def print_(*args: Any) -> None:
             print(a)
 
 
-# TODO test in different env
+# TODO RUN TESTS
 def is_notebook() -> bool:
     try:
         shell = get_ipython().__class__.__name__ # type: ignore
@@ -217,8 +216,7 @@ def is_notebook() -> bool:
     except NameError:
         return False
 
-def disable_warnings(): 
-    #print('disabling warnings')
+def disable_warnings() -> None: 
     if not sys.warnoptions:
         warnings.simplefilter('ignore')
         os.environ["PYTHONWARNINGS"] = 'ignore'

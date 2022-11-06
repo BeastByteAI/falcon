@@ -6,10 +6,26 @@
 # FALCON: A Lightweight AutoML Library
 Falcon is a lightweight python library that allows to train production-ready machine learning models in a single line of code. 
 
+## Quick Start 🚀
+
+You can try falcon out simply by pointing it to the location of your dataset.
+
 ```python
 from falcon import AutoML
 
-AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
+AutoML(task = 'tabular_classification', train_data = '/path/to/titanic.csv')
+```
+
+Alternatively, you can use one of the available demo datasets.
+
+```python
+from falcon import AutoML
+from falcon.datasets import load_churn_dataset, load_insurance_dataset 
+# churn -> classification; insurance -> regression
+
+df = load_churn_dataset()
+
+AutoML(task = 'tabular_classification', train_data = df)
 ```
 
 ## Installation 💾 
@@ -27,11 +43,11 @@ pip install git+https://github.com/OKUA1/falcon
 Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using [Conda](https://docs.conda.io/en/latest/)
 
 ```bash 
-    conda create -n falcon_env
-    conda activate falcon_env
-    conda config --env --set subdir osx-64
-    conda install python=3.9
-    pip3 install falcon-ml
+conda create -n falcon_env
+conda activate falcon_env
+conda config --env --set subdir osx-64
+conda install python=3.9
+pip3 install falcon-ml
 ```
 
 ## Documentation 📚

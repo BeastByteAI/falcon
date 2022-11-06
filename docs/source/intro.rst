@@ -86,3 +86,17 @@ While AutoML function enables extremely fast experimentation, it does not provid
     
 
 When using :code:`initialize` function it is also possible to provide a custom configuration or even a custom pipeline. For more details please check the API reference section.
+
+Demo datasets
+==================
+
+You can try out falcon using one of the built-in demo datasets. 
+
+..  code-block:: python
+
+    from falcon import AutoML
+    from falcon.datasets import load_churn_dataset, load_insurance_dataset # churn -> classification; insurance -> regression
+
+    df = load_churn_dataset()
+
+    AutoML(task = 'tabular_classification', train_data = df)

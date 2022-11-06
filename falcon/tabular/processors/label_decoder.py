@@ -9,7 +9,7 @@ from falcon.types import Float32Array, SerializedModelTuple, Int64Array
 from skl2onnx import convert_sklearn
 from onnx import TensorProto, helper as h, OperatorSetIdProto
 from skl2onnx.common.data_types import StringTensorType
-from falcon.config import ONNX_OPSET_VERSION
+from falcon.config import ML_ONNX_OPSET_VERSION
 from numpy import typing as npt
 
 
@@ -129,7 +129,8 @@ class LabelDecoder(Processor, ONNXConvertible):
             domain="ai.onnx.ml",
         )
         graph = h.make_graph([node], f"decoder", inputs, outputs)
-        model = h.make_model(graph, producer_name="Falcon")
+        op = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
+        model = h.make_model(graph, producer_name="falcon", opset_imports = [op])
         return model.SerializeToString(), 1, 1, ["INT64"], [[None]]
 
     def forward(

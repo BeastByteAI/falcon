@@ -4,11 +4,31 @@ import numpy as np
 from sklearn import metrics
 from falcon.tabular.utils import calculate_model_score
 
+def scale_acc(acc: float, n_classes: int) -> float: 
+    if acc < 0. or acc > 1.:
+        raise ValueError('Accuracy score should be in range [0,1]')
+    elif acc == 0. or acc == 1. or n_classes < 3: 
+        return acc
+
+    random_performance = 1 / n_classes
+
+    a_l = 0.5 / random_performance
+
+    a_u = 0.5 / (1-random_performance) 
+    b_u = 0.5 - (0.5/(1-random_performance))*random_performance
+ 
+    if acc <= random_performance: 
+        return acc * a_l
+    else:
+        return acc * a_u + b_u
+
 def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool = False) -> Dict:
     y = y.astype(np.str_)
     classification_report = metrics.classification_report(y, y_hat, output_dict=True)
+    n_classes, n_samples = len(np.unique(y)), len(y)
     metrics_ = {
-        
+        'N_SAMPLES': n_samples, 
+        'N_CLASSES': n_classes,
         'ACC': metrics.accuracy_score(y, y_hat),
         'BACC': metrics.balanced_accuracy_score(y, y_hat),
         'PRECISION': list(classification_report[list(classification_report.keys())[-2]].values())[0], 
@@ -18,8 +38,9 @@ def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool
         'B_RECALL': list(classification_report[list(classification_report.keys())[-1]].values())[1], 
         'B_F1': list(classification_report[list(classification_report.keys())[-1]].values())[2]
     }
-    
+     
     metrics_['SCORE'] = metrics_['BACC']
+    metrics_['SC_SCORE'] = scale_acc(metrics_['SCORE'], n_classes)
     
     if not silent: 
         confusion_matrix = metrics.confusion_matrix(y, y_hat)
@@ -90,14 +111,17 @@ def print_classification_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool
 
 
 def print_regression_report(y: npt.NDArray, y_hat: npt.NDArray, silent: bool = False) -> Dict:
+    diff = y-y_hat
     metrics_ = {
+        'N_SAMPLES': len(y),
         'R2': metrics.r2_score(y, y_hat), 
-        'RMSE': np.sqrt(np.mean((y - y_hat) ** 2)), 
-        'MSE': np.mean((y - y_hat) ** 2), 
-        'MAE': np.mean(np.abs(y - y_hat)),
-        'RMSLE': np.log(np.sqrt(np.mean((y - y_hat) ** 2)) + 1e-7)
+        'RMSE': np.sqrt(np.mean((diff) ** 2)), 
+        'MSE': np.mean((diff) ** 2), 
+        'MAE': np.mean(np.abs(diff)),
+        'RMSLE': np.log(np.sqrt(np.mean((diff) ** 2)) + 1e-7)
     }
-    metrics_['SCORE'] = calculate_model_score(y, y_hat, 'tabular_regression')
+    metrics_['SCORE'] = metrics_['R2'] if metrics_['R2'] > 0.0 else 0.0 
+    metrics_['SC_SCORE'] = (metrics_['SCORE'] + 1) / 2
     if not silent:
         print("PERFORMANCE REPORT: REGRESSION")
         print()
