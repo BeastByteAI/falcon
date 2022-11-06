@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; Falcon  documentation</title><link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Getting started &mdash; Falcon  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -38,6 +42,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#demo-datasets">Demo datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 
@@ -65,14 +70,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+  <section id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
 <p><strong>Train a powerful Machine Learning model in a single line of code with Falcon!</strong></p>
 <p>Falcon is a simple and lightweight AutoML library designed for people who want to train a model on a custom dataset in an instant even without specific data-science knowledge. Simply give Falcon your dataset and specify which feature you want the ML model to predict. Falcon will do the rest!</p>
 <p>Falcon allows the trained models to be immediately used in production by saving them in the widely used ONNX format. No need to write custom code to save complicated models to ONNX anymore!</p>
-</div>
-<div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <p>Stable release from <a class="reference external" href="https://pypi.org/project/falcon-ml/">PyPi</a></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install falcon-ml
 </pre></div>
@@ -89,9 +94,9 @@ conda install <span class="nv">python</span><span class="o">=</span><span class=
 pip3 install falcon-ml
 </pre></div>
 </div>
-</div>
-<div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
 <p>Currently, Falcon supports only tabular datasets and two tasks: ‘tabular_classification’ and ‘tabular_regression’.</p>
 <p>The easiest way to use the library is by using the highest level API as shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
@@ -129,7 +134,19 @@ pip3 install falcon-ml
 </pre></div>
 </div>
 <p>When using <code class="code docutils literal notranslate"><span class="pre">initialize</span></code> function it is also possible to provide a custom configuration or even a custom pipeline. For more details please check the API reference section.</p>
+</section>
+<section id="demo-datasets">
+<h1>Demo datasets<a class="headerlink" href="#demo-datasets" title="Permalink to this heading"></a></h1>
+<p>You can try out falcon using one of the built-in demo datasets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
+<span class="kn">from</span> <span class="nn">falcon.datasets</span> <span class="kn">import</span> <span class="n">load_churn_dataset</span><span class="p">,</span> <span class="n">load_insurance_dataset</span> <span class="c1"># churn -&gt; classification; insurance -&gt; regression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_churn_dataset</span><span class="p">()</span>
+
+<span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
+</pre></div>
 </div>
+</section>
 
 
            </div>

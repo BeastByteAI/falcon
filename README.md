@@ -6,10 +6,25 @@
 # FALCON: A Lightweight AutoML Library
 Falcon is a lightweight python library that allows to train production-ready machine learning models in a single line of code. 
 
+## Quick Start 🚀
+
+You can try falcon out by pointing it simply by pointing it to the location of your dataset.
+
 ```python
 from falcon import AutoML
 
-AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
+AutoML(task = 'tabular_classification', train_data = '/path/to/titanic.csv')
+```
+
+Alternatively, you can use one of the available demo datasets.
+
+```python
+from falcon import AutoML
+from falcon.datasets import load_churn_dataset, load_insurance_dataset # churn -> classification; insurance -> regression
+
+df = load_churn_dataset()
+
+AutoML(task = 'tabular_classification', train_data = df)
 ```
 
 ## Installation 💾 
