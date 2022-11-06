@@ -8,7 +8,7 @@ Falcon is a lightweight python library that allows to train production-ready mac
 
 ## Quick Start 🚀
 
-You can try falcon out by pointing it simply by pointing it to the location of your dataset.
+You can try falcon out simply by pointing it to the location of your dataset.
 
 ```python
 from falcon import AutoML
