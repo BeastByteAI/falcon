@@ -990,7 +990,7 @@ class SuperLearner(Learner, ONNXConvertible):
         min_threshold = (
             80_000  # 5_000 samples with 16 features
         )
-        mid_threshold = 8_000_000  # 125_000 samples with 64 featrues / 500_000 samples with 16 features
+        mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
 
         if volume < min_threshold:
             print_("Using default config for small dataset")
