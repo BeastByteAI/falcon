@@ -15,7 +15,7 @@ from typing import Dict, List, Tuple, Callable, Optional, List, Type, Any, Union
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.discriminant_analysis import (
     LinearDiscriminantAnalysis,
-    #QuadraticDiscriminantAnalysis, # DO NOT USE
+    # QuadraticDiscriminantAnalysis, # DO NOT USE
 )
 from sklearn.ensemble import (
     AdaBoostClassifier,
@@ -519,7 +519,7 @@ _default_estimators: Dict = {
             ),
             ("SVC_linear", SVC, {"C": 0.025, "kernel": "linear"}),
             ("LinearDiscriminantAnalysis", LinearDiscriminantAnalysis, {}),
-            #("QuadraticDiscriminantAnalysis", QuadraticDiscriminantAnalysis, {}), # this breaks onnx
+            # ("QuadraticDiscriminantAnalysis", QuadraticDiscriminantAnalysis, {}), # this breaks onnx
             ("AdaBoostClassifier_10", AdaBoostClassifier, {"n_estimators": 10}),
             ("AdaBoostClassifier_25", AdaBoostClassifier, {"n_estimators": 25}),
             ("AdaBoostClassifier_100", AdaBoostClassifier, {"n_estimators": 100}),
@@ -987,9 +987,7 @@ class SuperLearner(Learner, ONNXConvertible):
 
         volume = X.shape[0] * X.shape[1]
 
-        min_threshold = (
-            80_000  # 5_000 samples with 16 features
-        )
+        min_threshold = 80_000  # 5_000 samples with 16 features
         mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
 
         if volume < min_threshold:
