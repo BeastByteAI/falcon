@@ -7,14 +7,15 @@ from onnx.helper import make_model
 from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 import numpy as np
 from typing import Any, Dict, Union
-import bson
-from bson import BSON
 import onnx
 from onnx import TensorProto, helper as h, OperatorSetIdProto
 from falcon.types import ModelsList
 import os
 import sys
 import warnings
+import bson
+from bson import BSON
+from falcon.runtime import ONNXRuntime, FalconRuntime
 
 
 def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
@@ -101,93 +102,15 @@ def serialize_to_falcon(models: ModelsList) -> bytes:
 
 
 def run_falcon(model: BSON, X: npt.NDArray) -> npt.NDArray:
-    decoded_model: Dict = bson.BSON.decode(model)
-    for i, node in enumerate(decoded_model["nodes"]):
-        inputs = {}
-        n_next_inputs: Optional[int] = None
-        if i + 1 < len(decoded_model["nodes"]):
-            n_next_inputs = decoded_model["nodes"][i + 1]["n_inputs"]
-        if node["type"] == "onnx":
-            ort_sess = ort.InferenceSession(node["model"])
-        for oi, inp in enumerate(ort_sess.get_inputs()):
-            dtype: Any
-            if node["initial_types"][oi] == "FLOAT32":
-                dtype = np.float32
-            elif node["initial_types"][oi] == "STRING":
-                dtype = np.str_
-            elif node["initial_types"][oi] == "INT64":
-                dtype = np.int64
-            else:
-                RuntimeError("The model has an unsupported input type")
-            if not isinstance(X, np.ndarray):
-                RuntimeError(
-                    f"Wrong input type: Numpy array was expected, got {type(X)}"
-                )
-            if len(ort_sess.get_inputs()) > 1:
-                inputs[str(inp.name)] = np.expand_dims(X[:, oi], 1).astype(dtype)
-            else:
-                if not isinstance(X, np.ndarray):
-                    X = np.asarray(X)
-                if len(X.shape) > len(decoded_model["nodes"][i]["initial_shapes"][oi]):
-                    X = X.squeeze()
-                elif len(X.shape) < len(
-                    decoded_model["nodes"][i]["initial_shapes"][oi]
-                ):
-                    X = np.expand_dims(X, 1)
-                inputs[str(inp.name)] = X.astype(dtype)
-        outputs = [o.name for o in ort_sess.get_outputs()]
-        if n_next_inputs is not None:
-            outputs = outputs[:n_next_inputs]
-        pred = ort_sess.run(outputs, inputs)
-        X = pred
-        if len(X) == 1:
-            X = X[0]
-    if len(X) == 1:
-        X = X[0]
-    if len(X.shape) > 1:
-        X = np.squeeze(X)
-    return X
+    runtime = FalconRuntime(model=model)
+    return runtime.run(X)
 
 
 def run_onnx(
     model: Union[bytes, str], X: npt.NDArray, outputs: str = "final"
 ) -> npt.NDArray:
-    if outputs not in ["all", "final"]:
-        raise ValueError(
-            f"Expected `outputs` to be one of [all, final], got `{outputs}`."
-        )
-    ort_sess = ort.InferenceSession(model)
-    inputs = {}
-    for i, inp in enumerate(ort_sess.get_inputs()):
-        dtype: Any
-        if str(inp.type) == "tensor(float)":
-            dtype = np.float32
-        elif str(inp.type) == "tensor(string)":
-            dtype = np.str_
-        elif "int" in str(inp.type).lower():
-            dtype = np.int64
-        else:
-            RuntimeError(
-                f"The model input type should be one of [str, int, float], got f{inp.type}"
-            )
-        if len(ort_sess.get_inputs()) > 1:
-            inputs[str(inp.name)] = np.expand_dims(X[:, i], 1).astype(dtype)
-        else:
-            inputs[str(inp.name)] = X.astype(dtype)
-
-    output_names = [o.name for o in ort_sess.get_outputs()]
-    if outputs == "final" and len(ort_sess.get_outputs()) > 1:
-        idx_ = []
-        for name in output_names:
-            if not name[0:10] == "falcon_pl_":
-                raise RuntimeError("One of the output nodes has an invalid name.")
-            idx = int(name.split("/")[0][10:])
-            idx_.append(idx)
-        max_idx = max(idx_)
-        output_names = [n for n in output_names if n.startswith(f"falcon_pl_{max_idx}")]
-    pred_onnx = ort_sess.run(output_names, inputs)
-
-    return pred_onnx
+    runtime = ONNXRuntime(model=model)
+    return runtime.run(X, outputs=outputs)
 
 
 def set_verbosity_level(level: int = 1) -> None:
