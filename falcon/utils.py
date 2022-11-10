@@ -30,7 +30,6 @@ def serialize_to_onnx(models_: ModelsList) -> onnx.ModelProto:
         updated_model = make_model(model.graph, opset_imports=[op1, op2])
         updated_model = add_prefix(updated_model, prefix=f"falcon_pl_{i}/")
         updated_models.append(updated_model)
-        # onnx.save(updated_model, f"{i}_model.onnx")
 
     prev: ModelProto = updated_models[0]
 

@@ -988,7 +988,7 @@ class SuperLearner(Learner, ONNXConvertible):
         volume = X.shape[0] * X.shape[1]
 
         min_threshold = (
-            320_000  # 5_000 samples with 64 features / 20_000 samples with 16 features
+            80_000  # 5_000 samples with 16 features
         )
         mid_threshold = 8_000_000  # 125_000 samples with 64 featrues / 500_000 samples with 16 features
 
