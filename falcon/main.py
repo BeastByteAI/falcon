@@ -1,9 +1,10 @@
 from falcon.abstract import TaskManager
 from falcon.tabular import TabularTaskManager
-from typing import Any, Optional, Dict, Type
+from typing import Any, Optional, Dict, Type, Union
 from falcon.abstract import Pipeline, TaskManager
 import warnings
 import datetime
+from falcon.task_configurations import get_task_configuration
 
 def warn(*args: Any, **kwargs: Any) -> None:
     pass
@@ -72,6 +73,7 @@ def AutoML(
     test_data: Any =  None,
     features: Any = None,
     target: Any = None,
+    manager_configuration: Optional[Union[Dict, str]] = None
 ) -> TaskManager:
     """
     High level API for one line model training and evaluation.
@@ -94,13 +96,20 @@ def AutoML(
         features to be used for training, for tabular classification and regression this can be: list of column names or indexes, by default None
     target : Any, optional
         target to be used for training, for tabular classification and regression this can be: column name or index, by default None
+    manager_configuration : Unionp[Dict, str], optional
+        task manager configuration to be used (can be used to replace pipeline/learner and/or their arguments), by default None
 
     Returns
     -------
     TaskManager
         Task Manager object for the corresponding task.
     """
-    manager = initialize(task=task, data=train_data, features=features, target=target)
+    task = task.lower()
+    if manager_configuration is None:
+        manager_configuration_ = {}
+    elif isinstance(manager_configuration, str): 
+        manager_configuration_ = get_task_configuration(task=task, manager_configuration=manager_configuration)
+    manager = initialize(task=task, data=train_data, features=features, target=target, **manager_configuration_)
     make_eval_subset = True if test_data is None else False
     manager.train(pre_eval = False, make_eval_subset = make_eval_subset)
     manager.performance_summary(test_data = test_data)

@@ -120,8 +120,8 @@ class TaskManager(ABC):
             pipeline options
         """
 
-        if pipeline is not None and options is None:
-            self._pipeline = pipeline(task=self.task)
+        # if pipeline is not None and options is None:
+        #     self._pipeline = pipeline(task=self.task)
         if pipeline is None:
             pipeline = self.default_pipeline
         if options is None:

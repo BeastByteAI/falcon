@@ -3,6 +3,7 @@ from falcon.utils import run_falcon, run_onnx
 import numpy as np
 from sklearn.metrics import r2_score 
 import random
+from falcon.task_configurations import get_task_configuration
 
 def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
     X = manager._data[0]
@@ -41,35 +42,58 @@ def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
         return ac, msec, (pred, pred_)
 
 
-def test_inference_classification():
-    for i in range(2):
-        random.seed(42+i)
-        np.random.seed(42+i)
-        print(i)
-        manager = initialize(
-            task="tabular_classification", data="tests/extra_files/iris.csv"
-        )
-        manager.train(pre_eval=False)
-        assert eval_saved_model(manager=manager, is_regr=False, format="onnx")
-        assert eval_saved_model(manager=manager, is_regr=False, format="falcon")
+def inference_classification(config, config_name):
+    random.seed(42)
+    np.random.seed(42)
+    manager = initialize(
+        task="tabular_classification", data="tests/extra_files/iris.csv", **config
+    )
+    manager.train(pre_eval=False)
+    assert eval_saved_model(manager=manager, is_regr=False, format="onnx", prefix = f"clf_{config_name}_")
+    assert eval_saved_model(manager=manager, is_regr=False, format="falcon", prefix = f"clf_{config_name}_")
     
 
-def test_inference_regression():
-    for i in range(2):
-        random.seed(42+i)
-        np.random.seed(42+i)
-        manager = initialize(
-        task="tabular_regression",
-        data="tests/extra_files/prices.csv",
-        features="SqFt,Bedrooms,Bathrooms,Offers,Brick,Neighborhood".split(","),
-        target="Price",
-        )
-        manager.train(pre_eval=False)
-        ac, msec, data =  eval_saved_model(manager=manager, is_regr=True, format="onnx")
-        print(i, data)
-        assert ac
-        assert msec 
-        ac, msec, data = eval_saved_model(manager=manager, is_regr=True, format="falcon")
-        print(i, data)
-        assert ac
-        assert msec 
+def inference_regression(config, config_name):
+    manager = initialize(
+    task="tabular_regression",
+    data="tests/extra_files/prices.csv",
+    features="SqFt,Bedrooms,Bathrooms,Offers,Brick,Neighborhood".split(","),
+    target="Price",
+    )
+    manager.train(pre_eval=False, **config)
+    ac, msec, data =  eval_saved_model(manager=manager, is_regr=True, format="onnx", prefix = f"regr_{config_name}_")
+    assert ac
+    assert msec 
+    ac, msec, data = eval_saved_model(manager=manager, is_regr=True, format="falcon", prefix = f"regr_{config_name}_")
+    assert ac
+    assert msec 
+
+def test_inference_regr_superlearner_mini():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.mini')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_regression(config=config, config_name='SuperLearner.mini')
+
+def test_inference_regr_superlearner_mid():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.mid')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_regression(config=config, config_name='SuperLearner.mid')
+
+def test_inference_regr_superlearner_large():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.large')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_regression(config=config, config_name='SuperLearner.large')
+
+def test_inference_clf_superlearner_mini():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.mini')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_classification(config=config, config_name='SuperLearner.mini')
+
+def test_inference_clf_superlearner_mid():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.mid')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_classification(config=config, config_name='SuperLearner.mid')
+
+def test_inference_clf_superlearner_large():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.large')
+    config['extra_pipeline_optins']['learner_kwargs']['cv'] = 2
+    inference_classification(config=config, config_name='SuperLearner.large')
