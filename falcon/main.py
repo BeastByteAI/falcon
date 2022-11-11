@@ -108,7 +108,7 @@ def AutoML(
     if manager_configuration is None:
         manager_configuration_ = {}
     elif isinstance(manager_configuration, str): 
-        manager_configuration_ = get_task_configuration(task=task, manager_configuration=manager_configuration)
+        manager_configuration_ = get_task_configuration(task=task, configuration_name=manager_configuration)
     manager = initialize(task=task, data=train_data, features=features, target=target, **manager_configuration_)
     make_eval_subset = True if test_data is None else False
     manager.train(pre_eval = False, make_eval_subset = make_eval_subset)
