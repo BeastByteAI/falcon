@@ -100,3 +100,25 @@ You can try out falcon using one of the built-in demo datasets.
     df = load_churn_dataset()
 
     AutoML(task = 'tabular_classification', train_data = df)
+
+Making predictions with trained models
+======================
+
+There are 2 ways to make a prediction using a trained data. If the input data is available right away, the same manager object that was used for training the model can be used. 
+An important thing to notice is that the input data should have the same structure as the training set (the same number, order and type of the features). This is assumed by the model, but not explicitly checked during runtime.
+The reccomended approach is to provide the data as a numpy array. 
+
+..  code-block:: python
+
+    from falcon import AutoML
+    import pandas as pd
+
+    df = pd.read_csv('training_data.csv')
+    manager = AutoML(task = 'tabular_classification', train_data = df)
+
+    unlabeled_data = pd.read_csv('unlabeled_data.csv').to_numpy()
+    predictions = manager.predict(unlabeled_data) 
+    print(predictions)
+
+While this solution is straight-forward, in real-world applications the new/unlabaled data is not always available right away. So we want to train the model and reuse it in the future. 
+TODO
