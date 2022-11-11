@@ -9,10 +9,10 @@ from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType, StringTensorType
 from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
 from typing import List, Optional, Type, Any
-from falcon.types import SerializedModelTuple
 from sklearn.pipeline import Pipeline as SKLPipeline
 from sklearn.preprocessing import MaxAbsScaler, OrdinalEncoder
 from skl2onnx.sklapi import CastTransformer
+from falcon.serialization import SerializedModelRepr
 
 class ScalerAndEncoder(Processor, ONNXConvertible):
     """
@@ -109,15 +109,14 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         """
         return self.transform(X)
 
-    def to_onnx(self) -> SerializedModelTuple:
+    def to_onnx(self) -> SerializedModelRepr:
         """
         Serializes the encoder to onnx. 
         Each feature in the original dataset is mapped to its own input node (`float32` for numerical or `string` for categorical).
 
         Returns
         -------
-        SerializedModelTuple
-            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))
+        SerializedModelRepr
         """
         initial_types = []
         initial_types_str: List[str] = []
@@ -131,7 +130,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
                 initial_types_str.append("FLOAT32")
             initial_types.append((f"input{i}", tensor))
             initial_shapes.append([None, 1])
-        return (
+        return SerializedModelRepr(
             convert_sklearn(
                 self.ct,
                 initial_types=initial_types,

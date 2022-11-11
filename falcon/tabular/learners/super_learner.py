@@ -9,7 +9,7 @@ from sklearn.base import BaseEstimator as SklearnBaseEstimator
 from sklearn.svm import NuSVR, SVR
 from falcon.abstract import Learner
 from falcon.abstract.onnx_convertible import ONNXConvertible
-from falcon.types import Float32Array, Int64Array, SerializedModelTuple
+from falcon.types import Float32Array, Int64Array
 from typing import Dict, List, Tuple, Callable, Optional, List, Type, Any, Union
 
 from imblearn.over_sampling import RandomOverSampler
@@ -45,6 +45,7 @@ import pandas as pd
 
 import numpy as np
 from numpy import typing as npt
+from falcon.serialization import SerializedModelRepr
 
 _SKLEARN_VERBOSE = 0  # for debugging only
 
@@ -1143,13 +1144,12 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         self.fit(X, y)
 
-    def to_onnx(self) -> SerializedModelTuple:
+    def to_onnx(self) -> SerializedModelRepr:
         """
         Serializes the underlying model to onnx by calling its `.to_onnx()` method.
 
         Returns
         -------
-        SerializedModelTuple
-            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))
+        SerializedModelRepr
         """
         return self.model.to_onnx()

@@ -16,7 +16,7 @@ class ONNXRuntime(BaseRuntime):
     def __init__(self, model: Union[bytes, str]):
         self.ort_session = ort.InferenceSession(model)
 
-    def run(self, X: np.ndarray, outputs: str = "final"):
+    def run(self, X: np.ndarray, outputs: str = "final", **kwargs: Any) -> List[np.ndarray]:
         if outputs not in ["all", "final"]:
             raise ValueError(
                 f"Expected `outputs` to be one of [all, final], got `{outputs}`."
@@ -67,15 +67,15 @@ class ONNXRuntime(BaseRuntime):
 
 
 class FalconRuntime(BaseRuntime):
-    def __init__(self, model: Union[bson.BSON, str]):
+    def __init__(self, model: Union[bson.BSON, str, bytes]):
 
         if isinstance(model, str) and model.endswith(".falcon"):
             with (open(model, "rb")) as f:
                 model = f.read()
 
-        self.decoded_model: Dict = bson.BSON.decode(model)
+        self.decoded_model: Dict = bson.BSON.decode(model) # type: ignore
 
-    def run(self, X: np.ndarray) -> Union[List, np.ndarray]:
+    def run(self, X: np.ndarray, **kwargs: Any) -> Union[List, np.ndarray]:
         for i, node in enumerate(self.decoded_model["nodes"]):
             if node["type"] == "onnx":
                 X = self._run_onnx_node(node, X, self._get_n_inputs_node(i + 1))
@@ -125,6 +125,7 @@ class FalconRuntime(BaseRuntime):
         return pred
 
     def _get_np_type(self, type_: str) -> Type:
+        dtype: Type
         if type_ == "FLOAT32":
             dtype = np.float32
         elif type_ == "STRING":
