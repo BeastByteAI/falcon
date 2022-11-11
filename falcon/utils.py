@@ -14,6 +14,21 @@ from typing import Any, Dict, Union
 
 
 def run_model(model_path: str, X: npt.NDArray) -> Union[List[npt.NDArray], np.ndarray]:
+    """
+    Runs input data through the saved model.
+
+    Parameters
+    ----------
+    model_path : str
+        model path
+    X : npt.NDArray
+        model inputs
+
+    Returns
+    -------
+    Union[List[npt.NDArray], np.ndarray]
+        model predictions
+    """
     if model_path.endswith("onnx"):
         return run_onnx(model_path, X, "final")
     else:

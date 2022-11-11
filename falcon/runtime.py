@@ -13,10 +13,28 @@ class BaseRuntime(ABC):
 
 
 class ONNXRuntime(BaseRuntime):
+    """
+    Runtime for ONNX models. This runtime can only run onnx models produced by falcon.
+    """
     def __init__(self, model: Union[bytes, str]):
         self.ort_session = ort.InferenceSession(model)
 
     def run(self, X: np.ndarray, outputs: str = "final", **kwargs: Any) -> List[np.ndarray]:
+        """
+        Runs the model.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            model 
+        outputs : str, optional
+            when set to "all", all onnx output nodes will be returned; when "final" only the last layer outputs are returned, by default "final"
+
+        Returns
+        -------
+        List[np.ndarray]
+            model predictions
+        """
         if outputs not in ["all", "final"]:
             raise ValueError(
                 f"Expected `outputs` to be one of [all, final], got `{outputs}`."
@@ -67,7 +85,18 @@ class ONNXRuntime(BaseRuntime):
 
 
 class FalconRuntime(BaseRuntime):
+    """
+    Runtime for falcon models.
+    This runtime is added for future compatibility in case some models will not be onnx convertible. 
+    Ideally, it will not have to be used.
+    """
     def __init__(self, model: Union[bson.BSON, str, bytes]):
+        """
+        Parameters
+        ----------
+        model : Union[bson.BSON, str, bytes]
+            Serialized model or filepath
+        """
 
         if isinstance(model, str) and model.endswith(".falcon"):
             with (open(model, "rb")) as f:
@@ -76,6 +105,20 @@ class FalconRuntime(BaseRuntime):
         self.decoded_model: Dict = bson.BSON.decode(model) # type: ignore
 
     def run(self, X: np.ndarray, **kwargs: Any) -> Union[List, np.ndarray]:
+        """
+        Runs the model.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            model inputs
+            
+
+        Returns
+        -------
+        Union[List, np.ndarray]
+            model prediction
+        """
         for i, node in enumerate(self.decoded_model["nodes"]):
             if node["type"] == "onnx":
                 X = self._run_onnx_node(node, X, self._get_n_inputs_node(i + 1))
