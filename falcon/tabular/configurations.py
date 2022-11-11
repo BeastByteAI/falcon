@@ -5,7 +5,7 @@ from falcon.tabular.learners.super_learner import _default_estimators
 TABULAR_CLASSIFICATION_CONFIGURATIONS = {
     "SuperLearner.mini": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 10, 
@@ -16,7 +16,7 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
 
     "SuperLearner.mid": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 5, 
@@ -27,7 +27,7 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
 
     "SuperLearner.large": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 3, 
@@ -40,7 +40,7 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
 TABULAR_REGRESSION_CONFIGURATIONS = {
     "SuperLearner.mini": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 10, 
@@ -51,7 +51,7 @@ TABULAR_REGRESSION_CONFIGURATIONS = {
 
     "SuperLearner.mid": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 5, 
@@ -62,7 +62,7 @@ TABULAR_REGRESSION_CONFIGURATIONS = {
 
     "SuperLearner.large": {
         "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_optins": {
+        "extra_pipeline_options": {
             "learner": SuperLearner, 
             "learner_kwargs": {
                 "cv": 3, 
