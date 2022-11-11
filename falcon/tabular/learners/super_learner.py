@@ -381,34 +381,24 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
-                    "n_jobs": 4,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
             (
                 "RandomForestRegressor_100",
                 RandomForestRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
             (
                 "ExtraTreesRegressor_100",
                 ExtraTreesRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
-            ),
-            (
-                "GradientBoostingRegressor_10",
-                GradientBoostingRegressor,
-                {"n_estimators": 10},
+                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
             ),
             (
                 "GradientBoostingRegressor_25",
                 GradientBoostingRegressor,
                 {"n_estimators": 25},
-            ),
-            (
-                "GradientBoostingRegressor_50",
-                GradientBoostingRegressor,
-                {"n_estimators": 50},
             ),
             ("AdaBoostRegressor_10", AdaBoostRegressor, {"n_estimators": 10}),
             ("AdaBoostRegressor_25", AdaBoostRegressor, {"n_estimators": 25}),
@@ -458,7 +448,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 10,
                     "min_samples_split": 2,
-                    "n_jobs": 1,
+                    "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -478,7 +468,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 50,
                     "min_samples_split": 2,
-                    "n_jobs": 1,
+                    "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -848,7 +838,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 10,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -858,7 +848,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 25,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -868,7 +858,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 50,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
