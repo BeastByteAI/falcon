@@ -29,7 +29,7 @@ def load_insurance_dataset(mode: str = "training") -> Union[pd.DataFrame, np.nda
     if mode == "training":
         print_(df.head(5))
         print_(f"Dataset shape: {df.shape}")
-        print_("This dataset can be used for `tabular_classification` task")
+        print_("This dataset can be used for `tabular_regression` task")
     elif mode == "inference":
         df.pop("charges")
         df = df.to_numpy()
