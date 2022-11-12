@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -43,12 +44,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#demo-datasets">Demo datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../abstract/index.html">Abstract</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">Tabular</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../tab_manager.html">TabularTaskManager</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">SimpleTabularPipeline</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SimpleTabularPipeline</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#falcon.tabular.pipelines.SimpleTabularPipeline"><code class="docutils literal notranslate"><span class="pre">SimpleTabularPipeline</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/scaler_and_encoder.html">ScalerAndEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/label_decoder.html">LabelDecoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../learners/super_learner.html">SuperLearner</a></li>
@@ -71,10 +76,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../api.html">API reference</a> &raquo;</li>
-          <li><a href="../index.html">Tabular</a> &raquo;</li>
-      <li>SimpleTabularPipeline</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Tabular</a></li>
+      <li class="breadcrumb-item active">SimpleTabularPipeline</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/tabular/pipelines/simple_pipeline.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -153,17 +158,17 @@ For tabular classification, <cite>LabelDecoder</cite> is applied to targets befo
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.pipelines.SimpleTabularPipeline.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'onnx'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.save" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.pipelines.SimpleTabularPipeline.save" title="Permalink to this definition"></a></dt>
 <dd><p>Serializes the model to string. For more details please refer to the documentation of <cite>TaskManager.save_model(…)</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>format</strong> (<em>str</em><em>, </em><em>optional</em>) – <cite>falcon</cite> or <cite>onnx</cite>, by default <cite>onnx</cite></p>
+<dd class="field-odd"><p><strong>format</strong> (<em>str</em><em>, </em><em>optional</em>) – <cite>auto</cite>, <cite>falcon</cite> or <cite>onnx</cite>, by default <cite>auto</cite></p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Serialized model</p>
+<dd class="field-even"><p>Serialized model, format</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bytes</p>
+<dd class="field-odd"><p>Tuple[SerializedModelRepr, str]</p>
 </dd>
 </dl>
 </dd></dl>

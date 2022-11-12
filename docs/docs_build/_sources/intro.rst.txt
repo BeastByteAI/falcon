@@ -100,3 +100,61 @@ You can try out falcon using one of the built-in demo datasets.
     df = load_churn_dataset()
 
     AutoML(task = 'tabular_classification', train_data = df)
+
+Making predictions with trained models
+======================
+
+There are 2 ways to make a prediction using a trained model. If the input/unlabeled data is available right away, the same manager object that was used for training the model can be used. 
+An important thing to notice is that the input data should have the same structure as the training set (the same number, order and type of the features). This is assumed by the model, but not explicitly checked during runtime.
+The recommended approach is to provide the data as a numpy array. 
+
+..  code-block:: python
+
+    from falcon import AutoML
+    import pandas as pd
+
+    df = pd.read_csv('training_data.csv')
+    manager = AutoML(task = 'tabular_classification', train_data = df)
+
+    unlabeled_data = pd.read_csv('unlabeled_data.csv').to_numpy()
+    predictions = manager.predict(unlabeled_data) 
+    print(predictions)
+
+While this solution is straight-forward, in real-world applications the new/unlabeled data is not always available right away. Therefore, it is desirable to train a model and reuse it in the future. 
+
+One of the key features of falcon is native `ONNX <https://onnx.ai/>`_ support. ONNX (Open Neural Network Exchange) is an open standard for representing machine learning algorithms. This means that once the model is exported to ONNX, it can be run on any platform with available ONNX implementation. 
+For example, `Microsoft ONNX Rutime (ORT) <https://onnxruntime.ai/>`_ is available for Python, C, C++, Java, JavaScript and multiple other languages which allows to run the model virtually everywhere. There are also alternative implementations, but there is a high chance they do not support all the required operators.
+
+In order to simplify the interaction with ONNX Runtime, falcon provides a `run_model` function that takes the path to the ONNX model, the input data as a numpy array and returns the predictions. 
+
+..  code-block:: python
+
+    from falcon import run_model
+    import pandas as pd
+
+    unlabeled_data = pd.read_csv('unlabeled_data.csv').to_numpy() # ONLY NUMPY ARRAYS ARE ACCEPTED AS INPUT !!!
+
+    predictions = run_model(model_path = "/path/to/model.onnx", X = unlabeled_data)
+
+    print(predictions)
+
+Below is the complete example of model training and inference using the built-in datasets.
+
+..  code-block:: python
+
+    ############################################ training.py ###########################################################
+    from falcon import AutoML
+    from falcon.datasets import load_churn_dataset
+
+    df = load_churn_dataset(mode = "training")
+    AutoML(task = "tabular_classification", train_data = df) 
+    # onnx model name will be printed after the training is done, use it instead of <FILENAME> during infernce
+
+    ############################################ inference.py ##########################################################
+    from falcon import run_model
+    from falcon.datasets import load_churn_dataset
+
+    X = load_churn_dataset(mode = "inference") # for this example we are reusing training dataset but without labels
+    predictions = run_model(model_path = "<FILENAME>.onnx", X = X)
+    print(predictions)
+

@@ -16,6 +16,7 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -43,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#demo-datasets">Demo datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../high_level_api.html">High level functions</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Abstract</a><ul class="current">
@@ -52,7 +54,10 @@
 <li class="toctree-l3"><a class="reference internal" href="pipeline_element.html">PipelineElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="learner.html">Learner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="processor.html">Processor</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">ONNXConvertible</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ONNXConvertible</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#falcon.abstract.ONNXConvertible"><code class="docutils literal notranslate"><span class="pre">ONNXConvertible</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../tabular/index.html">Tabular</a></li>
@@ -73,10 +78,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../api.html">API reference</a> &raquo;</li>
-          <li><a href="index.html">Abstract</a> &raquo;</li>
-      <li>ONNXConvertible</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Abstract</a></li>
+      <li class="breadcrumb-item active">ONNXConvertible</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/abstract/onnx.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -94,14 +99,11 @@
 <dd><p>Base class for all models/pipeline_elements/pipelines that can be converted to onnx.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.abstract.ONNXConvertible.to_onnx">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_onnx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.abstract.ONNXConvertible.to_onnx" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_onnx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SerializedModelRepr</span></span></span><a class="headerlink" href="#falcon.abstract.ONNXConvertible.to_onnx" title="Permalink to this definition"></a></dt>
 <dd><p>Converted model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node)).</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>SerializedModelTuple</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>SerializedModelRepr</p>
 </dd>
 </dl>
 </dd></dl>
