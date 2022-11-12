@@ -15,7 +15,7 @@ def load_churn_dataset(mode: str = "training") -> Union[pd.DataFrame, np.ndarray
         print_("This dataset can be used for `tabular_classification` task")
     elif mode == "inference":
         df.pop("churn")
-        df = df.to_numpy
+        df = df.to_numpy()
     else:
         raise ValueError(f"Unknown mode {mode}, expected `training` or `inference`")
     return df
