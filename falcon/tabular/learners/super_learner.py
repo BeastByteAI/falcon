@@ -9,13 +9,13 @@ from sklearn.base import BaseEstimator as SklearnBaseEstimator
 from sklearn.svm import NuSVR, SVR
 from falcon.abstract import Learner
 from falcon.abstract.onnx_convertible import ONNXConvertible
-from falcon.types import Float32Array, Int64Array, SerializedModelTuple
+from falcon.types import Float32Array, Int64Array
 from typing import Dict, List, Tuple, Callable, Optional, List, Type, Any, Union
 
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.discriminant_analysis import (
     LinearDiscriminantAnalysis,
-    #QuadraticDiscriminantAnalysis, # DO NOT USE
+    # QuadraticDiscriminantAnalysis, # DO NOT USE
 )
 from sklearn.ensemble import (
     AdaBoostClassifier,
@@ -45,6 +45,7 @@ import pandas as pd
 
 import numpy as np
 from numpy import typing as npt
+from falcon.serialization import SerializedModelRepr
 
 _SKLEARN_VERBOSE = 0  # for debugging only
 
@@ -381,34 +382,24 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
-                    "n_jobs": 4,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
             (
                 "RandomForestRegressor_100",
                 RandomForestRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
             (
                 "ExtraTreesRegressor_100",
                 ExtraTreesRegressor,
-                {"min_samples_split": 0.003, "n_jobs": 4, "verbose": _SKLEARN_VERBOSE},
-            ),
-            (
-                "GradientBoostingRegressor_10",
-                GradientBoostingRegressor,
-                {"n_estimators": 10},
+                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
             ),
             (
                 "GradientBoostingRegressor_25",
                 GradientBoostingRegressor,
                 {"n_estimators": 25},
-            ),
-            (
-                "GradientBoostingRegressor_50",
-                GradientBoostingRegressor,
-                {"n_estimators": 50},
             ),
             ("AdaBoostRegressor_10", AdaBoostRegressor, {"n_estimators": 10}),
             ("AdaBoostRegressor_25", AdaBoostRegressor, {"n_estimators": 25}),
@@ -458,7 +449,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 10,
                     "min_samples_split": 2,
-                    "n_jobs": 1,
+                    "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -478,7 +469,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 50,
                     "min_samples_split": 2,
-                    "n_jobs": 1,
+                    "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -519,7 +510,7 @@ _default_estimators: Dict = {
             ),
             ("SVC_linear", SVC, {"C": 0.025, "kernel": "linear"}),
             ("LinearDiscriminantAnalysis", LinearDiscriminantAnalysis, {}),
-            #("QuadraticDiscriminantAnalysis", QuadraticDiscriminantAnalysis, {}), # this breaks onnx
+            # ("QuadraticDiscriminantAnalysis", QuadraticDiscriminantAnalysis, {}), # this breaks onnx
             ("AdaBoostClassifier_10", AdaBoostClassifier, {"n_estimators": 10}),
             ("AdaBoostClassifier_25", AdaBoostClassifier, {"n_estimators": 25}),
             ("AdaBoostClassifier_100", AdaBoostClassifier, {"n_estimators": 100}),
@@ -848,7 +839,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 10,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -858,7 +849,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 25,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -868,7 +859,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 50,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -987,10 +978,8 @@ class SuperLearner(Learner, ONNXConvertible):
 
         volume = X.shape[0] * X.shape[1]
 
-        min_threshold = (
-            320_000  # 5_000 samples with 64 features / 20_000 samples with 16 features
-        )
-        mid_threshold = 8_000_000  # 125_000 samples with 64 featrues / 500_000 samples with 16 features
+        min_threshold = 80_000  # 5_000 samples with 16 features
+        mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
 
         if volume < min_threshold:
             print_("Using default config for small dataset")
@@ -1155,13 +1144,12 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         self.fit(X, y)
 
-    def to_onnx(self) -> SerializedModelTuple:
+    def to_onnx(self) -> SerializedModelRepr:
         """
         Serializes the underlying model to onnx by calling its `.to_onnx()` method.
 
         Returns
         -------
-        SerializedModelTuple
-            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))
+        SerializedModelRepr
         """
         return self.model.to_onnx()

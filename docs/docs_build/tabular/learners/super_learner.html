@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -42,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#demo-datasets">Demo datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../abstract/index.html">Abstract</a></li>
@@ -50,7 +52,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../pipelines/simple_pipeline.html">SimpleTabularPipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/scaler_and_encoder.html">ScalerAndEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/label_decoder.html">LabelDecoder</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">SuperLearner</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SuperLearner</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#falcon.tabular.learners.SuperLearner"><code class="docutils literal notranslate"><span class="pre">SuperLearner</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -70,10 +75,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../api.html">API reference</a> &raquo;</li>
-          <li><a href="../index.html">Tabular</a> &raquo;</li>
-      <li>SuperLearner</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../api.html">API reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Tabular</a></li>
+      <li class="breadcrumb-item active">SuperLearner</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/tabular/learners/super_learner.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -197,14 +202,11 @@ For classification tasks, the dataset will be balanced by upsampling the minorit
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.learners.SuperLearner.to_onnx">
-<span class="sig-name descname"><span class="pre">to_onnx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.learners.SuperLearner.to_onnx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_onnx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SerializedModelRepr</span></span></span><a class="headerlink" href="#falcon.tabular.learners.SuperLearner.to_onnx" title="Permalink to this definition"></a></dt>
 <dd><p>Serializes the underlying model to onnx by calling its <cite>.to_onnx()</cite> method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node))</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>SerializedModelTuple</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>SerializedModelRepr</p>
 </dd>
 </dl>
 </dd></dl>

@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#demo-datasets">Demo datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 
@@ -59,8 +61,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Getting started</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Getting started</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -144,6 +146,55 @@ pip3 install falcon-ml
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_churn_dataset</span><span class="p">()</span>
 
 <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="making-predictions-with-trained-models">
+<h1>Making predictions with trained models<a class="headerlink" href="#making-predictions-with-trained-models" title="Permalink to this heading"></a></h1>
+<p>There are 2 ways to make a prediction using a trained model. If the input/unlabeled data is available right away, the same manager object that was used for training the model can be used.
+An important thing to notice is that the input data should have the same structure as the training set (the same number, order and type of the features). This is assumed by the model, but not explicitly checked during runtime.
+The recommended approach is to provide the data as a numpy array.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;training_data.csv&#39;</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s1">&#39;tabular_classification&#39;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="n">unlabeled_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;unlabeled_data.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">unlabeled_data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>While this solution is straight-forward, in real-world applications the new/unlabeled data is not always available right away. Therefore, it is desirable to train a model and reuse it in the future.</p>
+<p>One of the key features of falcon is native <a class="reference external" href="https://onnx.ai/">ONNX</a> support. ONNX (Open Neural Network Exchange) is an open standard for representing machine learning algorithms. This means that once the model is exported to ONNX, it can be run on any platform with available ONNX implementation.
+For example, <a class="reference external" href="https://onnxruntime.ai/">Microsoft ONNX Rutime (ORT)</a> is available for Python, C, C++, Java, JavaScript and multiple other languages which allows to run the model virtually everywhere. There are also alternative implementations, but there is a high chance they do not support all the required operators.</p>
+<p>In order to simplify the interaction with ONNX Runtime, falcon provides a <cite>run_model</cite> function that takes the path to the ONNX model, the input data as a numpy array and returns the predictions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">run_model</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">unlabeled_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;unlabeled_data.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="c1"># ONLY NUMPY ARRAYS ARE ACCEPTED AS INPUT !!!</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">run_model</span><span class="p">(</span><span class="n">model_path</span> <span class="o">=</span> <span class="s2">&quot;/path/to/model.onnx&quot;</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">unlabeled_data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Below is the complete example of model training and inference using the built-in datasets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">############################################ training.py ###########################################################</span>
+<span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">AutoML</span>
+<span class="kn">from</span> <span class="nn">falcon.datasets</span> <span class="kn">import</span> <span class="n">load_churn_dataset</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_churn_dataset</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span><span class="p">)</span>
+<span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s2">&quot;tabular_classification&quot;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
+<span class="c1"># onnx model name will be printed after the training is done, use it instead of &lt;FILENAME&gt; during infernce</span>
+
+<span class="c1">############################################ inference.py ##########################################################</span>
+<span class="kn">from</span> <span class="nn">falcon</span> <span class="kn">import</span> <span class="n">run_model</span>
+<span class="kn">from</span> <span class="nn">falcon.datasets</span> <span class="kn">import</span> <span class="n">load_churn_dataset</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">load_churn_dataset</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;inference&quot;</span><span class="p">)</span> <span class="c1"># for this example we are reusing training dataset but without labels</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">run_model</span><span class="p">(</span><span class="n">model_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;FILENAME&gt;.onnx&quot;</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

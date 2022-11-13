@@ -5,12 +5,13 @@ from typing import Any, Type, Union
 from numpy.typing import NDArray
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
-from falcon.types import Float32Array, SerializedModelTuple, Int64Array
+from falcon.types import Float32Array, Int64Array
 from skl2onnx import convert_sklearn
 from onnx import TensorProto, helper as h, OperatorSetIdProto
 from skl2onnx.common.data_types import StringTensorType
 from falcon.config import ML_ONNX_OPSET_VERSION
 from numpy import typing as npt
+from falcon.serialization import SerializedModelRepr
 
 
 class LabelDecoder(Processor, ONNXConvertible):
@@ -106,14 +107,13 @@ class LabelDecoder(Processor, ONNXConvertible):
         """
         return NDArray[np.str_]
 
-    def to_onnx(self) -> SerializedModelTuple:
+    def to_onnx(self) -> SerializedModelRepr:
         """
         Serializes the encoder to onnx. 
 
         Returns
         -------
-        SerializedModelTuple
-            tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types for each input node, list of initial shapes for each input node)
+        SerializedModelRepr
         """
         inputs = [h.make_tensor_value_info("encoded_labels", TensorProto.INT64, [None])]
         outputs = [
@@ -131,7 +131,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         graph = h.make_graph([node], f"decoder", inputs, outputs)
         op = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
         model = h.make_model(graph, producer_name="falcon", opset_imports = [op])
-        return model.SerializeToString(), 1, 1, ["INT64"], [[None]]
+        return SerializedModelRepr(model.SerializeToString(), 1, 1, ["INT64"], [[None]])
 
     def forward(
         self, X: npt.NDArray

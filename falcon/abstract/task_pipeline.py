@@ -1,16 +1,15 @@
-from abc import ABC, abstractmethod
-from numpy import typing as npt
+from abc import abstractmethod
 from typing import Any, Type, Union, Optional, List, Tuple
 from falcon.abstract.model import Model
-from falcon.utils import serialize_to_falcon, serialize_to_onnx
-from falcon.types import SerializedModelTuple, ModelsList
 from falcon.abstract.onnx_convertible import ONNXConvertible
+from falcon.serialization import SerializedModelRepr, serialize_to_falcon, serialize_to_onnx
 
 
 class PipelineElement(Model):
     """
     Base class for all pipeline elements.
     """
+
     @abstractmethod
     def get_input_type(self) -> Type:
         """
@@ -47,7 +46,6 @@ class PipelineElement(Model):
         """
         self.predict(X)
 
-
     def fit_pipe(self, X: Any, y: Any) -> Any:
         """
         Equivalent of `fit` method that is used for elements chaining inisde pipeline during training.
@@ -71,6 +69,7 @@ class Pipeline(Model):
     """
     Base class for all pipelines.
     """
+
     def __init__(self, task: str, **kwargs: Any) -> None:
         self.task = task
         self._pipeline: List[PipelineElement] = []
@@ -95,21 +94,19 @@ class Pipeline(Model):
             raise ValueError("Cannot add self to the pipeline")
         self._pipeline.append(element)
 
-
-
-    def save(self, format: str = "onnx") -> bytes:
+    def save(self, format: str = "auto") -> Tuple[bytes, str]:
         """
         Serializes the model to string. For more details please refer to the documentation of `TaskManager.save_model(...)` method.
 
         Parameters
         ----------
         format : str, optional
-           `falcon` or `onnx`, by default `onnx`
+           `auto`, `falcon` or `onnx`, by default `auto`
 
         Returns
         -------
-        bytes
-            Serialized model
+        Tuple[SerializedModelRepr, str]
+            Serialized model, format
 
 
         """
@@ -117,15 +114,20 @@ class Pipeline(Model):
             raise ValueError(
                 f"expected one of [onnx, falcon] as output format, got {format}"
             )
-        onnx_pipeline_elements: ModelsList = []
+        serialized_pipeline_elements: List[SerializedModelRepr] = []
         for p in self._pipeline:
             if isinstance(p, ONNXConvertible):
-                onnx_pipeline_elements.append((p.to_onnx(), "onnx"))
-        serialized_model: bytes
+                serialized_pipeline_elements.append(p.to_onnx())
+            else:
+                if format == "onnx":
+                    raise RuntimeError("This model cannot be serialized to onnx")
+                elif format == "auto":
+                    format = "falcon"
         if format == "falcon":
-            serialized_model = serialize_to_falcon(onnx_pipeline_elements)
+            serialized_model = serialize_to_falcon(serialized_pipeline_elements)
         else:
+            format = "onnx"
             serialized_model = serialize_to_onnx(
-                onnx_pipeline_elements
+                serialized_pipeline_elements
             ).SerializeToString()
-        return serialized_model
+        return serialized_model, format

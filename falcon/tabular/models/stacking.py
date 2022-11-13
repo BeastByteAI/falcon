@@ -7,7 +7,7 @@ from falcon.addons.sklearn import (
     BalancedStackingClassifier as SklearnBalancedStackingClassifier,
 )
 from falcon.abstract import Model
-from falcon.types import Float32Array, SerializedModelTuple
+from falcon.types import Float32Array
 from sklearn.base import BaseEstimator
 from typing import Any, List, Optional, Union, Dict, Tuple, Callable, Type
 from numpy import typing as npt
@@ -15,6 +15,7 @@ import numpy as np
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import TensorType, FloatTensorType
 from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
+from falcon.serialization import SerializedModelRepr
 
 
 class _StackingBase(Model, ONNXConvertible):
@@ -76,14 +77,13 @@ class _StackingBase(Model, ONNXConvertible):
         prediction = prediction.astype(dtype=self._ret_type)
         return prediction
 
-    def to_onnx(self) -> SerializedModelTuple:
+    def to_onnx(self) -> SerializedModelRepr:
         """
         Serializes the model to onnx. 
 
         Returns
         -------
-        SerializedModelTuple
-            Tuple of (Converted model serialized to string, number of input nodes, number of output nodes, list of initial types (one per input node), list of initial shapes (one per input node)).
+        SerializedModelRepr
         """
         initial_type = [("model_input", FloatTensorType(self._shape))]
         options = self._get_onnx_options()
@@ -97,7 +97,7 @@ class _StackingBase(Model, ONNXConvertible):
         n_inputs = len(onnx_model.graph.input)
         n_outputs = len(onnx_model.graph.output)
 
-        return (
+        return SerializedModelRepr(
             onnx_model.SerializeToString(),
             n_inputs,
             n_outputs,
