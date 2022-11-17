@@ -130,3 +130,5 @@ dmypy.json
 *.onnx
 *.falcon
 test.ipynb
+falcon/dev_tmp.py
+Untitled.ipynb
