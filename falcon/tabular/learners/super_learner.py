@@ -418,7 +418,7 @@ _default_estimators: Dict = {
                 RandomForestRegressor,
                 {
                     "n_estimators": 10,
-                    "min_samples_split": 2,
+                    "min_samples_split": 0.003,
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -428,7 +428,7 @@ _default_estimators: Dict = {
                 RandomForestRegressor,
                 {
                     "n_estimators": 25,
-                    "min_samples_split": 2,
+                    "min_samples_split": 0.003,
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -438,7 +438,7 @@ _default_estimators: Dict = {
                 RandomForestRegressor,
                 {
                     "n_estimators": 50,
-                    "min_samples_split": 2,
+                    "min_samples_split": 0.003,
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -448,8 +448,8 @@ _default_estimators: Dict = {
                 ExtraTreesRegressor,
                 {
                     "n_estimators": 10,
-                    "min_samples_split": 2,
-                    "n_jobs": 2,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -458,7 +458,7 @@ _default_estimators: Dict = {
                 ExtraTreesRegressor,
                 {
                     "n_estimators": 25,
-                    "min_samples_split": 2,
+                    "min_samples_split": 0.003,
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -468,12 +468,31 @@ _default_estimators: Dict = {
                 ExtraTreesRegressor,
                 {
                     "n_estimators": 50,
-                    "min_samples_split": 2,
-                    "n_jobs": 2,
+                    "min_samples_split": 0.003,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
         ],
+        "x-large": [
+            ("HistGradientBoostingRegressor_100", HistGradientBoostingRegressor, {}),
+            (
+                "HistGradientBoostingRegressor_200",
+                HistGradientBoostingRegressor,
+                {"max_iter": 200},
+            ),
+            (
+                "HistGradientBoostingRegressor_200",
+                HistGradientBoostingRegressor,
+                {"max_iter": 50},
+            ),
+            (
+                "RandomForestRegressor_100",
+                RandomForestRegressor,
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
+            ),
+        ],
+
     },
     "tabular_classification": {
         "mini": [
@@ -816,21 +835,21 @@ _default_estimators: Dict = {
             (
                 "RandomForestClassifier_100",
                 RandomForestClassifier,
-                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
             (
                 "BaggingClassifier_10",
                 BaggingClassifier,
                 {
                     "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
             (
                 "ExtraTreesClassifier_100",
                 ExtraTreesClassifier,
-                {"min_samples_split": 0.003, "n_jobs": 2, "verbose": _SKLEARN_VERBOSE},
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
             ("AdaBoostClassifier_200", AdaBoostClassifier, {"n_estimators": 200}),
             (
@@ -869,7 +888,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 25,
                     "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -879,7 +898,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 10,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -889,7 +908,7 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 25,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
@@ -899,10 +918,30 @@ _default_estimators: Dict = {
                 {
                     "n_estimators": 50,
                     "min_samples_split": 0.003,
-                    "n_jobs": 2,
+                    "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
             ),
+        ],
+
+        "x-large": [
+            ("HistGradientBoostingClassifier_100", HistGradientBoostingClassifier, {}),
+            (
+                "HistGradientBoostingClassifier_200",
+                HistGradientBoostingClassifier,
+                {"max_iter": 200},
+            ),
+            (
+                "HistGradientBoostingClassifier_50",
+                HistGradientBoostingClassifier,
+                {"max_iter": 50},
+            ),
+            (
+                "RandomForestClassifier_100",
+                RandomForestClassifier,
+                {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
+            ),
+            
         ],
     },
 }
@@ -980,20 +1019,26 @@ class SuperLearner(Learner, ONNXConvertible):
 
         min_threshold = 80_000  # 5_000 samples with 16 features
         mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
+        large_threshold = 16_000_000 # 1_000_000 samples with 16 features
 
         if volume < min_threshold:
-            print_("Using default config for small dataset")
+            print_("Setting up learner config [small dataset]")
             cv = 10
             base_estimators = _default_estimators[self.task]["mini"]
             filter_estimators = True
         elif volume < mid_threshold:
-            print_("Using default config for mid dataset")
+            print_("Setting up learner config [mid dataset]")
             cv = 5
             base_estimators = _default_estimators[self.task]["mid"]
             filter_estimators = True
-        else:
-            print_("Using default config for large dataset")
+        elif volume < large_threshold: 
+            print_("Setting up learner config [large dataset]")
             base_estimators = _default_estimators[self.task]["large"]
+            cv = 3
+            filter_estimators = False
+        else:
+            print_("Setting up learner config [x-large dataset]")
+            base_estimators = _default_estimators[self.task]["x-large"]
             cv = 3
             filter_estimators = False
 

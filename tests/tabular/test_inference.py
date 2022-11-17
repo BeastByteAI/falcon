@@ -73,6 +73,10 @@ def test_inference_regr_superlearner_mini():
     config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
     inference_regression(config=config, config_name='SuperLearner.mini')
 
+def test_inference_regr_superlearner_default():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner')
+    inference_regression(config=config, config_name='SuperLearner')
+
 def test_inference_regr_superlearner_mid():
     config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.mid')
     config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
@@ -82,6 +86,11 @@ def test_inference_regr_superlearner_large():
     config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.large')
     config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
     inference_regression(config=config, config_name='SuperLearner.large')
+
+def test_inference_regr_superlearner_xlarge():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='SuperLearner.xlarge')
+    config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
+    inference_regression(config=config, config_name='SuperLearner.xlarge')
 
 def test_inference_clf_superlearner_mini():
     config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.mini')
@@ -97,3 +106,12 @@ def test_inference_clf_superlearner_large():
     config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.large')
     config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
     inference_classification(config=config, config_name='SuperLearner.large')
+
+def test_inference_clf_superlearner_xlarge():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner.xlarge')
+    config['extra_pipeline_options']['learner_kwargs']['cv'] = 2
+    inference_classification(config=config, config_name='SuperLearner.xlarge')
+
+def test_inference_clf_superlearner_default():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner')
+    inference_classification(config=config, config_name='SuperLearner')
