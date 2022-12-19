@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 class OptunaLearner(Learner, ONNXConvertible):
     def __init__(
-        self, task: str, model_class: Optional[Type], n_trials: Optional[int] = None, **kwargs: Any
+        self, task: str, model_class: Optional[Type] = None, n_trials: Optional[int] = None, **kwargs: Any
     ) -> None:
         self.task = task
         if model_class is None: 
@@ -30,9 +30,10 @@ class OptunaLearner(Learner, ONNXConvertible):
             raise ValueError('OptunaLearner only supports ONNXConvertible models')
         
         if n_trials is not None and n_trials < 5:
-            n_trials = 5
+            print('n_trials should be >= 20, setting n_trials = 20')
+            n_trials = 20
 
-        self.n_trials = n_trials
+        self.n_trials = 3 #n_trials
         
         self.model_class = model_class
 
@@ -89,15 +90,17 @@ class OptunaLearner(Learner, ONNXConvertible):
     def fit(self, X: Float32Array, y: Float32Array) -> None:
         self._set_n_trials(X, y)
         search_space = self.model_class.get_search_space(X, y)
+        self.progress_bar = None
         if isinstance(search_space, dict):
             objective = self._make_objective_func(search_space, X, y)
         else: 
             NotImplementedError('Non-dict search space is not yet supported.')
         
         optuna.logging.set_verbosity(optuna.logging.ERROR)
-        study = optuna.create_study(direction="minimize")
+        study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=42))
         study.optimize(objective, n_trials=self.n_trials)
-        self.progress_bar.close()
+        if self.progress_bar:
+            self.progress_bar.close()
         best_params = study.best_params
 
         if self.task == 'tabular_classification':
