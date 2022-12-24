@@ -33,7 +33,7 @@ class OptunaLearner(Learner, ONNXConvertible):
             print('n_trials should be >= 20, setting n_trials = 20')
             n_trials = 20
 
-        self.n_trials = 3 #n_trials
+        self.n_trials = n_trials
         
         self.model_class = model_class
 
@@ -56,11 +56,12 @@ class OptunaLearner(Learner, ONNXConvertible):
                     params[hp_n] = trial.suggest_int(name = hp_n, **hp_v["kwargs"])
                 if hp_v["type"] == "float":
                     params[hp_n] = trial.suggest_float(name = hp_n, **hp_v["kwargs"]) 
+                if hp_v["type"] == "categorical":
+                    params[hp_n] = trial.suggest_categorical(name = hp_n, **hp_v["kwargs"]) 
             
             model = self.model_class(**params)
             model.fit(X_train, y_train)
             y_pred = model.predict(X_val)
-            #print(y_val, y_pred)
             loss_ = loss(y_val, y_pred)
             progress_bar.update(1)
             return loss_
