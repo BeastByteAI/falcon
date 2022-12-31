@@ -73,8 +73,7 @@ def AutoML(
     test_data: Any =  None,
     features: Any = None,
     target: Any = None,
-    manager_configuration: Optional[Union[Dict, str]] = None,
-    config: Optional[Union[Dict, str]] = None
+    manager_configuration: Optional[Union[Dict, str]] = None
 ) -> TaskManager:
     """
     High level API for one line model training and evaluation.
@@ -97,10 +96,8 @@ def AutoML(
         features to be used for training, for tabular classification and regression this can be: list of column names or indexes, by default None
     target : Any, optional
         target to be used for training, for tabular classification and regression this can be: column name or index, by default None
-    manager_configuration : Union[Dict, str], optional
+    manager_configuration : Unionp[Dict, str], optional
         task manager configuration to be used (can be used to replace pipeline/learner and/or their arguments), by default None
-    config : Union[Dict, str], optional
-        alias for `manager_configuration` argument
 
     Returns
     -------
@@ -108,10 +105,6 @@ def AutoML(
         Task Manager object for the corresponding task.
     """
     task = task.lower()
-    if config is not None and manager_configuration is not None:
-        print("Both `config` and `manager_configuration` were set; `manager_configuration` will be ignored in this case.")
-    if config is not None:
-        manager_configuration = config
     if manager_configuration is None:
         manager_configuration_ = {}
     elif isinstance(manager_configuration, str): 

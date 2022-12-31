@@ -12,7 +12,6 @@ Abstract
    Learner
    Processor
    ONNXConvertible
-   OptunaMixin
    
 
 .. toctree::
@@ -25,4 +24,3 @@ Abstract
     learner
     processor
     onnx
-    optuna

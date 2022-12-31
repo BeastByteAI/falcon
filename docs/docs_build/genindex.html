@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -41,7 +42,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#demo-datasets">Demo datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 
@@ -78,7 +78,6 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
- | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -99,17 +98,7 @@
 </li>
         <li><a href="abstract/task_manager.html#falcon.abstract.TaskManager.__init__">(falcon.abstract.TaskManager method)</a>
 </li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.__init__">(falcon.tabular.learners.OptunaLearner method)</a>
-</li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.__init__">(falcon.tabular.learners.SuperLearner method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier.__init__">(falcon.tabular.models.HistGradientBoostingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor.__init__">(falcon.tabular.models.HistGradientBoostingRegressor method)</a>
-</li>
-        <li><a href="tabular/models/stacking_clf.html#falcon.tabular.models.StackingClassifier.__init__">(falcon.tabular.models.StackingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/stacking_regr.html#falcon.tabular.models.StackingRegressor.__init__">(falcon.tabular.models.StackingRegressor method)</a>
 </li>
         <li><a href="tabular/pipelines/simple_pipeline.html#falcon.tabular.pipelines.SimpleTabularPipeline.__init__">(falcon.tabular.pipelines.SimpleTabularPipeline method)</a>
 </li>
@@ -199,17 +188,7 @@
 </li>
         <li><a href="abstract/processor.html#falcon.abstract.Processor.fit">(falcon.abstract.Processor method)</a>
 </li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.fit">(falcon.tabular.learners.OptunaLearner method)</a>
-</li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.fit">(falcon.tabular.learners.SuperLearner method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier.fit">(falcon.tabular.models.HistGradientBoostingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor.fit">(falcon.tabular.models.HistGradientBoostingRegressor method)</a>
-</li>
-        <li><a href="tabular/models/stacking_clf.html#falcon.tabular.models.StackingClassifier.fit">(falcon.tabular.models.StackingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/stacking_regr.html#falcon.tabular.models.StackingRegressor.fit">(falcon.tabular.models.StackingRegressor method)</a>
 </li>
         <li><a href="tabular/pipelines/simple_pipeline.html#falcon.tabular.pipelines.SimpleTabularPipeline.fit">(falcon.tabular.pipelines.SimpleTabularPipeline method)</a>
 </li>
@@ -218,16 +197,12 @@
         <li><a href="tabular/processors/scaler_and_encoder.html#falcon.tabular.processors.ScalerAndEncoder.fit">(falcon.tabular.processors.ScalerAndEncoder method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="abstract/learner.html#falcon.abstract.Learner.fit_pipe">fit_pipe() (falcon.abstract.Learner method)</a>
 
       <ul>
         <li><a href="abstract/pipeline_element.html#falcon.abstract.PipelineElement.fit_pipe">(falcon.abstract.PipelineElement method)</a>
 </li>
         <li><a href="abstract/processor.html#falcon.abstract.Processor.fit_pipe">(falcon.abstract.Processor method)</a>
-</li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.fit_pipe">(falcon.tabular.learners.OptunaLearner method)</a>
 </li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.fit_pipe">(falcon.tabular.learners.SuperLearner method)</a>
 </li>
@@ -236,14 +211,14 @@
         <li><a href="tabular/processors/scaler_and_encoder.html#falcon.tabular.processors.ScalerAndEncoder.fit_pipe">(falcon.tabular.processors.ScalerAndEncoder method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="abstract/learner.html#falcon.abstract.Learner.forward">forward() (falcon.abstract.Learner method)</a>
 
       <ul>
         <li><a href="abstract/pipeline_element.html#falcon.abstract.PipelineElement.forward">(falcon.abstract.PipelineElement method)</a>
 </li>
         <li><a href="abstract/processor.html#falcon.abstract.Processor.forward">(falcon.abstract.Processor method)</a>
-</li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.forward">(falcon.tabular.learners.OptunaLearner method)</a>
 </li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.forward">(falcon.tabular.learners.SuperLearner method)</a>
 </li>
@@ -265,8 +240,6 @@
 </li>
         <li><a href="abstract/processor.html#falcon.abstract.Processor.get_input_type">(falcon.abstract.Processor method)</a>
 </li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.get_input_type">(falcon.tabular.learners.OptunaLearner method)</a>
-</li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.get_input_type">(falcon.tabular.learners.SuperLearner method)</a>
 </li>
         <li><a href="tabular/processors/label_decoder.html#falcon.tabular.processors.LabelDecoder.get_input_type">(falcon.tabular.processors.LabelDecoder method)</a>
@@ -274,14 +247,14 @@
         <li><a href="tabular/processors/scaler_and_encoder.html#falcon.tabular.processors.ScalerAndEncoder.get_input_type">(falcon.tabular.processors.ScalerAndEncoder method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="abstract/learner.html#falcon.abstract.Learner.get_output_type">get_output_type() (falcon.abstract.Learner method)</a>
 
       <ul>
         <li><a href="abstract/pipeline_element.html#falcon.abstract.PipelineElement.get_output_type">(falcon.abstract.PipelineElement method)</a>
 </li>
         <li><a href="abstract/processor.html#falcon.abstract.Processor.get_output_type">(falcon.abstract.Processor method)</a>
-</li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.get_output_type">(falcon.tabular.learners.OptunaLearner method)</a>
 </li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.get_output_type">(falcon.tabular.learners.SuperLearner method)</a>
 </li>
@@ -290,28 +263,6 @@
         <li><a href="tabular/processors/scaler_and_encoder.html#falcon.tabular.processors.ScalerAndEncoder.get_output_type">(falcon.tabular.processors.ScalerAndEncoder method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="abstract/optuna.html#falcon.abstract.OptunaMixin.get_search_space">get_search_space() (falcon.abstract.OptunaMixin class method)</a>
-
-      <ul>
-        <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier.get_search_space">(falcon.tabular.models.HistGradientBoostingClassifier class method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor.get_search_space">(falcon.tabular.models.HistGradientBoostingRegressor class method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier">HistGradientBoostingClassifier (class in falcon.tabular.models)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor">HistGradientBoostingRegressor (class in falcon.tabular.models)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -349,12 +300,6 @@
       <li><a href="abstract/onnx.html#falcon.abstract.ONNXConvertible">ONNXConvertible (class in falcon.abstract)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner">OptunaLearner (class in falcon.tabular.learners)</a>
-</li>
-      <li><a href="abstract/optuna.html#falcon.abstract.OptunaMixin">OptunaMixin (class in falcon.abstract)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
@@ -383,17 +328,7 @@
 </li>
         <li><a href="abstract/task_manager.html#falcon.abstract.TaskManager.predict">(falcon.abstract.TaskManager method)</a>
 </li>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.predict">(falcon.tabular.learners.OptunaLearner method)</a>
-</li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.predict">(falcon.tabular.learners.SuperLearner method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier.predict">(falcon.tabular.models.HistGradientBoostingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor.predict">(falcon.tabular.models.HistGradientBoostingRegressor method)</a>
-</li>
-        <li><a href="tabular/models/stacking_clf.html#falcon.tabular.models.StackingClassifier.predict">(falcon.tabular.models.StackingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/stacking_regr.html#falcon.tabular.models.StackingRegressor.predict">(falcon.tabular.models.StackingRegressor method)</a>
 </li>
         <li><a href="tabular/pipelines/simple_pipeline.html#falcon.tabular.pipelines.SimpleTabularPipeline.predict">(falcon.tabular.pipelines.SimpleTabularPipeline method)</a>
 </li>
@@ -442,10 +377,6 @@
 </li>
       <li><a href="tabular/pipelines/simple_pipeline.html#falcon.tabular.pipelines.SimpleTabularPipeline">SimpleTabularPipeline (class in falcon.tabular.pipelines)</a>
 </li>
-      <li><a href="tabular/models/stacking_clf.html#falcon.tabular.models.StackingClassifier">StackingClassifier (class in falcon.tabular.models)</a>
-</li>
-      <li><a href="tabular/models/stacking_regr.html#falcon.tabular.models.StackingRegressor">StackingRegressor (class in falcon.tabular.models)</a>
-</li>
       <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner">SuperLearner (class in falcon.tabular.learners)</a>
 </li>
   </ul></td>
@@ -461,17 +392,7 @@
       <li><a href="abstract/onnx.html#falcon.abstract.ONNXConvertible.to_onnx">to_onnx() (falcon.abstract.ONNXConvertible method)</a>
 
       <ul>
-        <li><a href="tabular/learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner.to_onnx">(falcon.tabular.learners.OptunaLearner method)</a>
-</li>
         <li><a href="tabular/learners/super_learner.html#falcon.tabular.learners.SuperLearner.to_onnx">(falcon.tabular.learners.SuperLearner method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier.to_onnx">(falcon.tabular.models.HistGradientBoostingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor.to_onnx">(falcon.tabular.models.HistGradientBoostingRegressor method)</a>
-</li>
-        <li><a href="tabular/models/stacking_clf.html#falcon.tabular.models.StackingClassifier.to_onnx">(falcon.tabular.models.StackingClassifier method)</a>
-</li>
-        <li><a href="tabular/models/stacking_regr.html#falcon.tabular.models.StackingRegressor.to_onnx">(falcon.tabular.models.StackingRegressor method)</a>
 </li>
         <li><a href="tabular/processors/label_decoder.html#falcon.tabular.processors.LabelDecoder.to_onnx">(falcon.tabular.processors.LabelDecoder method)</a>
 </li>

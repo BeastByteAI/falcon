@@ -113,10 +113,6 @@ class _StackingBase(Model, ONNXConvertible):
 
 
 class StackingClassifier(_StackingBase):
-    """
-    Small wrapper around `sklearn.ensemble.StackingClassifier`. 
-    """
-
     def __init__(
         self,
         estimators: List[Tuple[str, BaseEstimator]],
@@ -183,9 +179,6 @@ class StackingClassifier(_StackingBase):
 
 
 class StackingRegressor(_StackingBase):
-    """
-    Small wrapper around `sklearn.ensemble.StackingRegressor`. 
-    """
     def __init__(
         self,
         estimators: List[Tuple[str, BaseEstimator]],

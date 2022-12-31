@@ -1,23 +1,6 @@
 from falcon.tabular.pipelines import SimpleTabularPipeline
-from falcon.tabular.learners import SuperLearner, OptunaLearner
+from falcon.tabular.learners import SuperLearner
 from falcon.tabular.learners.super_learner import _default_estimators
-from falcon.tabular.models.hist_gbt import HistGradientBoostingClassifier, HistGradientBoostingRegressor
-
-SUPER_LEARNER_DEFAULT_CONFIG =  {
-        "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_options": {
-            "learner": SuperLearner, 
-            "learner_kwargs": {}
-        }
-    }
-
-OPTUNA_LEARNER_DEFAULT_CONFIG = {
-        "pipeline": SimpleTabularPipeline, 
-        "extra_pipeline_options": {
-            "learner": OptunaLearner, 
-            "learner_kwargs": {}
-        }
-    }
 
 TABULAR_CLASSIFICATION_CONFIGURATIONS = {
     "SuperLearner.mini": {
@@ -64,17 +47,13 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
         }
     },
 
-    "OptunaLearner.hgbt": {
+    "SuperLearner": {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
-            "learner": OptunaLearner, 
-            "learner_kwargs": {"model_class": HistGradientBoostingClassifier}
+            "learner": SuperLearner, 
+            "learner_kwargs": {}
         }
-    },
-
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG,
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
- 
+    }
 }
 
 TABULAR_REGRESSION_CONFIGURATIONS = {
@@ -121,15 +100,12 @@ TABULAR_REGRESSION_CONFIGURATIONS = {
             }
         }
     }, 
-
-    "OptunaLearner.hgbt": {
+    
+    "SuperLearner": {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
-            "learner": OptunaLearner, 
-            "learner_kwargs": {"model_class": HistGradientBoostingRegressor}
+            "learner": SuperLearner, 
+            "learner_kwargs": {}
         }
-    },
-    
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG, 
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
+    }
 }
