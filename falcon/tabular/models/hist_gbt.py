@@ -102,6 +102,22 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
 class HistGradientBoostingRegressor(_BaseHistGradientBoosting):
     
     def __init__(self, max_iter: int = 100, min_samples_leaf: int = 20, learning_rate: float = 0.1, l2_regularization: float = 0., random_seed: int = 42, **kwargs: Any):
+        """
+        Wrapper around sklearn HistGradientBoostingRegressor
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            number of decision trees, by default 100
+        min_samples_leaf : int, optional
+            minimum number of samples per leaf, by default 20
+        learning_rate : float, optional
+            learning rate, by default 0.1
+        l2_regularization : float, optional
+            L2 regularization parameter, by default 0.0
+        random_seed : int, optional
+            by default 42
+        """
         estimator = SklearnHistGradientBoostingRegressor(max_iter = max_iter, learning_rate=learning_rate, l2_regularization=l2_regularization, min_samples_leaf=min_samples_leaf, random_state=random_seed)
         super().__init__(estimator=estimator)
 
@@ -110,5 +126,21 @@ class HistGradientBoostingRegressor(_BaseHistGradientBoosting):
 class HistGradientBoostingClassifier(_BaseHistGradientBoosting):
     
     def __init__(self, max_iter: int = 100, min_samples_leaf: int = 20, learning_rate: float = 0.1, l2_regularization: float = 0., random_seed: int = 42, **kwargs: Any):
+        """
+        Wrapper around sklearn HistGradientBoostingClassifier
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            number of decision trees, by default 100
+        min_samples_leaf : int, optional
+            minimum number of samples per leaf, by default 20
+        learning_rate : float, optional
+            learning rate, by default 0.1
+        l2_regularization : float, optional
+            L2 regularization parameter, by default 0.0
+        random_seed : int, optional
+            by default 42
+        """
         estimator = SklearnHistGradientBoostingClassifier(max_iter = max_iter, learning_rate=learning_rate, l2_regularization=l2_regularization, min_samples_leaf=min_samples_leaf, random_state=random_seed)
         super().__init__(estimator=estimator)

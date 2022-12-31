@@ -16,6 +16,21 @@ class OptunaLearner(Learner, ONNXConvertible):
     def __init__(
         self, task: str, model_class: Optional[Type] = None, n_trials: Optional[int] = None, **kwargs: Any
     ) -> None:
+        """
+        OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.
+
+        Parameters
+        ----------
+        task : str
+            'tabular_classification' or 'tabular_regression'
+        model_class : Optional[Type], optional
+            the class of the model to train, by default None;
+            if None, HistGradientBoosting
+        n_trials : Optional[int], optional
+            number of optimization trials, minimum 20, by default None;
+            if None, the number of trials is chosen dynamically based on the dataset size
+
+        """
         self.task = task
         if model_class is None: 
             if task == "tabular_classification": 
@@ -89,6 +104,17 @@ class OptunaLearner(Learner, ONNXConvertible):
             self.n_trials = 30
 
     def fit(self, X: Float32Array, y: Float32Array) -> None:
+        """
+        Fits the model by choosing the best hyperparameters and training the final model using them.
+        For classification tasks, the dataset will be balanced by upsampling the minority class(es).
+
+        Parameters
+        ----------
+        X : Float32Array
+            features
+        y : Float32Array
+            targets
+        """
         self._set_n_trials(X, y)
         search_space = self.model_class.get_search_space(X, y)
         self.progress_bar = None
@@ -135,7 +161,7 @@ class OptunaLearner(Learner, ONNXConvertible):
     
     def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
         """
-        Equivalen to `.predict(X)`
+        Equivalent to `.predict(X)`
 
         Parameters
         ----------
