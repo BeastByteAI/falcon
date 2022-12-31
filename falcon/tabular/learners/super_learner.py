@@ -1160,7 +1160,7 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
 
-    def forward(self, X: Float32Array) -> Float32Array:
+    def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
         """
         Equivalen to `.predict(X)`
 
@@ -1171,7 +1171,7 @@ class SuperLearner(Learner, ONNXConvertible):
 
         Returns
         -------
-        Float32Array
+        Union[Float32Array, Int64Array]
             predictions
         """
         return self.model.predict(X)

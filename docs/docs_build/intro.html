@@ -16,7 +16,6 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#demo-datasets">Demo datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#making-predictions-with-trained-models">Making predictions with trained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
 </ul>
 
@@ -197,6 +197,21 @@ For example, <a class="reference external" href="https://onnxruntime.ai/">Micros
 <span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="manually-selecting-a-configuration">
+<h1>Manually selecting a configuration<a class="headerlink" href="#manually-selecting-a-configuration" title="Permalink to this heading"></a></h1>
+<p>All of the examples in the previous sections demonstrated how to train falcon models using the default configuration.
+However, there are several configurations available and it is easily possible to switch between them by providing a single additional argument.</p>
+<p>For tabular classification task, by default, falcon will use a <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> and the sub-configuration (e.g. list of base estimators) will be chosen automatically based on the dataset size.
+But if we want to specify that a ‘mini’ sub-configuration of the learner is to be used, we can do it by adding <cite>config = ‘SuperLearner.mini’</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s2">&quot;tabular_classification&quot;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">config</span> <span class="o">=</span> <span class="s1">&#39;SuperLearner.mini&#39;</span><span class="p">)</span> <span class="c1"># SuperLearner.mini config is used</span>
+</pre></div>
+</div>
+<p>Similarly, instead of <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> which builds a stacking ensemble of base estimators, it is possible to use <a class="reference internal" href="tabular/learners/optuna_learner.html"><span class="doc">OptunaLearner</span></a> which uses a single model and performs hyperparameter optimization using the Optuna framework.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AutoML</span><span class="p">(</span><span class="n">task</span> <span class="o">=</span> <span class="s2">&quot;tabular_classification&quot;</span><span class="p">,</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">config</span> <span class="o">=</span> <span class="s1">&#39;OptunaLearner&#39;</span><span class="p">)</span> <span class="c1"># OptunaLearner config is used</span>
+</pre></div>
+</div>
+<p>All the available configurations can be found here.</p>
 </section>
 
 

@@ -115,3 +115,13 @@ def test_inference_clf_superlearner_xlarge():
 def test_inference_clf_superlearner_default():
     config = get_task_configuration(task = 'tabular_classification', configuration_name='SuperLearner')
     inference_classification(config=config, config_name='SuperLearner')
+
+def test_inference_clf_optuna_hgbt():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='OptunaLearner.hgbt')
+    config['extra_pipeline_options']['learner_kwargs']['n_trials'] = 2
+    inference_classification(config=config, config_name='OptunaLearnerHGBT')
+
+def test_inference_regr_optuna_hgbt():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='OptunaLearner.hgbt')
+    config['extra_pipeline_options']['learner_kwargs']['n_trials'] = 2
+    inference_regression(config=config, config_name='OptunaLearnerHGBT')

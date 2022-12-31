@@ -13,10 +13,11 @@ dependencies = [
 "pandas>=1.0.0", 
 "imbalanced-learn>=0.8.1", 
 "pymongo>=3.9.0", 
-"pyarrow>=8.0.0"
+"pyarrow>=8.0.0",
+"optuna>=3.0.0"
 ]
 name = "falcon-ml"
-version = "0.4.1"
+version = "0.5.0"
 authors = [
   { name="Oleg Kostromin", email="kostromin97@gmail.com" },
   { name="Iryna Kondrashchenko", email="iryna230520@gmail.com" },
