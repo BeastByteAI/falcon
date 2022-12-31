@@ -177,4 +177,4 @@ Similarly, instead of :doc:`tabular/learners/super_learner` which builds a stack
 
     AutoML(task = "tabular_classification", train_data = df, config = 'OptunaLearner') # OptunaLearner config is used
 
-All the available configurations can be found here.
+All the available configurations can be found :doc:`here<available_configurations>`.
