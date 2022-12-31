@@ -16,12 +16,11 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TabularTaskManager" href="tab_manager.html" />
-    <link rel="prev" title="ONNXConvertible" href="../abstract/onnx.html" /> 
+    <link rel="prev" title="OptunaMixin" href="../abstract/optuna.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#usage">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#demo-datasets">Demo datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../high_level_api.html">High level functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../abstract/index.html">Abstract</a></li>
@@ -54,8 +54,14 @@
 <li class="toctree-l3"><a class="reference internal" href="processors/scaler_and_encoder.html">ScalerAndEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="processors/label_decoder.html">LabelDecoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="learners/super_learner.html">SuperLearner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="learners/optuna_learner.html">OptunaLearner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/hgbt_clf.html">HistGradientBoostingClassifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/hgbt_regr.html">HistGradientBoostingRegressor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/stacking_clf.html">StackingClassifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/stacking_regr.html">StackingRegressor</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
 </ul>
@@ -108,6 +114,21 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="learners/super_learner.html#falcon.tabular.learners.SuperLearner" title="falcon.tabular.learners.SuperLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.SuperLearner</span></code></a>(task[, ...])</p></td>
 <td><p>Tabular learner which employs StackingModel for construction of meta estimator.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner" title="falcon.tabular.learners.OptunaLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.OptunaLearner</span></code></a>(task[, model_class, ...])</p></td>
+<td><p>OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier" title="falcon.tabular.models.HistGradientBoostingClassifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models.HistGradientBoostingClassifier</span></code></a>([...])</p></td>
+<td><p>Wrapper around <cite>sklearn.ensemble.HistGradientBoostingClassifier</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="models/hgbt_regr.html#falcon.tabular.models.HistGradientBoostingRegressor" title="falcon.tabular.models.HistGradientBoostingRegressor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models.HistGradientBoostingRegressor</span></code></a>([...])</p></td>
+<td><p>Wrapper around <cite>sklearn.ensemble.HistGradientBoostingRegressor</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="models/stacking_clf.html#falcon.tabular.models.StackingClassifier" title="falcon.tabular.models.StackingClassifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models.StackingClassifier</span></code></a>(estimators, ...[, ...])</p></td>
+<td><p>Small wrapper around <cite>sklearn.ensemble.StackingClassifier</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="models/stacking_regr.html#falcon.tabular.models.StackingRegressor" title="falcon.tabular.models.StackingRegressor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models.StackingRegressor</span></code></a>(estimators, ...[, ...])</p></td>
+<td><p>Small wrapper around <cite>sklearn.ensemble.StackingRegressor</cite>.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="toctree-wrapper compound">
@@ -118,7 +139,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../abstract/onnx.html" class="btn btn-neutral float-left" title="ONNXConvertible" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../abstract/optuna.html" class="btn btn-neutral float-left" title="OptunaMixin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tab_manager.html" class="btn btn-neutral float-right" title="TabularTaskManager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

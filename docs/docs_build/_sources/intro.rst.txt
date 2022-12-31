@@ -102,7 +102,7 @@ You can try out falcon using one of the built-in demo datasets.
     AutoML(task = 'tabular_classification', train_data = df)
 
 Making predictions with trained models
-======================
+============================================
 
 There are 2 ways to make a prediction using a trained model. If the input/unlabeled data is available right away, the same manager object that was used for training the model can be used. 
 An important thing to notice is that the input data should have the same structure as the training set (the same number, order and type of the features). This is assumed by the model, but not explicitly checked during runtime.
@@ -158,3 +158,23 @@ Below is the complete example of model training and inference using the built-in
     predictions = run_model(model_path = "<FILENAME>.onnx", X = X)
     print(predictions)
 
+Manually selecting a configuration
+======================================
+
+All of the examples in the previous sections demonstrated how to train falcon models using the default configuration.
+However, there are several configurations available and it is easily possible to switch between them by providing a single additional argument.
+
+For tabular classification task, by default, falcon will use a :doc:`tabular/learners/super_learner` and the sub-configuration (e.g. list of base estimators) will be chosen automatically based on the dataset size. 
+But if we want to specify that a 'mini' sub-configuration of the learner is to be used, we can do it by adding `config = 'SuperLearner.mini'`.
+
+..  code-block:: python
+
+    AutoML(task = "tabular_classification", train_data = df, config = 'SuperLearner.mini') # SuperLearner.mini config is used
+
+Similarly, instead of :doc:`tabular/learners/super_learner` which builds a stacking ensemble of base estimators, it is possible to use :doc:`tabular/learners/optuna_learner` which uses a single model and performs hyperparameter optimization using the Optuna framework.
+
+..  code-block:: python
+
+    AutoML(task = "tabular_classification", train_data = df, config = 'OptunaLearner') # OptunaLearner config is used
+
+All the available configurations can be found here.

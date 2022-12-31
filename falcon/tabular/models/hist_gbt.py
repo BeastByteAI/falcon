@@ -100,10 +100,11 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
         }
 
 class HistGradientBoostingRegressor(_BaseHistGradientBoosting):
-    
+    """
+    Wrapper around `sklearn.ensemble.HistGradientBoostingRegressor`.
+    """
     def __init__(self, max_iter: int = 100, min_samples_leaf: int = 20, learning_rate: float = 0.1, l2_regularization: float = 0., random_seed: int = 42, **kwargs: Any):
         """
-        Wrapper around sklearn HistGradientBoostingRegressor
 
         Parameters
         ----------
@@ -124,10 +125,11 @@ class HistGradientBoostingRegressor(_BaseHistGradientBoosting):
     
 
 class HistGradientBoostingClassifier(_BaseHistGradientBoosting):
-    
+    """
+    Wrapper around `sklearn.ensemble.HistGradientBoostingClassifier`.
+    """
     def __init__(self, max_iter: int = 100, min_samples_leaf: int = 20, learning_rate: float = 0.1, l2_regularization: float = 0., random_seed: int = 42, **kwargs: Any):
         """
-        Wrapper around sklearn HistGradientBoostingClassifier
 
         Parameters
         ----------

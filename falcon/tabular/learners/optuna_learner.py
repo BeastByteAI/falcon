@@ -13,11 +13,14 @@ from imblearn.over_sampling import RandomOverSampler
 from tqdm import tqdm
 
 class OptunaLearner(Learner, ONNXConvertible):
+    """
+    OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.
+    """
+
     def __init__(
         self, task: str, model_class: Optional[Type] = None, n_trials: Optional[int] = None, **kwargs: Any
     ) -> None:
         """
-        OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.
 
         Parameters
         ----------
