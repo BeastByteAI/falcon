@@ -1112,7 +1112,6 @@ class SuperLearner(Learner, ONNXConvertible):
         print_("Fitting stacked model... ")
         self._set_size_optimized_config(X)
         estimators: List[Tuple[str, Callable]] = self._preselect(X, y)
-        stacked_estimator: SklearnBaseEstimator
         print_(f"\t -> Fitting the final estimator")
         if self.task == "tabular_classification":
             stacked_estimator = StackingClassifier(

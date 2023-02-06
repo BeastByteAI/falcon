@@ -84,6 +84,7 @@ class TaskManager(ABC):
         pass
 
     @property
+    @abstractmethod
     def default_pipeline_options(self) -> Dict:
         """
         Default pipeline options. Can be chosen dynamically.
