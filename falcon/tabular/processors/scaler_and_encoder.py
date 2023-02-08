@@ -30,7 +30,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         """
         self.mask = mask
 
-    def fit(self, X: npt.NDArray, _: Any = None) -> None:
+    def fit(self, X: npt.NDArray, y: Any = None, *args: Any, **kwargs: Any) -> None:
         """
         Fits the encoder.
 
@@ -39,7 +39,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         X : npt.NDArray
             data to encode
         _ : Any, optional
-            dummy argument to keep compatibility with pipeline training, by default None
+            dummy argument to keep compatibility with pipeline training
         """
         transformers = []
         for i, v in enumerate(self.mask):
@@ -58,7 +58,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         self.ct = ColumnTransformer(transformers)
         self.ct.fit(X)
 
-    def predict(self, X: npt.NDArray) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Applies the encoder.
 

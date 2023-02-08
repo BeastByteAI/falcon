@@ -16,7 +16,7 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
     def __init__(self, estimator: Callable, **kwargs: Any):
         self.estimator = estimator
     
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model
 
@@ -60,7 +60,7 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
     def _get_onnx_options(self) -> Dict:
         return {}
     
-    def predict(self, X: npt.NDArray) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         return self.estimator.predict(X)
     
     @classmethod

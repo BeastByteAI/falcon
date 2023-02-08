@@ -44,7 +44,7 @@ class SimpleTabularPipeline(Pipeline):
             self.labels_transformer: LabelDecoder = LabelDecoder()
             self.add_element(self.labels_transformer)
 
-    def fit(self, X: npt.NDArray, y: npt.NDArray) -> None:
+    def fit(self, X: npt.NDArray, y: npt.NDArray, *args: Any, **kwargs: Any) -> None:
         """
         Fits the pipeline by consecutively calling `.fit_pipe()` method of each element in pipeline.
         For tabular classification, `LabelDecoder` is applied to targets before actual training occurs.
@@ -64,7 +64,7 @@ class SimpleTabularPipeline(Pipeline):
             p.fit_pipe(X, y)
             X = p.forward(X)
 
-    def predict(self, X: npt.NDArray) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Predicts the label of passed data points.
 

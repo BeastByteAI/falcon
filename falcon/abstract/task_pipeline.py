@@ -30,7 +30,7 @@ class PipelineElement(Model):
         """
         pass
 
-    def forward(self, X: Any) -> Any:
+    def forward(self, X: Any, *args: Any, **kwargs: Any) -> Any:
         """
         Equivalent of `predict` method that is used for elements chaining inside pipeline during inference.
 
@@ -46,7 +46,7 @@ class PipelineElement(Model):
         """
         self.predict(X)
 
-    def fit_pipe(self, X: Any, y: Any) -> Any:
+    def fit_pipe(self, X: Any, y: Any, *args: Any, **kwargs: Any) -> Any:
         """
         Equivalent of `fit` method that is used for elements chaining inisde pipeline during training.
 
