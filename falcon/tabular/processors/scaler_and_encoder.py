@@ -1,6 +1,8 @@
 import numpy as np
 from numpy import typing as npt
 from falcon.types import Float32Array
+from sklearn import __version__ as sklearn_version
+from packaging import version
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
@@ -42,10 +44,14 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
             dummy argument to keep compatibility with pipeline training
         """
         transformers = []
+        if version.parse(sklearn_version) < version.parse('1.2.0'):
+            not_sparse = {"sparse": False}
+        else: 
+            not_sparse = {"sparse_output": False}
         for i, v in enumerate(self.mask):
             if v == 1:
                 method = OneHotEncoder(
-                    categories="auto", sparse=False, handle_unknown="ignore"
+                    categories="auto", handle_unknown="ignore", **not_sparse
                 )
             elif v == 0:
                 method = SKLPipeline(steps = [('cast64', CastTransformer(dtype=np.float64)),('scaler', StandardScaler(with_mean=True, with_std=True)),('cast32', CastTransformer())])
