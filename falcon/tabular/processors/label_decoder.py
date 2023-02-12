@@ -50,7 +50,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         """
         self.le.fit(X)
 
-    def predict(self, X: npt.NDArray, inverse: bool = True) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, inverse: bool = True, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Equivalent of `.transform()`.
 
@@ -68,7 +68,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         """
         return self.transform(X, inverse=inverse)
 
-    def transform(self, X: npt.NDArray, inverse: bool = True) -> npt.NDArray:
+    def transform(self, X: npt.NDArray, inverse: bool = True, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Encodes/decodes the labels.
 
@@ -134,7 +134,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         return SerializedModelRepr(model.SerializeToString(), 1, 1, ["INT64"], [[None]])
 
     def forward(
-        self, X: npt.NDArray
+        self, X: npt.NDArray, *args: Any, **kwargs: Any
     ) -> npt.NDArray:  # Inside pipeline used as post-processor to decode labels back to strings
         """
         Equivalent to `.transform(X, inverse=True)`.

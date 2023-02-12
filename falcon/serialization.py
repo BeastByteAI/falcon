@@ -1,7 +1,5 @@
 from typing import List, Optional, Dict
 from falcon.utils import print_
-import bson
-from bson import BSON
 from typing import List, Tuple, Optional
 from numpy import typing as npt
 from onnx import ModelProto, load_from_string
@@ -100,18 +98,3 @@ def serialize_to_onnx(models_: List[SerializedModelRepr]) -> onnx.ModelProto:
         prev = combined_model
     print_("Serialization completed.")
     return prev
-
-
-def serialize_to_falcon(models: List[SerializedModelRepr]) -> bytes:
-    print_("Serializing to falcon...")
-    if len(models) == 0:
-        raise ValueError("List of models cannot be empty")
-
-    nodes = []
-    for model_ in models:
-        nodes.append(model_.to_dict())
-
-    model_to_save = {"version": 1, "n_nodes": len(nodes), "nodes": nodes}
-    encoded = bytes(bson.BSON.encode(model_to_save))
-    print_("Serialization completed.")
-    return encoded

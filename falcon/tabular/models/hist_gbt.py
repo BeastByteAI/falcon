@@ -13,7 +13,7 @@ from falcon.abstract.optuna import OptunaMixin
 from numpy import typing as npt
 
 class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
-    def __init__(self, estimator: Callable, **kwargs: Any):
+    def __init__(self, estimator: Union[SklearnHistGradientBoostingClassifier, SklearnHistGradientBoostingRegressor], **kwargs: Any):
         self.estimator = estimator
     
     def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:

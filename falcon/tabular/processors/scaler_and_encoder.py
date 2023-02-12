@@ -98,7 +98,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         """
         return Float32Array
 
-    def forward(self, X: npt.NDArray[np.object_]) -> npt.NDArray:
+    def forward(self, X: npt.NDArray[np.object_], *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Equivalent of `.predict()` or `.transform()`.
 

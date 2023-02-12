@@ -1,5 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Any, Union, Callable, Dict
+from typing_extensions import Protocol
+from numpy import typing as npt
 
 class OptunaMixin(ABC):
 

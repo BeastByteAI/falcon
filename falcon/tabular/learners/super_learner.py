@@ -1113,6 +1113,7 @@ class SuperLearner(Learner, ONNXConvertible):
         self._set_size_optimized_config(X)
         estimators: List[Tuple[str, Callable]] = self._preselect(X, y)
         print_(f"\t -> Fitting the final estimator")
+        stacked_estimator: Union[StackingClassifier, StackingRegressor]
         if self.task == "tabular_classification":
             stacked_estimator = StackingClassifier(
                 estimators=estimators, final_estimator=LogisticRegression(), cv=self.cv
@@ -1159,7 +1160,7 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
 
-    def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def forward(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
         """
         Equivalen to `.predict(X)`
 
