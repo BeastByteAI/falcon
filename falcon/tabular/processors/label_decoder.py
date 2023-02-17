@@ -131,7 +131,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         graph = h.make_graph([node], f"decoder", inputs, outputs)
         op = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
         model = h.make_model(graph, producer_name="falcon", opset_imports = [op])
-        return SerializedModelRepr(model.SerializeToString(), 1, 1, ["INT64"], [[None]])
+        return SerializedModelRepr(model, 1, 1, ["INT64"], [[None]])
 
     def forward(
         self, X: npt.NDArray, *args: Any, **kwargs: Any

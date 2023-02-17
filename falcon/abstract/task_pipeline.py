@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Type, Union, Optional, List, Tuple
+from onnx import ModelProto
 from falcon.abstract.model import Model
 from falcon.abstract.onnx_convertible import ONNXConvertible
 from falcon.serialization import SerializedModelRepr, serialize_to_onnx
@@ -94,17 +95,17 @@ class Pipeline(Model):
             raise ValueError("Cannot add self to the pipeline")
         self._pipeline.append(element)
 
-    def save(self) -> bytes:
+    def save(self) -> ModelProto:
         """
-        Serializes the model to string. For more details please refer to the documentation of `TaskManager.save_model(...)` method.
+        Exports the pipeline to ONNX ModelProto
 
         Parameters
         ----------
 
         Returns
         -------
-        bytes
-            Serialized model
+        ModelProto
+            Pipeline as ONNX ModelProto
         """
         serialized_pipeline_elements: List[SerializedModelRepr] = []
         for p in self._pipeline:
@@ -115,5 +116,5 @@ class Pipeline(Model):
 
         serialized_model = serialize_to_onnx(
             serialized_pipeline_elements
-        ).SerializeToString()
+        )
         return serialized_model

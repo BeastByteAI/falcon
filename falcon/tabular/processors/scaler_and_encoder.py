@@ -142,7 +142,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
                 initial_types=initial_types,
                 target_opset={'': ONNX_OPSET_VERSION, 'ai.onnx.ml': ML_ONNX_OPSET_VERSION},
                 options={StandardScaler: {"div": "div_cast"}},
-            ).SerializeToString(),
+            ),
             len(self.mask),
             1,
             initial_types_str,

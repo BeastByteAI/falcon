@@ -15,7 +15,7 @@ from onnx import TensorProto, helper as h, OperatorSetIdProto
 class SerializedModelRepr:
     def __init__(
         self,
-        model: bytes,
+        model: onnx.ModelProto,
         n_inputs: int,
         n_outputs: int,
         initial_types: List[str],
@@ -29,7 +29,7 @@ class SerializedModelRepr:
         self._initial_shapes = initial_shapes
         self._type = type_
 
-    def get_model(self) -> bytes:
+    def get_model(self) -> onnx.ModelProto:
         return self._model
 
     def get_n_inputs(self) -> int:
@@ -64,7 +64,7 @@ def serialize_to_onnx(models_: List[SerializedModelRepr]) -> onnx.ModelProto:
 
     # Updating the models by resetting the opset and adding prefix to node names
     updated_models: List[ModelProto] = []
-    models = [load_from_string(m.get_model()) for m in models_]
+    models = [m.get_model() for m in models_]
     for i, model in enumerate(models):
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
         op2 = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
