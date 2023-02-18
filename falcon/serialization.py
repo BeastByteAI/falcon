@@ -1,7 +1,5 @@
 from typing import List, Optional, Dict
 from falcon.utils import print_
-import bson
-from bson import BSON
 from typing import List, Tuple, Optional
 from numpy import typing as npt
 from onnx import ModelProto, load_from_string
@@ -17,7 +15,7 @@ from onnx import TensorProto, helper as h, OperatorSetIdProto
 class SerializedModelRepr:
     def __init__(
         self,
-        model: bytes,
+        model: onnx.ModelProto,
         n_inputs: int,
         n_outputs: int,
         initial_types: List[str],
@@ -31,7 +29,7 @@ class SerializedModelRepr:
         self._initial_shapes = initial_shapes
         self._type = type_
 
-    def get_model(self) -> bytes:
+    def get_model(self) -> onnx.ModelProto:
         return self._model
 
     def get_n_inputs(self) -> int:
@@ -66,7 +64,7 @@ def serialize_to_onnx(models_: List[SerializedModelRepr]) -> onnx.ModelProto:
 
     # Updating the models by resetting the opset and adding prefix to node names
     updated_models: List[ModelProto] = []
-    models = [load_from_string(m.get_model()) for m in models_]
+    models = [m.get_model() for m in models_]
     for i, model in enumerate(models):
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
         op2 = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
@@ -100,18 +98,3 @@ def serialize_to_onnx(models_: List[SerializedModelRepr]) -> onnx.ModelProto:
         prev = combined_model
     print_("Serialization completed.")
     return prev
-
-
-def serialize_to_falcon(models: List[SerializedModelRepr]) -> bytes:
-    print_("Serializing to falcon...")
-    if len(models) == 0:
-        raise ValueError("List of models cannot be empty")
-
-    nodes = []
-    for model_ in models:
-        nodes.append(model_.to_dict())
-
-    model_to_save = {"version": 1, "n_nodes": len(nodes), "nodes": nodes}
-    encoded = bytes(bson.BSON.encode(model_to_save))
-    print_("Serialization completed.")
-    return encoded

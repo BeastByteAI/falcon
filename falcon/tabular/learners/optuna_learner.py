@@ -12,6 +12,7 @@ import optuna
 from imblearn.over_sampling import RandomOverSampler
 from tqdm import tqdm
 
+
 class OptunaLearner(Learner, ONNXConvertible):
     """
     OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.
@@ -35,16 +36,21 @@ class OptunaLearner(Learner, ONNXConvertible):
 
         """
         self.task = task
+
+        self.model_class: Type[Any]
         if model_class is None: 
             if task == "tabular_classification": 
-                model_class = HistGradientBoostingClassifier
+                self.model_class = HistGradientBoostingClassifier
             elif task == "tabular_regression":
-                model_class = HistGradientBoostingRegressor
+                self.model_class = HistGradientBoostingRegressor 
             else:
                 ValueError("Not supported task")
-        if not issubclass(model_class, Model) or not issubclass(model_class, OptunaMixin):
+        else: 
+            self.model_class = model_class
+
+        if not issubclass(model_class, Model) or not issubclass(model_class, OptunaMixin): # type: ignore
             raise ValueError('Model class should be a subclass of falcon.abstract.Model')
-        if not issubclass(model_class, ONNXConvertible):
+        if not issubclass(model_class, ONNXConvertible): # type: ignore
             raise ValueError('OptunaLearner only supports ONNXConvertible models')
         
         if n_trials is not None and n_trials < 5:
@@ -53,7 +59,7 @@ class OptunaLearner(Learner, ONNXConvertible):
 
         self.n_trials = n_trials
         
-        self.model_class = model_class
+        
 
     def _make_objective_func(self, search_space: Dict, X: npt.NDArray, y: npt.NDArray) -> Callable:
         stratify = y if self.task == "tabular_classification" else None
@@ -67,8 +73,8 @@ class OptunaLearner(Learner, ONNXConvertible):
                 X_train, y_train
             )
         progress_bar = tqdm(total = self.n_trials)
-        def objective(trial) -> float:
-            params = {}
+        def objective(trial: optuna.trial.Trial) -> float:
+            params: Dict[str, Any] = {}
             for hp_n, hp_v in search_space.items():
                 if hp_v["type"] == "int":
                     params[hp_n] = trial.suggest_int(name = hp_n, **hp_v["kwargs"])
@@ -106,7 +112,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         else: 
             self.n_trials = 30
 
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model by choosing the best hyperparameters and training the final model using them.
         For classification tasks, the dataset will be balanced by upsampling the minority class(es).
@@ -141,7 +147,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         model.fit(X,y)
         self.model = model
     
-    def predict(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def predict(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
         return self.model.predict(X)
 
     def get_input_type(self) -> Type:
@@ -162,7 +168,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
     
-    def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def forward(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
         """
         Equivalent to `.predict(X)`
 
@@ -178,7 +184,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         """
         return self.model.predict(X)
 
-    def fit_pipe(self, X: Float32Array, y: Float32Array) -> None:
+    def fit_pipe(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Equivalent to `.fit(X, y)`
 

@@ -98,7 +98,7 @@ class _StackingBase(Model, ONNXConvertible):
         n_outputs = len(onnx_model.graph.output)
 
         return SerializedModelRepr(
-            onnx_model.SerializeToString(),
+            onnx_model,
             n_inputs,
             n_outputs,
             ["FLOAT32"],

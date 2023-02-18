@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from numpy import typing as npt
 from typing import Any
+from typing_extensions import Protocol
 
 
 class Model(ABC):

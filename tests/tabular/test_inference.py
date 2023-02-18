@@ -1,5 +1,5 @@
 from falcon import initialize
-from falcon.utils import run_falcon, run_onnx
+from falcon.utils import run_onnx
 import numpy as np
 from sklearn.metrics import r2_score 
 import random
@@ -19,9 +19,7 @@ def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
         pred_ = pred_[0].squeeze()
         print(pred_.shape)
     else:
-        with open(f"{prefix}test_model.{format}", "rb") as f:
-            model_r = f.read()
-        pred_ = run_falcon(model_r, X)
+        ValueError("Non onnx format was selected. Currently only onnx is supported.")
     if not is_regr:
         eq_ = np.equal(pred, pred_)
         print(eq_)
@@ -50,7 +48,6 @@ def inference_classification(config, config_name):
     )
     manager.train(pre_eval=False)
     assert eval_saved_model(manager=manager, is_regr=False, format="onnx", prefix = f"clf_{config_name}_")
-    assert eval_saved_model(manager=manager, is_regr=False, format="falcon", prefix = f"clf_{config_name}_")
     
 
 def inference_regression(config, config_name):
@@ -62,9 +59,6 @@ def inference_regression(config, config_name):
     )
     manager.train(pre_eval=False, **config)
     ac, msec, data =  eval_saved_model(manager=manager, is_regr=True, format="onnx", prefix = f"regr_{config_name}_")
-    assert ac
-    assert msec 
-    ac, msec, data = eval_saved_model(manager=manager, is_regr=True, format="falcon", prefix = f"regr_{config_name}_")
     assert ac
     assert msec 
 
