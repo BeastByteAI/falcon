@@ -6,6 +6,7 @@ from falcon.abstract.learner import Learner
 from falcon.abstract.onnx_convertible import ONNXConvertible
 from falcon.tabular.processors.label_decoder import LabelDecoder
 from falcon.tabular.processors.scaler_and_encoder import ScalerAndEncoder
+from falcon.tabular.processors.multi_modal_encoder import MultiModalEncoder
 from falcon.tabular.learners.super_learner import SuperLearner
 from falcon.utils import print_
 
@@ -32,7 +33,7 @@ class SimpleTabularPipeline(Pipeline):
         """
         super().__init__(task=task)
         
-        encoder: PipelineElement = ScalerAndEncoder(mask)
+        encoder: PipelineElement = MultiModalEncoder(mask)
         self.add_element(encoder)
         
         if not learner_kwargs:
