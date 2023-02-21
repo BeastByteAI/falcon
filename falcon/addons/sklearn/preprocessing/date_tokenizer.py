@@ -4,11 +4,12 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from onnxconverter_common.data_types import StringTensorType
 from skl2onnx.proto import onnx_proto
 from skl2onnx import update_registered_converter
+import re
 
 
 class DateTimeTokenizer(BaseEstimator, TransformerMixin):
     def __init__(self, format: str):
-        if format not in (r"%Y-%m-%d"):
+        if format not in (r"%Y-%m-%d", r"%Y-%m-%d %H:%M:%S", r"%Y-%m-%dT%H:%M:%SZ"):
             raise ValueError("Selected date format is not supported")
         self.format = format
 
@@ -20,16 +21,15 @@ class DateTimeTokenizer(BaseEstimator, TransformerMixin):
             len(X.shape) < 2 or X.shape[1] == 1
         ), "DateTimeTokenizer only accepts single column arrays"
         if self.format == r"%Y-%m-%d":
-            self.separators = ["-"]
-            return np.asarray(np.char.split(X.astype(str), sep="-").tolist()).squeeze()
-
-
+            self.out_dim = 3
+        elif self.format in (r"%Y-%m-%d %H:%M:%S", r"%Y-%m-%dT%H:%M:%SZ"):
+            self.out_dim = 6
+        r = re.compile("[0-9]+")
+        l = np.apply_along_axis(lambda x: r.findall(str(x)), -1, X).reshape(-1, self.out_dim)
+        return l
+        
 def _dt_shape_calculator(operator):  # type: ignore
-    if operator.raw_operator.format == r"%Y-%m-%d":
-        c = 3
-    else:
-        ValueError("DateTimeTokenizer contains unknown date format")
-
+    c = operator.raw_operator.out_dim
     operator.outputs[0].type = StringTensorType([None, c])
 
 
@@ -53,7 +53,7 @@ def _dt_converter(scope, operator, container):  # type: ignore
         "pad_value": "0",
         "mark": False,
         "mincharnum": 1,
-        "separators": operator.raw_operator.separators,
+        "tokenexp": r"[0-9]+",
     }
 
     container.add_node(
