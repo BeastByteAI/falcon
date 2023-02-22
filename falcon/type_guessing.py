@@ -11,6 +11,7 @@ NP_NUMERIC_TYPES = (int, float, np.int32, np.int64, np.float32, np.float64)
 REGEX_MAYBE_DATE = r"[0-9]+[/-][0-9]+[/-][0-9]+"
 # not strictly valid, but should be sufficient
 REGEX_UTC_LIKE = r"[0-9]+[-][0-9]{2}[-][0-9]{2}[ T]{1}[0-9]{2}[:][0-9]{2}[:][0-9]{2}Z?"
+REGEX_UTF_TOKEN = r"(?u)\b\w\w+\b"
 
 
 def _determine_date_type(X: np.ndarray, column: int) -> Optional[ColumnTypes]:
@@ -46,6 +47,13 @@ def determine_column_types(data: npt.NDArray) -> List[ColumnTypes]:
             .all()
         ):
             determined_type = ColumnTypes.DATETIME_YMDHMS_ISO8601
+        elif (
+            tmp_df.iloc[:, col]
+            .map(lambda x: len(re.findall(REGEX_UTF_TOKEN, x)))
+            .median()
+            > 5
+        ):
+            determined_type = ColumnTypes.TEXT_UTF8
 
         if determined_type is None:
             if len(tmp_df.iloc[:, col].unique().tolist()) > HIGH_CARD_THRESHOLD:

@@ -40,6 +40,29 @@ def test_type_guessing_2():
     assert type_ == ColumnTypes.CAT_HIGH_CARD
 
 
+def test_type_guessing_3():
+    corpus = [
+        "Removed demands expense account in outward tedious do.",
+        "Particular way thoroughly unaffected projection favourable mrs can projecting own.",
+        "Thirty it matter enable become admire in giving."
+        "Drawings offended yet answered jennings perceive laughing six did far.",
+    ]
+
+    type_ = determine_column_types(np.array(corpus))[0]
+
+    assert type_ == ColumnTypes.TEXT_UTF8, 'corpus not detected'
+
+    not_corpus = [
+        "Removed demands expense",
+        "Particular way thoroughly unaffected",
+        "Thirty it matter enable become"
+        "Drawings offended yet answered jennings.",
+    ]
+
+    type_ = determine_column_types(np.array(not_corpus))[0]
+
+    assert type_ != ColumnTypes.TEXT_UTF8, 'not_corpus wrongly detected as text'
+
 def test_type_guessing_100():
     data = np.asarray([["2022-02-02"], ["2022-02-25"], ["2022-05-02"]])
 

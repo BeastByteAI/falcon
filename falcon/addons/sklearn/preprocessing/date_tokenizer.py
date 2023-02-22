@@ -14,6 +14,7 @@ class DateTimeTokenizer(BaseEstimator, TransformerMixin):
         self.format = format
 
     def fit(self, X: any):
+        self.fit_ = True
         return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
