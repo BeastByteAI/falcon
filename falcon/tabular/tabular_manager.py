@@ -4,7 +4,9 @@ from falcon.tabular.pipelines.simple_tabular_pipeline import SimpleTabularPipeli
 from falcon.tabular.utils import convert_to_np_obj
 from .reporting import print_classification_report, print_regression_report
 from falcon.tabular.utils import *
+from falcon.type_guessing import determine_column_types
 from falcon import types as ft
+from falcon.types import ColumnTypes
 from typing import Union, Optional, List, Tuple, Type, Dict, Any
 from numpy import typing as npt
 import pandas as pd
@@ -72,7 +74,7 @@ class TabularTaskManager(TaskManager):
 
     def _prepare_data(
         self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
-    ) -> Tuple[npt.NDArray, npt.NDArray, List[int]]:
+    ) -> Tuple[npt.NDArray, npt.NDArray, List[ColumnTypes]]:
         """
         Initial data preparation: 
         1) optional: read data from the specified location;
@@ -87,8 +89,8 @@ class TabularTaskManager(TaskManager):
 
         Returns
         -------
-        Tuple[npt.NDArray, npt.NDArray, List[int]]
-            tuple of features, target and categorical mask for features
+        Tuple[npt.NDArray, npt.NDArray, List[ColumnTypes]]
+            tuple of features, target and type mask for features
         """
         if isinstance(data, str):
             data = read_data(data)
@@ -106,9 +108,9 @@ class TabularTaskManager(TaskManager):
         else:
             X, y = split_features(data, features=self.features, target=self.target)
         X, y = clean_data_split(X, y)
-        mask: List[int]
+        mask: List[ColumnTypes]
         if training:
-            mask = get_cat_mask(X)
+            mask = determine_column_types(X)
         else: 
             mask = []
         if len(y.shape) == 2:

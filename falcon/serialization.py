@@ -68,7 +68,8 @@ def serialize_to_onnx(models_: List[SerializedModelRepr]) -> onnx.ModelProto:
     for i, model in enumerate(models):
         op1 = h.make_operatorsetid("", ONNX_OPSET_VERSION)
         op2 = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
-        updated_model = make_model(model.graph, opset_imports=[op1, op2])
+        op3 = h.make_operatorsetid("com.microsoft", 1)
+        updated_model = make_model(model.graph, opset_imports=[op1, op2, op3])
         updated_model = add_prefix(updated_model, prefix=f"falcon_pl_{i}/")
         updated_models.append(updated_model)
 
