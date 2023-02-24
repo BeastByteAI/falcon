@@ -108,7 +108,7 @@ class TabularTaskManager(TaskManager):
         else:
             X, y = split_features(data, features=self.features, target=self.target)
         X, y = clean_data_split(X, y)
-        mask: List[int]
+        mask: List[ColumnTypes]
         if training:
             mask = determine_column_types(X)
         else: 

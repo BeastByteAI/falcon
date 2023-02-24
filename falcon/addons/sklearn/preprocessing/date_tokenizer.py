@@ -13,7 +13,7 @@ class DateTimeTokenizer(BaseEstimator, TransformerMixin):
             raise ValueError("Selected date format is not supported")
         self.format = format
 
-    def fit(self, X: any):
+    def fit(self, X):
         self.fit_ = True
         return self
 

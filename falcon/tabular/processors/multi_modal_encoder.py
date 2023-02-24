@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import typing as npt
 from falcon.types import Float32Array, ColumnTypes
-from typing import List, Optional, Type, Any
+from typing import List, Optional, Type, Any, Tuple, Union
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline as SKLPipeline
@@ -47,7 +47,7 @@ class MultiModalEncoder(ScalerAndEncoder):
             ]
         )
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: npt.NDArray, y: Any = None, *args: Any, **kwargs: Any) -> None:
         """
         Fits the encoder.
 
@@ -73,6 +73,7 @@ class MultiModalEncoder(ScalerAndEncoder):
                 method = self._get_text_tfidf()
             else:
                 method = self._get_ordinal_encoder()
+            t: Tuple[str, Any, Union[int, List[int]]]
             if v != ColumnTypes.TEXT_UTF8:
                 t = (f"input {i}", method, [i])
             else: 

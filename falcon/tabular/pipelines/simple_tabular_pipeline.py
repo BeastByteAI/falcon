@@ -8,6 +8,7 @@ from falcon.tabular.processors.label_decoder import LabelDecoder
 from falcon.tabular.processors.scaler_and_encoder import ScalerAndEncoder
 from falcon.tabular.processors.multi_modal_encoder import MultiModalEncoder
 from falcon.tabular.learners.super_learner import SuperLearner
+from falcon.types import ColumnTypes
 from falcon.utils import print_
 
 
@@ -19,7 +20,7 @@ class SimpleTabularPipeline(Pipeline):
     def __init__(
         self,
         task: str,
-        mask: List[int],
+        mask: List[ColumnTypes],
         learner: Type[Learner] = SuperLearner,
         learner_kwargs: Optional[Dict] = None,
         preprocessor: str = "MultiModalEncoder",
