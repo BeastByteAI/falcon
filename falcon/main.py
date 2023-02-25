@@ -4,7 +4,7 @@ from typing import Any, Optional, Dict, Type, Union
 from falcon.abstract import Pipeline, TaskManager
 import warnings
 import datetime
-from falcon.task_configurations import get_task_configuration
+from falcon.task_configurations import get_task_configuration, TaskConfigurationRegistry
 
 def warn(*args: Any, **kwargs: Any) -> None:
     pass
@@ -49,19 +49,19 @@ def initialize(
         Initialized task manager object
     """
     warnings.warn = warn
-    if task == "tabular_classification" or task == "tabular_regression":
-        manager: TabularTaskManager = TabularTaskManager(
-            task=task,
-            data=data,
-            pipeline=pipeline,
-            pipeline_options=pipeline_options,
-            extra_pipeline_options=extra_pipeline_options,
-            features=features,
-            target=target,
-            **options
-        )
-    else:
-        raise ValueError("Invalid task")
+
+    Manager = TaskConfigurationRegistry.get_task_manager(task)
+    
+    manager = Manager(
+        task=task,
+        data=data,
+        pipeline=pipeline,
+        pipeline_options=pipeline_options,
+        extra_pipeline_options=extra_pipeline_options,
+        features=features,
+        target=target,
+        **options
+    )
 
     return manager
 
