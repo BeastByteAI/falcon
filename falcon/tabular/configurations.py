@@ -3,7 +3,7 @@ from falcon.tabular.learners import SuperLearner, OptunaLearner, PlainLearner
 from falcon.tabular.learners.super_learner import _default_estimators
 from falcon.tabular.models.hist_gbt import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 
-SUPER_LEARNER_DEFAULT_CONFIG =  {
+_SUPER_LEARNER_DEFAULT_CONFIG =  {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
             "learner": SuperLearner, 
@@ -11,7 +11,7 @@ SUPER_LEARNER_DEFAULT_CONFIG =  {
         }
     }
 
-OPTUNA_LEARNER_DEFAULT_CONFIG = {
+_OPTUNA_LEARNER_DEFAULT_CONFIG = {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
             "learner": OptunaLearner, 
@@ -19,7 +19,7 @@ OPTUNA_LEARNER_DEFAULT_CONFIG = {
         }
     }
 
-PLAIN_LEARNER_DEFAULT_CONFIG = {
+_PLAIN_LEARNER_DEFAULT_CONFIG = {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
             "learner": PlainLearner, 
@@ -88,9 +88,9 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
         }
     },
 
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG,
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
-    "PlainLearner": PLAIN_LEARNER_DEFAULT_CONFIG
+    "SuperLearner": _SUPER_LEARNER_DEFAULT_CONFIG,
+    "OptunaLearner": _OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "PlainLearner": _PLAIN_LEARNER_DEFAULT_CONFIG
  
 }
 
@@ -155,7 +155,8 @@ TABULAR_REGRESSION_CONFIGURATIONS = {
         }
     },
     
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG, 
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
-    "PlainLearner": PLAIN_LEARNER_DEFAULT_CONFIG
+    "SuperLearner": _SUPER_LEARNER_DEFAULT_CONFIG, 
+    "OptunaLearner": _OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "PlainLearner": _PLAIN_LEARNER_DEFAULT_CONFIG
+
 }

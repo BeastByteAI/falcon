@@ -114,6 +114,8 @@ def AutoML(
         manager_configuration = config
     if manager_configuration is None:
         manager_configuration_ = {}
+    elif isinstance(manager_configuration, dict):
+        manager_configuration_ = manager_configuration
     elif isinstance(manager_configuration, str): 
         manager_configuration_ = get_task_configuration(task=task, configuration_name=manager_configuration)
     manager = initialize(task=task, data=train_data, features=features, target=target, **manager_configuration_)
