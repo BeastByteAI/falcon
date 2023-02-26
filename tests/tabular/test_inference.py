@@ -47,6 +47,8 @@ def inference_classification(config, config_name):
         task="tabular_classification", data="tests/extra_files/iris.csv", **config
     )
     manager.train(pre_eval=False)
+    print('model ', manager._pipeline._pipeline[1].model)
+    print('task ', manager._pipeline._pipeline[1].task)
     assert eval_saved_model(manager=manager, is_regr=False, format="onnx", prefix = f"clf_{config_name}_")
     
 
@@ -126,7 +128,7 @@ def test_inference_clf_plain():
 
 def test_inference_regr_plain():
     config = get_task_configuration(task = 'tabular_regression', configuration_name='PlainLearner')
-    inference_classification(config=config, config_name='PlainLearner')
+    inference_regression(config=config, config_name='PlainLearner')
 
 def test_inference_clf_plain_hgbt():
     config = get_task_configuration(task = 'tabular_classification', configuration_name='PlainLearner.hgbt')
@@ -134,5 +136,5 @@ def test_inference_clf_plain_hgbt():
 
 def test_inference_regr_plain_hgbt():
     config = get_task_configuration(task = 'tabular_regression', configuration_name='PlainLearner.hgbt')
-    inference_classification(config=config, config_name='PlainLearnerHGBT')
+    inference_regression(config=config, config_name='PlainLearnerHGBT')
 
