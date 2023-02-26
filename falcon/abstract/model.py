@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from numpy import typing as npt
 from typing import Any
+from typing_extensions import Protocol
 
 
 class Model(ABC):
@@ -9,7 +10,7 @@ class Model(ABC):
     """
 
     @abstractmethod
-    def fit(self, X: npt.NDArray, y: npt.NDArray) -> Any:
+    def fit(self, X: npt.NDArray, y: npt.NDArray, *args: Any, **kwargs: Any) -> Any:
         """
 
         Parameters
@@ -27,7 +28,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def predict(self, X: npt.NDArray) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Parameters
         ----------
@@ -43,7 +44,7 @@ class Model(ABC):
 
 
 class TransformerMixin:
-    def transform(self, X: npt.NDArray) -> npt.NDArray:
+    def transform(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Equivalent of `self.predict(X)`
 

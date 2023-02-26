@@ -1097,7 +1097,7 @@ class SuperLearner(Learner, ONNXConvertible):
                 selected_estimators.append((estimator[0], estimator[1](**estimator[2])))
         return selected_estimators
 
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model. The hyperparameters that were not passed to the `__init__` will be automatically determined based on the size of the training set.
         For classification tasks, the dataset will be balanced by upsampling the minority class(es).
@@ -1112,8 +1112,8 @@ class SuperLearner(Learner, ONNXConvertible):
         print_("Fitting stacked model... ")
         self._set_size_optimized_config(X)
         estimators: List[Tuple[str, Callable]] = self._preselect(X, y)
-        stacked_estimator: SklearnBaseEstimator
         print_(f"\t -> Fitting the final estimator")
+        stacked_estimator: Union[StackingClassifier, StackingRegressor]
         if self.task == "tabular_classification":
             stacked_estimator = StackingClassifier(
                 estimators=estimators, final_estimator=LogisticRegression(), cv=self.cv
@@ -1126,7 +1126,7 @@ class SuperLearner(Learner, ONNXConvertible):
         stacked_estimator.fit(X, y)
         self.model = stacked_estimator
 
-    def predict(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def predict(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
         """
         Makes a prediction for given X.
 
@@ -1160,7 +1160,7 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
 
-    def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def forward(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
         """
         Equivalen to `.predict(X)`
 
@@ -1176,7 +1176,7 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return self.model.predict(X)
 
-    def fit_pipe(self, X: Float32Array, y: Float32Array) -> None:
+    def fit_pipe(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Equivalent to `.fit(X, y)`
 

@@ -1,9 +1,9 @@
 from falcon.tabular.pipelines import SimpleTabularPipeline
-from falcon.tabular.learners import SuperLearner, OptunaLearner
+from falcon.tabular.learners import SuperLearner, OptunaLearner, PlainLearner
 from falcon.tabular.learners.super_learner import _default_estimators
 from falcon.tabular.models.hist_gbt import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 
-SUPER_LEARNER_DEFAULT_CONFIG =  {
+_SUPER_LEARNER_DEFAULT_CONFIG =  {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
             "learner": SuperLearner, 
@@ -11,10 +11,18 @@ SUPER_LEARNER_DEFAULT_CONFIG =  {
         }
     }
 
-OPTUNA_LEARNER_DEFAULT_CONFIG = {
+_OPTUNA_LEARNER_DEFAULT_CONFIG = {
         "pipeline": SimpleTabularPipeline, 
         "extra_pipeline_options": {
             "learner": OptunaLearner, 
+            "learner_kwargs": {}
+        }
+    }
+
+_PLAIN_LEARNER_DEFAULT_CONFIG = {
+        "pipeline": SimpleTabularPipeline, 
+        "extra_pipeline_options": {
+            "learner": PlainLearner, 
             "learner_kwargs": {}
         }
     }
@@ -72,8 +80,17 @@ TABULAR_CLASSIFICATION_CONFIGURATIONS = {
         }
     },
 
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG,
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "PlainLearner.hgbt": {
+        "pipeline": SimpleTabularPipeline, 
+        "extra_pipeline_options": {
+            "learner": PlainLearner, 
+            "learner_kwargs": {"model_class": HistGradientBoostingClassifier}
+        }
+    },
+
+    "SuperLearner": _SUPER_LEARNER_DEFAULT_CONFIG,
+    "OptunaLearner": _OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "PlainLearner": _PLAIN_LEARNER_DEFAULT_CONFIG
  
 }
 
@@ -129,7 +146,17 @@ TABULAR_REGRESSION_CONFIGURATIONS = {
             "learner_kwargs": {"model_class": HistGradientBoostingRegressor}
         }
     },
+
+    "PlainLearner.hgbt": {
+        "pipeline": SimpleTabularPipeline, 
+        "extra_pipeline_options": {
+            "learner": PlainLearner, 
+            "learner_kwargs": {"model_class": HistGradientBoostingRegressor}
+        }
+    },
     
-    "SuperLearner": SUPER_LEARNER_DEFAULT_CONFIG, 
-    "OptunaLearner": OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "SuperLearner": _SUPER_LEARNER_DEFAULT_CONFIG, 
+    "OptunaLearner": _OPTUNA_LEARNER_DEFAULT_CONFIG,
+    "PlainLearner": _PLAIN_LEARNER_DEFAULT_CONFIG
+
 }

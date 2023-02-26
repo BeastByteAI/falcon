@@ -13,10 +13,10 @@ from falcon.abstract.optuna import OptunaMixin
 from numpy import typing as npt
 
 class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
-    def __init__(self, estimator: Callable, **kwargs: Any):
+    def __init__(self, estimator: Union[SklearnHistGradientBoostingClassifier, SklearnHistGradientBoostingRegressor], **kwargs: Any):
         self.estimator = estimator
     
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model
 
@@ -50,7 +50,7 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
         n_outputs = len(onnx_model.graph.output)
 
         return SerializedModelRepr(
-            onnx_model.SerializeToString(),
+            onnx_model,
             n_inputs,
             n_outputs,
             ["FLOAT32"],
@@ -60,7 +60,7 @@ class _BaseHistGradientBoosting(Model, ONNXConvertible, OptunaMixin):
     def _get_onnx_options(self) -> Dict:
         return {}
     
-    def predict(self, X: npt.NDArray) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, *args: Any, **kwargs: Any) -> npt.NDArray:
         return self.estimator.predict(X)
     
     @classmethod
