@@ -48,9 +48,9 @@ class OptunaLearner(Learner, ONNXConvertible):
         else: 
             self.model_class = model_class
 
-        if not issubclass(model_class, Model) or not issubclass(model_class, OptunaMixin): # type: ignore
+        if not issubclass(self.model_class, Model) or not issubclass(self.model_class, OptunaMixin): # type: ignore
             raise ValueError('Model class should be a subclass of falcon.abstract.Model')
-        if not issubclass(model_class, ONNXConvertible): # type: ignore
+        if not issubclass(self.model_class, ONNXConvertible): # type: ignore
             raise ValueError('OptunaLearner only supports ONNXConvertible models')
         
         if n_trials is not None and n_trials < 5:

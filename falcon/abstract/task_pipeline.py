@@ -45,7 +45,7 @@ class PipelineElement(Model):
         Any
             predictions
         """
-        self.predict(X)
+        return self.predict(X)
 
     def fit_pipe(self, X: Any, y: Any, *args: Any, **kwargs: Any) -> Any:
         """
