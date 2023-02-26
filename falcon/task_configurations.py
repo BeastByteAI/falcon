@@ -12,6 +12,8 @@ from falcon.tabular.configurations import (
 from falcon.abstract.task_manager import TaskManager as _TaskManager
 from falcon.tabular.tabular_manager import TabularTaskManager as _TabularTaskManager
 
+_PREFIX = "falcon_ml_"
+
 
 def _prevent_load() -> bool:
     return bool(os.getenv("FALCON_PREVENT_EXTENSION_AUTO_LOAD", False))
@@ -41,11 +43,15 @@ class TaskConfigurationRegistry:
         return task in cls._CONFIGURATIONS.keys()
 
     @classmethod
-    def register_configurations(cls, task: str, config: Dict) -> None:
+    def register_configurations(
+        cls, task: str, config: Dict, silent: bool = False
+    ) -> None:
         if not cls.is_known_task(task):
             raise ValueError(
                 f"The task {task} does not exist. Please register it first using TaskConfigurationRegistry.register_task method."
             )
+        if not silent:
+            print(f"Registered {list(config.keys())} for task {task}")
         cls._CONFIGURATIONS[task]["configs"].update(deepcopy(config))
 
     @classmethod
@@ -61,8 +67,12 @@ class TaskConfigurationRegistry:
                 and "::" in configuration_name
             )
             if should_load:
+
                 extension_name = configuration_name.split("::")[0]
-                pass
+                print(
+                    f"Extension `{_PREFIX + extension_name.lower()}` does not seem to be loaded. Will try to load automatically."
+                )
+                cls.load_extension(extension_name=extension_name)
                 return cls.get_configuration(task, configuration_name, False)
             raise ValueError(f"Configuration `{configuration_name}` does not exist")
         return deepcopy(cls._CONFIGURATIONS[task]["configs"][configuration_name])
@@ -82,20 +92,20 @@ class TaskConfigurationRegistry:
     @classmethod
     def load_extension(cls, extension_name: str):
         extension_name = extension_name.lower()
-        prefix = "falcon_ml_"
+        print(f"Attempting to load {_PREFIX + extension_name}...")
         try:
-            __import__(prefix+extension_name).self_register()
+            __import__(_PREFIX + extension_name).self_register()
         except ModuleNotFoundError:
             print(
-                f"Seems like extension `{extension_name}` is not installed. Try installing it first using `pip install {prefix+extension_name}`."
+                f"Seems like the extension `{extension_name}` is not installed. Try installing it first using `pip install {_PREFIX+extension_name}`."
             )
 
 
 TaskConfigurationRegistry.register_task(_TAB_CLF_TASK, _TabularTaskManager)
 TaskConfigurationRegistry.register_task(_TAB_REGR_TASK, _TabularTaskManager)
 
-TaskConfigurationRegistry.register_configurations(_TAB_CLF_TASK, _TAB_CLF_CONF)
-TaskConfigurationRegistry.register_configurations(_TAB_REGR_TASK, _TAB_REGR_CONF)
+TaskConfigurationRegistry.register_configurations(_TAB_CLF_TASK, _TAB_CLF_CONF, silent = True)
+TaskConfigurationRegistry.register_configurations(_TAB_REGR_TASK, _TAB_REGR_CONF, silent = True)
 
 # for backward compatibility
 get_task_configuration = TaskConfigurationRegistry.get_configuration
