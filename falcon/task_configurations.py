@@ -21,10 +21,24 @@ def _prevent_load() -> bool:
 
 class TaskConfigurationRegistry:
 
-    _CONFIGURATIONS = {}
+    """
+    Central registry holding pre-defined configurations for the tasks.
+    """
+
+    _CONFIGURATIONS: Dict[str, Dict] = {}
 
     @classmethod
     def register_task(cls, task: str, task_manager: Type[_TaskManager]) -> None:
+        """
+        Registers a new task.
+
+        Parameters
+        ----------
+        task : str
+            name of the task (e.g. `tabular_regression`)
+        task_manager : Type[TaskManager]
+            TaskManager responsible for handling the task
+        """
         if task not in cls._CONFIGURATIONS.keys():
             if not issubclass(task_manager, _TaskManager):
                 raise ValueError(
@@ -36,16 +50,47 @@ class TaskConfigurationRegistry:
 
     @classmethod
     def get_registered_tasks(cls) -> List[str]:
-        return cls._CONFIGURATIONS.keys()
+        """
+        Returns the list of registered tasks.
+
+        Returns
+        -------
+        List[str]
+            list of registered tasks
+        """
+        return list(cls._CONFIGURATIONS.keys())
 
     @classmethod
     def is_known_task(cls, task: str) -> bool:
+        """
+        Parameters
+        ----------
+        task : str
+            the name of the task
+
+        Returns
+        -------
+        bool
+            True if the task is registered, else False
+        """
         return task in cls._CONFIGURATIONS.keys()
 
     @classmethod
     def register_configurations(
         cls, task: str, config: Dict, silent: bool = False
     ) -> None:
+        """
+        Register configuration for the task.
+
+        Parameters
+        ----------
+        task : str
+            the name of the task
+        config : Dict
+            the name of the configuration, should follow the naming scheme `EXTENSION_NAME::config_name`
+        silent : bool, optional
+            prints config name on registration if True, by default False
+        """
         if not cls.is_known_task(task):
             raise ValueError(
                 f"The task {task} does not exist. Please register it first using TaskConfigurationRegistry.register_task method."
@@ -58,6 +103,21 @@ class TaskConfigurationRegistry:
     def get_configuration(
         cls, task: str, configuration_name: str, allow_extensions_discovery: bool = True
     ) -> Dict:
+        """
+        Parameters
+        ----------
+        task : str
+            the name of the task
+        configuration_name : str
+            the name of the configuration
+        allow_extensions_discovery : bool, optional
+            if True falcon will try to import an extension module for a given config (config module is determined based on config name), by default True
+
+        Returns
+        -------
+        Dict
+            task configuration
+        """
         if not cls.is_known_task(task):
             raise ValueError(f"Unknown task `{task}`")
         elif configuration_name not in cls._CONFIGURATIONS[task]["configs"].keys():
@@ -79,18 +139,48 @@ class TaskConfigurationRegistry:
 
     @classmethod
     def get_registered_config_names(cls, task: str) -> List[str]:
+        """
+        Parameters
+        ----------
+        task : str
+            the name of the task
+
+        Returns
+        -------
+        List[str]
+            a list of registered configuration names for a given task
+        """
         if not cls.is_known_task(task):
             raise ValueError(f"Unknown task `{task}`")
         return cls._CONFIGURATIONS[task]["configs"].keys()
 
     @classmethod
     def get_task_manager(cls, task: str) -> Type[_TaskManager]:
+        """
+        Parameters
+        ----------
+        task : str
+            the name of the task
+
+        Returns
+        -------
+        Type[TaskManager]
+            TaskNanager class for the given task
+        """
         if not cls.is_known_task(task):
             raise ValueError(f"Unknown task `{task}`")
         return cls._CONFIGURATIONS[task]["manager"]
 
     @classmethod
-    def load_extension(cls, extension_name: str):
+    def load_extension(cls, extension_name: str) -> None:
+        """
+        Imports the extension module, module name should follow the naming scheme `falcon_ml_<extension_name>`.
+
+        Parameters
+        ----------
+        extension_name : str
+            the name of the extension
+        """
         extension_name = extension_name.lower()
         print(f"Attempting to load {_PREFIX + extension_name}...")
         try:

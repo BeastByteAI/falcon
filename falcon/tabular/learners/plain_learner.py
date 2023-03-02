@@ -10,7 +10,7 @@ class PlainLearner(Learner, ONNXConvertible):
     """
     PlainLearner trains a model using speicified or default hyperparameters
     """
-    def __init__(self, task: str, model_class: Optional[Type] = None, hyperparameters: Dict = None, **kwargs: Any) -> None:
+    def __init__(self, task: str, model_class: Optional[Type] = None, hyperparameters: Optional[Dict] = None, **kwargs: Any) -> None:
         """
         Parameters
         ----------

@@ -67,8 +67,6 @@ class OptunaLearner(Learner, ONNXConvertible):
         self.n_trials = n_trials
 
 
-        self.model_class = model_class
-
     def _make_objective_func(
         self, search_space: Union[Dict, Callable], X: npt.NDArray, y: npt.NDArray
     ) -> Callable:
@@ -84,10 +82,10 @@ class OptunaLearner(Learner, ONNXConvertible):
             X_train, y_train = RandomOverSampler().fit_resample(X_train, y_train)
         progress_bar = tqdm(total=self.n_trials)
         if isinstance(search_space, Dict):
-
-            def objective(trial) -> float:
+            search_space_dict: Dict = search_space
+            def objective(trial) -> float: #type: ignore
                 params = {}
-                for hp_n, hp_v in search_space.items():
+                for hp_n, hp_v in search_space_dict.items():
                     if hp_v["type"] == "int":
                         params[hp_n] = trial.suggest_int(name=hp_n, **hp_v["kwargs"])
                     if hp_v["type"] == "float":
@@ -105,9 +103,9 @@ class OptunaLearner(Learner, ONNXConvertible):
                 return loss_
 
         else:
-
-            def objective(trial) -> float:
-                res = search_space(trial, X_train, X_val, y_train, y_val)
+            search_space_fn: Callable = search_space
+            def objective(trial) -> float: #type: ignore
+                res = search_space_fn(trial, X_train, X_val, y_train, y_val)
                 if res["loss"] is None:
                     pred = res["predictions"]
                     loss_ = loss(y_val, pred)

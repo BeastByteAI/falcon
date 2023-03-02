@@ -13,6 +13,9 @@ from falcon.addons.sklearn.decomposition.svd import ConditionalSVD
 
 
 class MultiModalEncoder(ScalerAndEncoder):
+    """
+    Applies different types of encodings on numerical, categorical, text and date/datetime features.
+    """
     def _get_date_tokenizer(self, ct: ColumnTypes) -> SKLPipeline:
         if ct == ColumnTypes.DATE_YMD_ISO8601:
             f = r"%Y-%m-%d"
