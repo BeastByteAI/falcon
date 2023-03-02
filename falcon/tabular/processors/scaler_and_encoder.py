@@ -37,7 +37,18 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
             not_sparse = {"sparse": False}
         else:
             not_sparse = {"sparse_output": False}
-        method = OneHotEncoder(categories="auto", handle_unknown="ignore", **not_sparse)
+
+        method = SKLPipeline(
+            steps=[
+                ("cast_str", CastTransformer(dtype=np.str_)),
+                (
+                    "ohe",
+                    OneHotEncoder(
+                        categories="auto", handle_unknown="ignore", **not_sparse
+                    ),
+                ),
+            ]
+        )
         return method
 
     def _get_numeric_scaler(self) -> BaseEstimator:
