@@ -122,7 +122,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         Returns
         -------
         Type
-            npt.NDArray[np.object_]
+            object
         """
         return npt.NDArray[np.object_]
 
@@ -144,7 +144,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
 
         Parameters
         ----------
-        X : npt.NDArray[np.object_]
+        X : npt.NDArray[object]
             data to process
 
         Returns

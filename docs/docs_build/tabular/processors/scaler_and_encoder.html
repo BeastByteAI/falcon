@@ -7,6 +7,7 @@
   <title>ScalerAndEncoder &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,10 +17,12 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="LabelDecoder" href="label_decoder.html" />
+    <link rel="next" title="MultiModalEncoder" href="mm_encoder.html" />
     <link rel="prev" title="SimpleTabularPipeline" href="../pipelines/simple_pipeline.html" /> 
 </head>
 
@@ -46,21 +49,28 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../abstract/index.html">Abstract</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">Tabular</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../tab_manager.html">TabularTaskManager</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../pipelines/simple_pipeline.html">SimpleTabularPipeline</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">ScalerAndEncoder</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ScalerAndEncoder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#falcon.tabular.processors.ScalerAndEncoder"><code class="docutils literal notranslate"><span class="pre">ScalerAndEncoder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mm_encoder.html">MultiModalEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="label_decoder.html">LabelDecoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../learners/super_learner.html">SuperLearner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../learners/optuna_learner.html">OptunaLearner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../learners/plain_learner.html">PlainLearner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/hgbt_clf.html">HistGradientBoostingClassifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/hgbt_regr.html">HistGradientBoostingRegressor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/stacking_clf.html">StackingClassifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/stacking_regr.html">StackingRegressor</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../registry.html">Task Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
@@ -96,27 +106,27 @@
 <h1>ScalerAndEncoder<a class="headerlink" href="#scalerandencoder" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">falcon.tabular.processors.</span></span><span class="sig-name descname"><span class="pre">ScalerAndEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">falcon.tabular.processors.</span></span><span class="sig-name descname"><span class="pre">ScalerAndEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ColumnTypes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder" title="Permalink to this definition"></a></dt>
 <dd><p>Applies OneHotEncoder/OrdinalEncoder on low/high cardinality categorical features and StandardScaler on numerical features.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ColumnTypes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.__init__" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mask</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – boolean mask with True/False for categorical/numerical features</p>
+<dd class="field-odd"><p><strong>mask</strong> (<em>List</em><em>[</em><em>ColumnTypes</em><em>]</em>) – provides a type for each column at a given index</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.fit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fits the encoder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>npt.NDArray</em>) – data to encode</p></li>
-<li><p><strong>_</strong> (<em>Any</em><em>, </em><em>optional</em>) – dummy argument to keep compatibility with pipeline training, by default None</p></li>
+<li><p><strong>_</strong> (<em>Any</em><em>, </em><em>optional</em>) – dummy argument to keep compatibility with pipeline training</p></li>
 </ul>
 </dd>
 </dl>
@@ -124,7 +134,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.fit_pipe">
-<span class="sig-name descname"><span class="pre">fit_pipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.fit_pipe" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit_pipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.fit_pipe" title="Permalink to this definition"></a></dt>
 <dd><p>Equivalent of <cite>fit</cite> method that is used for elements chaining inisde pipeline during training.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -144,11 +154,11 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">object_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Equivalent of <cite>.predict()</cite> or <cite>.transform()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>X</strong> (npt.NDArray[<a href="#id1"><span class="problematic" id="id2">np.object_</span></a>]) – data to process</p>
+<dd class="field-odd"><p><strong>X</strong> (<em>npt.NDArray</em><em>[</em><em>object</em><em>]</em>) – data to process</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>processed data</p>
@@ -164,7 +174,7 @@
 <span class="sig-name descname"><span class="pre">get_input_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.get_input_type" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>npt.NDArray[<a href="#id3"><span class="problematic" id="id4">np.object_</span></a>]</p>
+<dd class="field-odd"><p>object</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Type</p>
@@ -187,7 +197,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Applies the encoder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -216,7 +226,7 @@ Each feature in the original dataset is mapped to its own input node (<cite>floa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.processors.ScalerAndEncoder.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.transform" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.processors.ScalerAndEncoder.transform" title="Permalink to this definition"></a></dt>
 <dd><p>Equivalent of <cite>self.predict(X)</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -240,7 +250,7 @@ Each feature in the original dataset is mapped to its own input node (<cite>floa
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../pipelines/simple_pipeline.html" class="btn btn-neutral float-left" title="SimpleTabularPipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="label_decoder.html" class="btn btn-neutral float-right" title="LabelDecoder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mm_encoder.html" class="btn btn-neutral float-right" title="MultiModalEncoder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

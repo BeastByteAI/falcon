@@ -103,7 +103,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         Returns
         -------
         Type
-            NDArray[np.str_]
+            NDArray[str]
         """
         return NDArray[np.str_]
 

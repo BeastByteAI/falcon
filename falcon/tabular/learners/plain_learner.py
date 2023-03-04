@@ -8,7 +8,7 @@ from falcon.serialization import SerializedModelRepr
 
 class PlainLearner(Learner, ONNXConvertible):
     """
-    PlainLearner trains a model using speicified or default hyperparameters
+    PlainLearner trains a model using provided or default hyperparameters.
     """
     def __init__(self, task: str, model_class: Optional[Type] = None, hyperparameters: Optional[Dict] = None, **kwargs: Any) -> None:
         """
@@ -18,7 +18,7 @@ class PlainLearner(Learner, ONNXConvertible):
             'tabular_classification' or 'tabular_regression'
         model_class : Optional[Type], optional
             the class of the model to train, by default None;
-            if None, HistGradientBoosting
+            if None, HistGradientBoosting is used
         hyperparameters: Dict, optional
             the dictionary of hyperparameters for model training
         """

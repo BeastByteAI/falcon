@@ -7,6 +7,7 @@
   <title>API reference &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,10 +17,12 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/design-tabs.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="High level functions" href="high_level_api.html" />
+    <link rel="next" title="High level API" href="high_level_api.html" />
     <link rel="prev" title="Getting started" href="intro.html" /> 
 </head>
 
@@ -46,9 +49,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="high_level_api.html">High level functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="high_level_api.html">High level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="abstract/index.html">Abstract</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tabular/index.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="registry.html">Task Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
@@ -82,10 +87,53 @@
 <h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="high_level_api.html">High level functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level_api.html">High level API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="high_level_api.html#falcon.AutoML"><code class="docutils literal notranslate"><span class="pre">AutoML()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="high_level_api.html#falcon.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="high_level_api.html#falcon.run_model"><code class="docutils literal notranslate"><span class="pre">run_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sklearn_api.html">Scikit-learn API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.__init__"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.fit"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.get_params"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.save_model"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.save_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.score"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.score()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularClassifier.set_params"><code class="docutils literal notranslate"><span class="pre">FalconTabularClassifier.set_params()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.__init__"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.fit"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.get_params"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.save_model"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.save_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.score"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.score()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sklearn_api.html#falcon.sklapi.FalconTabularRegressor.set_params"><code class="docutils literal notranslate"><span class="pre">FalconTabularRegressor.set_params()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="abstract/index.html">Abstract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tabular/index.html">Tabular</a></li>
-<li class="toctree-l1"><a class="reference internal" href="available_configurations.html">Available Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Task Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.get_configuration"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.get_configuration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.get_registered_config_names"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.get_registered_config_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.get_registered_tasks"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.get_registered_tasks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.get_task_manager"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.get_task_manager()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.is_known_task"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.is_known_task()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.load_extension"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.load_extension()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.register_configurations"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.register_configurations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="registry.html#falcon.task_configurations.TaskConfigurationRegistry.register_task"><code class="docutils literal notranslate"><span class="pre">TaskConfigurationRegistry.register_task()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="available_configurations.html">Available Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="available_configurations.html#configurations-for-tabular-regression-tabular-classification-tasks">Configurations for tabular_regression/tabular_classification tasks</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -95,7 +143,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="intro.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="high_level_api.html" class="btn btn-neutral float-right" title="High level functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="high_level_api.html" class="btn btn-neutral float-right" title="High level API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
