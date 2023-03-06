@@ -162,6 +162,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         if self.progress_bar:
             self.progress_bar.close()
         best_params = study.best_params
+        self.best_params_ = best_params
 
         if self.task == "tabular_classification":
             X, y = RandomOverSampler().fit_resample(X, y)
