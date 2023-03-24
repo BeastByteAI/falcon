@@ -55,3 +55,4 @@ def disable_warnings() -> None:
     if not sys.warnoptions:
         warnings.simplefilter("ignore")
         os.environ["PYTHONWARNINGS"] = "ignore"
+    return None

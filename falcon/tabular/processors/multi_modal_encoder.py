@@ -16,6 +16,7 @@ class MultiModalEncoder(ScalerAndEncoder):
     """
     Applies different types of encodings on numerical, categorical, text and date/datetime features.
     """
+
     def _get_date_tokenizer(self, ct: ColumnTypes) -> SKLPipeline:
         if ct == ColumnTypes.DATE_YMD_ISO8601:
             f = r"%Y-%m-%d"
@@ -25,6 +26,7 @@ class MultiModalEncoder(ScalerAndEncoder):
             raise ValueError("Unknown column type encountered")
         return SKLPipeline(
             steps=[
+                ("cast_str", CastTransformer(dtype=np.str_)),
                 ("date_tokenizer", DateTimeTokenizer(format=f)),
                 ("cast32", CastTransformer()),
                 ("sc", MaxAbsScaler()),
@@ -34,6 +36,7 @@ class MultiModalEncoder(ScalerAndEncoder):
     def _get_text_tfidf(self) -> SKLPipeline:
         return SKLPipeline(
             steps=[
+                ("cast_str", CastTransformer(dtype=np.str_)),
                 (
                     "tfidf_vectorizer",
                     TfidfVectorizer(
@@ -41,8 +44,7 @@ class MultiModalEncoder(ScalerAndEncoder):
                         input="content",
                         analyzer="word",
                         max_features=1024,
-                        token_pattern = "[a-zA-Z0-9_]+"
-
+                        token_pattern="[a-zA-Z0-9_]+",
                     ),
                 ),
                 ("cast32", CastTransformer()),
@@ -79,7 +81,7 @@ class MultiModalEncoder(ScalerAndEncoder):
             t: Tuple[str, Any, Union[int, List[int]]]
             if v != ColumnTypes.TEXT_UTF8:
                 t = (f"input {i}", method, [i])
-            else: 
+            else:
                 t = (f"input {i}", method, i)
             transformers.append(t)
         self.ct = ColumnTransformer(transformers)

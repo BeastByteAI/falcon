@@ -63,6 +63,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
     def _get_ordinal_encoder(self) -> BaseEstimator:
         return SKLPipeline(
             steps=[
+                ("cast_str", CastTransformer(dtype=np.str_)),
                 (
                     "ord_enc",
                     OrdinalEncoder(
