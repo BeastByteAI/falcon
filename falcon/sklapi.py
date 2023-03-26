@@ -3,7 +3,7 @@ from sklearn.base import (
     ClassifierMixin as _ClassifierMixin,
     RegressorMixin as _RegressorMixin,
 )
-from typing import Optional, Union, Dict
+from typing import Optional, Union, Dict, Callable
 import pandas as pd
 from numpy import typing as npt
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
@@ -11,22 +11,29 @@ from sklearn.utils.multiclass import unique_labels
 from falcon.main import initialize
 from falcon.task_configurations import get_task_configuration
 from datetime import datetime
+from sklearn.model_selection import BaseCrossValidator
 
 
 class _FalconBaseEstimator(_BaseEstimator):
     def __init__(
-        self, config: Union[str, Dict] = "SuperLearner", make_eval_set: bool = False
+        self, config: Union[str, Dict] = "SuperLearner", eval_strategy: Optional[Union[str, Callable, BaseCrossValidator]] = 'auto'
     ) -> None:
         """
         Parameters
         ----------
         config : Union[str, Dict], optional
             configuration to be used, by default "SuperLearner"
-        make_eval_set : bool, optional
-            determines if an evaluation set should be created, by default False
+        eval_strategy : Optional[Union[str, Callable, BaseCrossValidator]], optional
+            evaluation strategy, can be one of {'auto', 'holdout' 'cv', BaseCrossValidator, Callable} by default 'auto'.
+            If 'auto', uses 5 fold CV for small datasets and holdout for large ones.
+            If 'holdout', uses holdout strategy with 25% of data for validation.
+            If 'cv', uses 5 fold CV.
+            If BaseCrossValidator, uses the specified cross-validator.
+            If Callable, uses the specified function to split data into train and validation sets.
+            If None, no evaluation will be performed.
         """
         self.config = config
-        self.make_eval_set = make_eval_set
+        self.eval_strategy = eval_strategy
     
     def _get_tags(self) -> Dict:
         tags =  super()._get_tags()
@@ -90,8 +97,8 @@ class FalconTabularClassifier(_FalconBaseEstimator, _ClassifierMixin):
         self.classes_ = unique_labels(y)
         config = self._get_task_config()
         self.n_features_in_ = X.shape[1]
-        self.manager_ = initialize(task="tabular_classification", data=(X, y), **config)
-        self.manager_.train(pre_eval=False, make_eval_set=self.make_eval_set)
+        self.manager_ = initialize(task="tabular_classification", eval_strategy = self.eval_strategy, data=(X, y), **config)
+        self.manager_.train()
         self.manager_.performance_summary(None)
         return self
 
@@ -118,8 +125,8 @@ class FalconTabularRegressor(_FalconBaseEstimator, _RegressorMixin):
         X, y = check_X_y(X, y, dtype=None)
         config = self._get_task_config()
         self.n_features_in_ = X.shape[1]
-        self.manager_ = initialize(task="tabular_regression", data=(X, y), **config)
-        self.manager_.train(pre_eval=False, make_eval_set=self.make_eval_set)
+        self.manager_ = initialize(task="tabular_regression", eval_strategy = self.eval_strategy, data=(X, y), **config)
+        self.manager_.train()
         self.manager_.performance_summary(None)
         return self
 

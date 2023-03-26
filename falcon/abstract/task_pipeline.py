@@ -71,9 +71,10 @@ class Pipeline(Model):
     Base class for all pipelines.
     """
 
-    def __init__(self, task: str, **kwargs: Any) -> None:
+    def __init__(self, task: str, dataset_size: Tuple[int], **kwargs: Any) -> None:
         self.task = task
         self._pipeline: List[PipelineElement] = []
+        self.dataset_size = dataset_size
 
     def add_element(self, element: PipelineElement) -> None:
         """
