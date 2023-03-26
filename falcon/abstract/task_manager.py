@@ -44,7 +44,10 @@ class TaskManager(ABC):
         self.task: str = task
         self.features = features
         self.target = target
+        self.dataset_size = None
         self._data = self._prepare_data(data)
+        if self.dataset_size is None: 
+            raise RuntimeError('It seems like prepare_data() method did not set dataset_size attribute.')
         self._extra_pipeline_options = extra_pipeline_options
         self._create_pipeline(pipeline=pipeline, options=pipeline_options)
 
@@ -126,6 +129,7 @@ class TaskManager(ABC):
 
         # if pipeline is not None and options is None:
         #     self._pipeline = pipeline(task=self.task)
+
         if pipeline is None:
             pipeline = self.default_pipeline
         if options is None:
@@ -133,7 +137,7 @@ class TaskManager(ABC):
             if self._extra_pipeline_options is not None:
                 for k, v in self._extra_pipeline_options.items():
                     options[k] = v
-        self._pipeline = pipeline(task=self.task, **options)
+        self._pipeline = pipeline(task=self.task, dataset_size = self.dataset_size, **options)
 
     def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> ModelProto:
         """

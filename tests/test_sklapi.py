@@ -15,8 +15,8 @@ from unittest.case import SkipTest
 
 
 class DummyTestPipeline(Pipeline):
-    def __init__(self, task, learner, learner_kwargs, **kwargs):
-        super().__init__(task=task)
+    def __init__(self, task, learner, learner_kwargs, dataset_size, **kwargs):
+        super().__init__(task=task, dataset_size=dataset_size)
         self.add_element(learner(task=task, **learner_kwargs))
 
     def fit(self, X, y) -> None:
@@ -120,8 +120,8 @@ def test_skl_regr():
         },
     }
 
-    _test_regr(FalconRegressor(config=config, make_eval_set=False))
-    _test_regr(FalconTabularRegressor(config=config, make_eval_set=False))
+    _test_regr(FalconRegressor(config=config, eval_strategy='auto'))
+    _test_regr(FalconTabularRegressor(config=config, eval_strategy='auto'))
 
 
 def test_skl_clf():
@@ -132,5 +132,5 @@ def test_skl_clf():
             "learner_kwargs": {"model_class": FalconC},
         },
     }
-    _test_clf(FalconClassifier(config=config, make_eval_set=False))
-    _test_clf(FalconTabularClassifier(config=config, make_eval_set=False))
+    _test_clf(FalconClassifier(config=config, eval_strategy='auto'))
+    _test_clf(FalconTabularClassifier(config=config, eval_strategy='auto'))

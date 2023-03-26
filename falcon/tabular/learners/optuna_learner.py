@@ -1,5 +1,5 @@
 from falcon.abstract import Learner
-from typing import Type, Optional, Any, Union, Dict, Callable
+from typing import Type, Optional, Any, Union, Dict, Callable, Tuple
 from falcon.types import Float32Array, Int64Array
 from numpy import typing as npt
 from falcon.serialization import SerializedModelRepr
@@ -26,6 +26,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         task: str,
         model_class: Optional[Type] = None,
         n_trials: Optional[int] = None,
+        dataset_size: Optional[Tuple[int]] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -40,32 +41,35 @@ class OptunaLearner(Learner, ONNXConvertible):
         n_trials : Optional[int], optional
             number of optimization trials, minimum 20, by default None;
             if None, the number of trials is chosen dynamically based on the dataset size
+        dataset_size : Optional[Tuple[int]], optional
+            the size of the dataset, by default None;
 
         """
         self.task = task
-
+        self.dataset_size = dataset_size
         self.model_class: Type[Any]
-        if model_class is None: 
-            if task == "tabular_classification": 
+        if model_class is None:
+            if task == "tabular_classification":
                 self.model_class = HistGradientBoostingClassifier
             elif task == "tabular_regression":
-                self.model_class = HistGradientBoostingRegressor 
+                self.model_class = HistGradientBoostingRegressor
             else:
                 ValueError("Not supported task")
-        else: 
+        else:
             self.model_class = model_class
 
-        if not issubclass(self.model_class, Model) or not issubclass(self.model_class, OptunaMixin): # type: ignore
-            raise ValueError('Model class should be a subclass of falcon.abstract.Model')
-        if not issubclass(self.model_class, ONNXConvertible): # type: ignore
-            raise ValueError('OptunaLearner only supports ONNXConvertible models')
-        
+        if not issubclass(self.model_class, Model) or not issubclass(self.model_class, OptunaMixin):  # type: ignore
+            raise ValueError(
+                "Model class should be a subclass of falcon.abstract.Model"
+            )
+        if not issubclass(self.model_class, ONNXConvertible):  # type: ignore
+            raise ValueError("OptunaLearner only supports ONNXConvertible models")
+
         if n_trials is not None and n_trials < 5:
             print("n_trials should be >= 20, setting n_trials = 20")
             n_trials = 20
 
         self.n_trials = n_trials
-
 
     def _make_objective_func(
         self, search_space: Union[Dict, Callable], X: npt.NDArray, y: npt.NDArray
@@ -83,7 +87,8 @@ class OptunaLearner(Learner, ONNXConvertible):
         progress_bar = tqdm(total=self.n_trials)
         if isinstance(search_space, Dict):
             search_space_dict: Dict = search_space
-            def objective(trial) -> float: #type: ignore
+
+            def objective(trial) -> float:  # type: ignore
                 params = {}
                 for hp_n, hp_v in search_space_dict.items():
                     if hp_v["type"] == "int":
@@ -104,7 +109,8 @@ class OptunaLearner(Learner, ONNXConvertible):
 
         else:
             search_space_fn: Callable = search_space
-            def objective(trial) -> float: #type: ignore
+
+            def objective(trial) -> float:  # type: ignore
                 res = search_space_fn(trial, X_train, X_val, y_train, y_val)
                 if res["loss"] is None:
                     pred = res["predictions"]
@@ -114,7 +120,6 @@ class OptunaLearner(Learner, ONNXConvertible):
                 progress_bar.update(1)
                 return loss_
 
-
         self.progress_bar = progress_bar
         return objective
 
@@ -122,7 +127,9 @@ class OptunaLearner(Learner, ONNXConvertible):
         if self.n_trials is not None:
             return
 
-        volume = X.shape[0] * X.shape[1]
+        if self.dataset_size is None:
+            self.dataset_size = X.shape
+        volume = self.dataset_size[0] * self.dataset_size[1]
 
         min_threshold = 80_000  # 5_000 samples with 16 features
         mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
@@ -170,7 +177,9 @@ class OptunaLearner(Learner, ONNXConvertible):
         model.fit(X, y)
         self.model = model
 
-    def predict(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
+    def predict(
+        self, X: Float32Array, *args: Any, **kwargs: Any
+    ) -> Union[Float32Array, Int64Array]:
         return self.model.predict(X)
 
     def get_input_type(self) -> Type:
@@ -191,8 +200,9 @@ class OptunaLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
 
-    
-    def forward(self, X: Float32Array, *args: Any, **kwargs: Any) -> Union[Float32Array, Int64Array]:
+    def forward(
+        self, X: Float32Array, *args: Any, **kwargs: Any
+    ) -> Union[Float32Array, Int64Array]:
         """
         Equivalent to `.predict(X)`
 
@@ -208,7 +218,9 @@ class OptunaLearner(Learner, ONNXConvertible):
         """
         return self.model.predict(X)
 
-    def fit_pipe(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
+    def fit_pipe(
+        self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any
+    ) -> None:
         """
         Equivalent to `.fit(X, y)`
 

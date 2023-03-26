@@ -1,6 +1,6 @@
 from copy import deepcopy
 import pandas as pd
-from typing import Union, Tuple, Optional, List
+from typing import Union, Tuple, Optional, List, Callable
 import numpy as np
 from numpy import isin, typing as npt
 from falcon import types as ft
@@ -8,7 +8,8 @@ from falcon.abstract.task_pipeline import Pipeline
 from falcon.types import ColumnTypes
 from sklearn.model_selection import RepeatedStratifiedKFold, RepeatedKFold
 from sklearn.metrics import balanced_accuracy_score, r2_score
-
+from sklearn.model_selection._split import BaseCrossValidator
+from falcon.tabular.reporting import print_classification_report, print_regression_report
 
 def read_data(path: str) -> pd.DataFrame:
     if path.endswith(".csv"):
@@ -137,13 +138,17 @@ def calculate_model_score(y: npt.NDArray, y_hat: npt.NDArray, task: str) -> floa
 
 
 def tab_cv_score(
-    pipeline: Pipeline, X: npt.NDArray, y: npt.NDArray, task: str, n_folds: int = 5
+    pipeline: Pipeline, X: npt.NDArray, y: npt.NDArray, task: str, cv: Optional[BaseCrossValidator] = None,
 ) -> List[float]:
-    if task == "tabular_classification":
-        kf = RepeatedStratifiedKFold(n_splits=n_folds, n_repeats=1)
+    if cv is not None:
+        if not isinstance(cv, BaseCrossValidator):
+            raise ValueError("cv should be an instance of BaseCrossValidator")
+        kf = cv
+    elif task == "tabular_classification":
+        kf = RepeatedStratifiedKFold(n_splits=5, n_repeats=1)
         y = y.astype(np.str_)
     else:
-        kf = RepeatedKFold(n_splits=n_folds, n_repeats=1)
+        kf = RepeatedKFold(n_splits=5, n_repeats=1)
     scores = []
     for train_index, test_index in kf.split(X, y):
         copied_pipeline = deepcopy(pipeline)
@@ -151,5 +156,9 @@ def tab_cv_score(
         y_train, y_test = y[train_index], y[test_index]
         copied_pipeline.fit(X_train, y_train)
         pred = copied_pipeline.predict(X_test)
-        scores.append(calculate_model_score(y_test, pred, task))
-    return scores
+        report_fn = print_classification_report if task == 'tabular_classification' else print_regression_report
+        scores.append(report_fn(y_test, pred, silent = True))
+    mean_scores = {}
+    for key in scores[0].keys():
+        mean_scores[key] = np.mean([score[key] for score in scores])
+    return mean_scores
