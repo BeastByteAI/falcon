@@ -45,6 +45,7 @@ class TaskManager(ABC):
         self.features = features
         self.target = target
         self.dataset_size = None
+        self.feature_names_to_save = []
         self._data = self._prepare_data(data)
         if self.dataset_size is None: 
             raise RuntimeError('It seems like prepare_data() method did not set dataset_size attribute.')
@@ -153,7 +154,7 @@ class TaskManager(ABC):
             ONNX ModelProto of the model
         """
 
-        serialized_model = self._pipeline.save()
+        serialized_model = self._pipeline.save(feature_names=self.feature_names_to_save)
         if filename is not None:
             if not filename.endswith(f".onnx"):
                 filename += f".onnx"
