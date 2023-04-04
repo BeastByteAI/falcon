@@ -7,8 +7,16 @@ from falcon.abstract.onnx_convertible import ONNXConvertible
 from falcon.serialization import SerializedModelRepr
 from falcon.tabular.adapters.ts.auxiliary import _wrap_onnx
 
+
 class TSAdapterLearner(Learner, ONNXConvertible):
-    def __init__(self, task: str, dataset_size, mask, wrapped_pipeline: Pipeline, wrapped_pipeline_options: Dict):
+    def __init__(
+        self,
+        task: str,
+        dataset_size,
+        mask,
+        wrapped_pipeline: Pipeline,
+        wrapped_pipeline_options: Dict,
+    ):
         self.task = task
         self.mask = mask
         self.dataset_size = dataset_size
@@ -16,24 +24,35 @@ class TSAdapterLearner(Learner, ONNXConvertible):
         self.wrapped_pipeline = wrapped_pipeline
         self.wrapped_pipeline_options = wrapped_pipeline_options
         self.data_shape = None
-    
+
     def fit(self, X: np.ndarray, y: np.ndarray, *args: Any, **kwargs: Any) -> None:
-        mean = np.mean(X, axis = 1).reshape(-1, 1)
+        mean = np.mean(X, axis=1).reshape(-1, 1)
         y = y.reshape(-1, 1)
-        self._pipeline = self.wrapped_pipeline(task = self.task, mask = self.mask, dataset_size = self.dataset_size, **self.wrapped_pipeline_options)
+        self._pipeline = self.wrapped_pipeline(
+            task=self.task,
+            mask=self.mask,
+            dataset_size=self.dataset_size,
+            **self.wrapped_pipeline_options
+        )
         self._pipeline.fit(X - mean, y - mean)
         self.data_shape = [None, X.shape[1]]
-    
-    def predict(self, X:np.ndarray, *args: Any, **kwargs: Any) -> np.ndarray:
-        mean = np.mean(X, axis = 1).reshape(-1, 1)
-        pred = self._pipeline.predict(X-mean).reshape(-1,1)
+
+    def predict(self, X: np.ndarray, *args: Any, **kwargs: Any) -> np.ndarray:
+        mean = np.mean(X, axis=1).reshape(-1, 1)
+        pred = self._pipeline.predict(X - mean).reshape(-1, 1)
         pred = pred + mean
-        return pred.squeeze()
-    
+        return pred.squeeze(1)
+
     def to_onnx(self) -> SerializedModelRepr:
         onx = self._pipeline.save()
         _wrap_onnx(onx)
-        sm = SerializedModelRepr(model = onx, n_inputs=self.data_shape[1], n_outputs=1, initial_types=["float32" for _ in range(self.data_shape[1])], initial_shapes=[self.data_shape])
+        sm = SerializedModelRepr(
+            model=onx,
+            n_inputs=self.data_shape[1],
+            n_outputs=1,
+            initial_types=["float32" for _ in range(self.data_shape[1])],
+            initial_shapes=[self.data_shape],
+        )
         return sm
 
     def get_input_type(self) -> Type:

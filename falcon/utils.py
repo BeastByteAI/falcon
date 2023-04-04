@@ -56,3 +56,15 @@ def disable_warnings() -> None:
         warnings.simplefilter("ignore")
         os.environ["PYTHONWARNINGS"] = "ignore"
     return None
+
+
+def set_eval_strategy(
+    eval_strategy: Any, manager_configuration_: Dict, test_data: Any = None
+) -> None:
+    if "eval_strategy" in manager_configuration_.keys():
+        if not eval_strategy == "dynamic":
+            manager_configuration_["eval_strategy"] = eval_strategy
+    else:
+        if eval_strategy == "dynamic":
+            eval_strategy = "auto" if test_data is None else None
+        manager_configuration_["eval_strategy"] = eval_strategy
