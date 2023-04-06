@@ -12,11 +12,14 @@ from falcon.main import initialize
 from falcon.task_configurations import get_task_configuration
 from datetime import datetime
 from sklearn.model_selection import BaseCrossValidator
+from falcon.utils import set_eval_strategy
 
 
 class _FalconBaseEstimator(_BaseEstimator):
     def __init__(
-        self, config: Union[str, Dict] = "SuperLearner", eval_strategy: Optional[Union[str, Callable, BaseCrossValidator]] = 'auto'
+        self,
+        config: Union[str, Dict] = "SuperLearner",
+        eval_strategy: Optional[Union[str, Callable, BaseCrossValidator]] = "dynamic",
     ) -> None:
         """
         Parameters
@@ -24,7 +27,7 @@ class _FalconBaseEstimator(_BaseEstimator):
         config : Union[str, Dict], optional
             configuration to be used, by default "SuperLearner"
         eval_strategy : Optional[Union[str, Callable, BaseCrossValidator]], optional
-            evaluation strategy, can be one of {'auto', 'holdout' 'cv', BaseCrossValidator, Callable} by default 'auto'.
+            evaluation strategy, can be one of {'auto', 'holdout' 'cv', BaseCrossValidator, Callable} by default 'dynamic'.
             If 'auto', uses 5 fold CV for small datasets and holdout for large ones.
             If 'holdout', uses holdout strategy with 25% of data for validation.
             If 'cv', uses 5 fold CV.
@@ -34,12 +37,12 @@ class _FalconBaseEstimator(_BaseEstimator):
         """
         self.config = config
         self.eval_strategy = eval_strategy
-    
+
     def _get_tags(self) -> Dict:
-        tags =  super()._get_tags()
-        if "string" not in tags['X_types']:
-            tags['X_types'].append("string")
-        tags['non_deterministic'] = True
+        tags = super()._get_tags()
+        if "string" not in tags["X_types"]:
+            tags["X_types"].append("string")
+        tags["non_deterministic"] = True
         return tags
 
     def _get_task_config(self) -> Dict:
@@ -47,7 +50,7 @@ class _FalconBaseEstimator(_BaseEstimator):
             config = self.config
         elif isinstance(self.config, str):
             config = get_task_configuration("tabular_classification", self.config)
-        else: 
+        else:
             raise ValueError("Invalid configuration")
         return config
 
@@ -97,7 +100,12 @@ class FalconTabularClassifier(_FalconBaseEstimator, _ClassifierMixin):
         self.classes_ = unique_labels(y)
         config = self._get_task_config()
         self.n_features_in_ = X.shape[1]
-        self.manager_ = initialize(task="tabular_classification", eval_strategy = self.eval_strategy, data=(X, y), **config)
+        set_eval_strategy(self.eval_strategy, config, None)
+        self.manager_ = initialize(
+            task="tabular_classification",
+            data=(X, y),
+            **config,
+        )
         self.manager_.train()
         self.manager_.performance_summary(None)
         return self
@@ -125,7 +133,12 @@ class FalconTabularRegressor(_FalconBaseEstimator, _RegressorMixin):
         X, y = check_X_y(X, y, dtype=None)
         config = self._get_task_config()
         self.n_features_in_ = X.shape[1]
-        self.manager_ = initialize(task="tabular_regression", eval_strategy = self.eval_strategy, data=(X, y), **config)
+        set_eval_strategy(self.eval_strategy, config, None)
+        self.manager_ = initialize(
+            task="tabular_regression",
+            data=(X, y),
+            **config,
+        )
         self.manager_.train()
         self.manager_.performance_summary(None)
         return self

@@ -26,7 +26,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         task: str,
         model_class: Optional[Type] = None,
         n_trials: Optional[int] = None,
-        dataset_size: Optional[Tuple[int]] = None,
+        dataset_size: Optional[Tuple[int, ...]] = None,
         **kwargs: Any,
     ) -> None:
         """

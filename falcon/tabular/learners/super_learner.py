@@ -956,7 +956,7 @@ class SuperLearner(Learner, ONNXConvertible):
         base_score_threshold: Optional[float] = None,
         cv: Any = None,
         filter_estimators: Optional[bool] = None,
-        dataset_size: Optional[Tuple[int]] = None,
+        dataset_size: Optional[Tuple[int, ...]] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -984,7 +984,7 @@ class SuperLearner(Learner, ONNXConvertible):
             )
 
         self.base_estimators = base_estimators
-        self.dataset_size = dataset_size
+        self.dataset_size: Optional[Tuple[int, ...]] = dataset_size
         self.task = task
         self.base_score_threshold = base_score_threshold
         self.cv = cv

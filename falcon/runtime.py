@@ -1,5 +1,9 @@
 from typing import Any, Union, Dict, List, Type, Optional
-import onnxruntime as ort
+try:
+    import onnxruntime as ort
+except (ImportError, ModuleNotFoundError):
+    print("ONNXRuntime is not installed. Inference modules will not work.")
+    ort = None
 import numpy as np
 from abc import ABC, abstractmethod
 
@@ -14,17 +18,24 @@ class ONNXRuntime(BaseRuntime):
     """
     Runtime for ONNX models. This runtime can only run onnx models produced by falcon.
     """
+
     def __init__(self, model: Union[bytes, str]):
+        if ort is None:
+            raise RuntimeError(
+                "ONNXRuntime is not installed. Please install it with `pip install onnxruntime`."
+            )
         self.ort_session = ort.InferenceSession(model)
 
-    def run(self, X: np.ndarray, outputs: str = "final", **kwargs: Any) -> List[np.ndarray]:
+    def run(
+        self, X: np.ndarray, outputs: str = "final", **kwargs: Any
+    ) -> List[np.ndarray]:
         """
         Runs the model.
 
         Parameters
         ----------
         X : np.ndarray
-            model 
+            model
         outputs : str, optional
             when set to "all", all onnx output nodes will be returned; when "final" only the last layer outputs are returned, by default "final"
 
@@ -71,12 +82,17 @@ class ONNXRuntime(BaseRuntime):
         if outputs == "final" and len(ort_outputs) > 1:
             idx_ = []
             for name in output_names:
-                if not name[0:10] == "falcon_pl_":
+                if not name[0:10] in ("falcon_pl_", "falcon-pl-"):
                     raise RuntimeError("One of the output nodes has an invalid name.")
                 idx = int(name.split("/")[0][10:])
                 idx_.append(idx)
             max_idx = max(idx_)
             output_names = [
-                n for n in output_names if n.startswith(f"falcon_pl_{max_idx}")
+                n
+                for n in output_names
+                if (
+                    n.startswith(f"falcon_pl_{max_idx}")
+                    or n.startswith(f"falcon-pl-{max_idx}")
+                )
             ]
         return output_names

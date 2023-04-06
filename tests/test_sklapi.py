@@ -16,7 +16,8 @@ from unittest.case import SkipTest
 
 class DummyTestPipeline(Pipeline):
     def __init__(self, task, learner, learner_kwargs, dataset_size, **kwargs):
-        super().__init__(task=task, dataset_size=dataset_size)
+        mask = kwargs.get("mask", [])
+        super().__init__(task=task, dataset_size=dataset_size, mask = mask)
         self.add_element(learner(task=task, **learner_kwargs))
 
     def fit(self, X, y) -> None:

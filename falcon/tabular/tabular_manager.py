@@ -69,7 +69,8 @@ class TabularTaskManager(TaskManager):
             If None, no evaluation will be performed.
         """
         print_(f"\nInitializing a new TabularTaskManager for task `{task}`")
-
+        self._data: Tuple[npt.NDArray, npt.NDArray, List[ColumnTypes]]
+        # self._pipeline: Pipeline
         super().__init__(
             task=task,
             data=data,
@@ -89,15 +90,25 @@ class TabularTaskManager(TaskManager):
             )
 
     def _validate_eval_strategy(self) -> bool:
-        if self.eval_strategy is None: 
+        if self.eval_strategy is None:
             return True
-        if self.eval_strategy in ('auto', 'cv', 'holdout'):
+        if self.eval_strategy in ("auto", "cv", "holdout"):
             return True
         if isinstance(self.eval_strategy, BaseCrossValidator):
             return True
         if callable(self.eval_strategy):
             return True
         return False
+
+    def _infer_feature_names(self, data: Any) -> None:
+        print(type(data))
+        if (
+            isinstance(data, pd.DataFrame)
+            and self.features is None
+            and self.target is not None
+        ):
+            self.features: Optional[Union[List[str], List[int]]] = [c for c in data.columns if c != self.target]
+
 
     def _prepare_data(
         self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
@@ -121,6 +132,7 @@ class TabularTaskManager(TaskManager):
         """
         if isinstance(data, str):
             data = read_data(data)
+            self._infer_feature_names(data)
         if isinstance(data, tuple):
             if self.features is not None or self.target is not None:
                 print(
@@ -131,13 +143,20 @@ class TabularTaskManager(TaskManager):
                     "When passing data as tuple, it should contain exactly 2 elements: `X` and `y`."
                 )
             X, y = data
+            if isinstance(X, pd.DataFrame):
+                self.feature_names_to_save = list(X.columns)
             if len(y.shape) > 3 or len(X.shape) > 3:
                 raise ValueError("Invalid data shape.")
             if len(y.shape) > 1 and y.shape[-1] != 1:
                 raise ValueError("The target should contain only one column.")
             X, y = convert_to_np_obj(X), convert_to_np_obj(y)
         else:
+            self._infer_feature_names(data)
             X, y = split_features(data, features=self.features, target=self.target)
+            if self.features is None and isinstance(data, pd.DataFrame):
+                self.feature_names_to_save = list(data.columns[:-1])
+            elif self.features is not None:
+                self.feature_names_to_save = self.features
         X, y = clean_data_split(X, y)
         self.dataset_size = X.shape
         mask: List[ColumnTypes]
@@ -162,7 +181,7 @@ class TabularTaskManager(TaskManager):
         """
         Default options for pipeline.
         """
-        options = {"mask": self._data[2]}
+        options: Dict[str, Any] = {"mask": self._data[2]}
         return options
 
     def _cross_validate(self) -> None:
@@ -177,9 +196,7 @@ class TabularTaskManager(TaskManager):
         scores["N_SAMPLES"] = self.dataset_size[0]
         self._stored_cv_score = scores
 
-    def train(
-        self, **kwargs: Any
-    ) -> TabularTaskManager:
+    def train(self, **kwargs: Any) -> TabularTaskManager:
         """
         Invokes the training procedure of an underlying pipeline.
 
@@ -220,7 +237,7 @@ class TabularTaskManager(TaskManager):
                 else:
                     print_("Evaluation set is already available.")
             elif eval_strategy == "cv" or isinstance(eval_strategy, BaseCrossValidator):
-                print_('Starting cross validation')
+                print_("Starting cross validation")
                 self._cross_validate()
                 print_("Finished cross-validation")
 
@@ -273,7 +290,7 @@ class TabularTaskManager(TaskManager):
             raise ValueError("subset should be either `train` or `eval`")
 
     def performance_summary(
-        self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]]
+        self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]] = None
     ) -> dict:
         """
         Prints a performance summary of the model.

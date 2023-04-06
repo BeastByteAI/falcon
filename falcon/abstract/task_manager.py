@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from numpy import typing as npt
 from .task_pipeline import Pipeline
-from typing import Dict, Optional, Any, Callable, Type
+from typing import Dict, Optional, Any, Callable, Type, List
 from falcon.serialization import SerializedModelRepr
 from onnx import ModelProto
 from onnx import save_model as onnx_save_model
@@ -44,11 +44,12 @@ class TaskManager(ABC):
         self.task: str = task
         self.features = features
         self.target = target
-        self.dataset_size = None
+        self.dataset_size = ()
+        self.feature_names_to_save: List[Any] = []
         self._data = self._prepare_data(data)
         if self.dataset_size is None: 
             raise RuntimeError('It seems like prepare_data() method did not set dataset_size attribute.')
-        self._extra_pipeline_options = extra_pipeline_options
+        self._extra_pipeline_options: Optional[Dict] = extra_pipeline_options
         self._create_pipeline(pipeline=pipeline, options=pipeline_options)
 
     @abstractmethod
@@ -137,7 +138,7 @@ class TaskManager(ABC):
             if self._extra_pipeline_options is not None:
                 for k, v in self._extra_pipeline_options.items():
                     options[k] = v
-        self._pipeline = pipeline(task=self.task, dataset_size = self.dataset_size, **options)
+        self._pipeline: Pipeline = pipeline(task=self.task, dataset_size = self.dataset_size, **options)
 
     def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> ModelProto:
         """
@@ -153,7 +154,7 @@ class TaskManager(ABC):
             ONNX ModelProto of the model
         """
 
-        serialized_model = self._pipeline.save()
+        serialized_model = self._pipeline.save(feature_names=self.feature_names_to_save)
         if filename is not None:
             if not filename.endswith(f".onnx"):
                 filename += f".onnx"

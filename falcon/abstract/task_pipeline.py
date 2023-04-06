@@ -71,10 +71,13 @@ class Pipeline(Model):
     Base class for all pipelines.
     """
 
-    def __init__(self, task: str, dataset_size: Tuple[int], **kwargs: Any) -> None:
+    def __init__(
+        self, task: str, dataset_size: Tuple[int, ...], mask: List[Any], **kwargs: Any
+    ) -> None:
         self.task = task
         self._pipeline: List[PipelineElement] = []
         self.dataset_size = dataset_size
+        self.mask = mask
 
     def add_element(self, element: PipelineElement) -> None:
         """
@@ -96,13 +99,14 @@ class Pipeline(Model):
             raise ValueError("Cannot add self to the pipeline")
         self._pipeline.append(element)
 
-    def save(self) -> ModelProto:
+    def save(self, feature_names: Optional[List] = None) -> ModelProto:
         """
         Exports the pipeline to ONNX ModelProto
 
         Parameters
         ----------
-
+        feature_names : Optional[List], optional
+            feature names, by default None
         Returns
         -------
         ModelProto
@@ -116,6 +120,9 @@ class Pipeline(Model):
                 raise RuntimeError("Encountered non convertible pipeline element")
 
         serialized_model = serialize_to_onnx(
-            serialized_pipeline_elements
+            serialized_pipeline_elements,
+            task=self.task,
+            init_types=self.mask,
+            init_feature_names=feature_names,
         )
         return serialized_model

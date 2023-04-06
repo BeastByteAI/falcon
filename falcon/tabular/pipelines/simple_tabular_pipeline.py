@@ -46,14 +46,13 @@ class SimpleTabularPipeline(Pipeline):
             defines which preprocessor to use, can be one of {'MultiModalEncoder','ScalerAndEncoder'}, by default 'MultiModalEncoder'
         """
 
-        super().__init__(task=task, dataset_size=dataset_size)
+        super().__init__(task=task, dataset_size=dataset_size, mask = mask)
 
-        self.mask = mask
         self.preprocessor = preprocessor
         self.learner = learner
         self.learner_kwargs = learner_kwargs
 
-    def _reset(self):
+    def _reset(self) -> None:
         self._pipeline = []
         encoder: PipelineElement
         if self.preprocessor == "MultiModalEncoder":
