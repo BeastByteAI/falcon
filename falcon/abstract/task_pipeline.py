@@ -72,7 +72,7 @@ class Pipeline(Model):
     """
 
     def __init__(
-        self, task: str, dataset_size: Tuple[int], mask: List[Any], **kwargs: Any
+        self, task: str, dataset_size: Tuple[int, ...], mask: List[Any], **kwargs: Any
     ) -> None:
         self.task = task
         self._pipeline: List[PipelineElement] = []

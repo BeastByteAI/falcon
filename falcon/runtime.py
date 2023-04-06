@@ -1,9 +1,11 @@
 from typing import Any, Union, Dict, List, Type, Optional
-import onnxruntime as ort
+try:
+    import onnxruntime as ort
+except (ImportError, ModuleNotFoundError):
+    print("ONNXRuntime is not installed. Inference modules will not work.")
+    ort = None
 import numpy as np
 from abc import ABC, abstractmethod
-import bson
-from bson import BSON
 
 
 class BaseRuntime(ABC):
@@ -18,6 +20,10 @@ class ONNXRuntime(BaseRuntime):
     """
 
     def __init__(self, model: Union[bytes, str]):
+        if ort is None:
+            raise RuntimeError(
+                "ONNXRuntime is not installed. Please install it with `pip install onnxruntime`."
+            )
         self.ort_session = ort.InferenceSession(model)
 
     def run(

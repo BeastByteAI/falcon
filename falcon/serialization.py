@@ -3,7 +3,6 @@ from falcon.utils import print_
 from typing import List, Tuple, Optional
 from numpy import typing as npt
 from onnx import ModelProto, load_from_string
-import onnxruntime as ort
 from onnx.compose import add_prefix, merge_models
 from onnx.helper import make_model
 from falcon.config import ONNX_OPSET_VERSION, ML_ONNX_OPSET_VERSION
@@ -93,7 +92,7 @@ def serialize_to_onnx(
     models_: List[SerializedModelRepr],
     init_types: Optional[List] = None,
     init_feature_names: Optional[List] = None,
-    task: str = None,
+    task: Optional[str] = None,
 ) -> onnx.ModelProto:
     if init_types is None:
         init_types = []

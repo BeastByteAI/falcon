@@ -69,7 +69,8 @@ class TabularTaskManager(TaskManager):
             If None, no evaluation will be performed.
         """
         print_(f"\nInitializing a new TabularTaskManager for task `{task}`")
-
+        self._data: Tuple[npt.NDArray, npt.NDArray, List[ColumnTypes]]
+        # self._pipeline: Pipeline
         super().__init__(
             task=task,
             data=data,
@@ -99,14 +100,14 @@ class TabularTaskManager(TaskManager):
             return True
         return False
 
-    def _infer_feature_names(self, data):
+    def _infer_feature_names(self, data: Any) -> None:
         print(type(data))
         if (
             isinstance(data, pd.DataFrame)
             and self.features is None
             and self.target is not None
         ):
-            self.features = [c for c in data.columns if c != self.target]
+            self.features: Optional[Union[List[str], List[int]]] = [c for c in data.columns if c != self.target]
 
 
     def _prepare_data(
@@ -180,7 +181,7 @@ class TabularTaskManager(TaskManager):
         """
         Default options for pipeline.
         """
-        options = {"mask": self._data[2]}
+        options: Dict[str, Any] = {"mask": self._data[2]}
         return options
 
     def _cross_validate(self) -> None:
@@ -289,7 +290,7 @@ class TabularTaskManager(TaskManager):
             raise ValueError("subset should be either `train` or `eval`")
 
     def performance_summary(
-        self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]]
+        self, test_data: Optional[Union[str, npt.NDArray, pd.DataFrame, Tuple]] = None
     ) -> dict:
         """
         Prints a performance summary of the model.

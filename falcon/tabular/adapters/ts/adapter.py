@@ -1,10 +1,12 @@
 import pandas as pd
-from typing import Union, List, Dict, Tuple
+from typing import Union, List, Dict, Tuple, Optional
 import numpy as np
 from falcon.task_configurations import get_task_configuration
 from falcon.tabular.adapters.ts.auxiliary import _create_window, _split_fn
 from falcon.tabular.adapters.ts.pipeline import TSAdapterPipeline
+from falcon.tabular.adapters.ts.plot_errors import _plot_errors
 from falcon.abstract import TaskManager
+from sklearn.metrics import mean_absolute_error, r2_score
 
 
 class TSAdapter:
@@ -39,7 +41,7 @@ class TSAdapter:
         if eval_size <= 0.0 or eval_size >= 1.0:
             raise ValueError("eval_size should be in the range (O., 1.)")
         self.eval_size = eval_size
-        self._manager = None
+        self._manager: Optional[TaskManager] = None
 
     def adapt(self, target_function: str = "AutoML") -> Dict:
         if target_function not in ("AutoML", "initialize"):
@@ -70,16 +72,49 @@ class TSAdapter:
     def bind(self, manager: TaskManager) -> None:
         self._manager = manager
 
+    def evaluate(self, forecast_period: int = 1, visualize: bool = False) -> Optional[pd.DataFrame]:
+        if self._manager is None:
+            raise ValueError("Manager is not bound. Please call .bind() method first")
+        if not hasattr(self._manager, "_eval_set"):
+            print("Cannot evaluate. No evaluation set was provided")
+            return None
+        _train = self._manager._data
+        _eval = self._manager._eval_set  # type: ignore
+        _train = _train[1].squeeze()
+
+        forecast_period_m1 = forecast_period - 1
+        predictions = np.zeros(shape=(len(_eval[1]) - forecast_period_m1,))
+
+        trunc = forecast_period_m1 if forecast_period_m1 > 0 else -len(_eval[1])
+        for i, datapoint in enumerate(_eval[0][:-trunc]):
+            datapoint = datapoint.reshape(1, -1)
+            predictions[i] = self.predict(datapoint, forecast_period=forecast_period)[
+                -1
+            ]
+
+        metrics = {
+            "FORECAST_WINDOW": [forecast_period],
+            "N_FORECASTS": [len(predictions)],
+            "MAE": [mean_absolute_error(_eval[1][forecast_period_m1:], predictions)],
+            "R2": [r2_score(_eval[1][forecast_period_m1:], predictions)],
+        }
+        df_metrics = pd.DataFrame(metrics)
+        print(df_metrics)
+        if visualize:
+            _plot_errors(_train, _eval[1], predictions)
+        return df_metrics
+
     def predict(
-        self, X: Union[pd.DataFrame, np.ndarray], forecast_period=3
+        self, X: Union[pd.DataFrame, np.ndarray], forecast_period: int = 3
     ) -> np.ndarray:
         if self._manager is None:
             raise ValueError("Manager is not bound. Please call .bind() method first")
         if isinstance(X, pd.DataFrame):
             X = X.to_numpy()
+        X = X.copy()
         predictions = np.zeros(shape=(forecast_period,))
         for i in range(forecast_period):
-            print(X, X.shape)
+            # print(X, X.shape)
             pred = self._manager.predict(X)[0]
             predictions[i] = pred
             X = np.roll(X, -1)

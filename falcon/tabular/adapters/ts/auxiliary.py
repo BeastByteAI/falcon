@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from typing import Tuple
-from onnx import ModelProto, TensorProto, helper as h
+from typing import Tuple, List
+from onnx import ModelProto, TensorProto, helper as h, NodeProto
 
 
 def _create_window(df: pd.DataFrame, window_size: int = 5) -> pd.DataFrame:
@@ -28,7 +28,7 @@ def _wrap_onnx(m: ModelProto) -> None:
     for i, _ in reversed(list(enumerate(m.graph.input))):
         del m.graph.input[i]
 
-    additional_nodes = []
+    additional_nodes: List[NodeProto] = []
 
     inputs = [
         h.make_tensor_value_info(new_names[i], TensorProto.FLOAT, [None, 1])

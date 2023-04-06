@@ -52,7 +52,7 @@ class SimpleTabularPipeline(Pipeline):
         self.learner = learner
         self.learner_kwargs = learner_kwargs
 
-    def _reset(self):
+    def _reset(self) -> None:
         self._pipeline = []
         encoder: PipelineElement
         if self.preprocessor == "MultiModalEncoder":

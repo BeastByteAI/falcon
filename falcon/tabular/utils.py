@@ -1,6 +1,6 @@
 from copy import deepcopy
 import pandas as pd
-from typing import Union, Tuple, Optional, List, Callable
+from typing import Union, Tuple, Optional, List, Callable, Dict
 import numpy as np
 from numpy import isin, typing as npt
 from falcon import types as ft
@@ -139,7 +139,7 @@ def calculate_model_score(y: npt.NDArray, y_hat: npt.NDArray, task: str) -> floa
 
 def tab_cv_score(
     pipeline: Pipeline, X: npt.NDArray, y: npt.NDArray, task: str, cv: Optional[BaseCrossValidator] = None,
-) -> List[float]:
+) -> Dict[str, float]:
     if cv is not None:
         if not isinstance(cv, BaseCrossValidator):
             raise ValueError("cv should be an instance of BaseCrossValidator")

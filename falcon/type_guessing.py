@@ -1,7 +1,7 @@
 from numpy import typing as npt
 import numpy as np
 import pandas as pd
-from typing import List, Optional
+from typing import List, Optional, Any
 from falcon.types import ColumnTypes
 import re
 
@@ -14,7 +14,7 @@ REGEX_UTC_LIKE = r"[0-9]+[-][0-9]{2}[-][0-9]{2}[ T]{1}[0-9]{2}[:][0-9]{2}[:][0-9
 REGEX_UTF_TOKEN = r"(?u)\b\w\w+\b"
 
 
-def _fullmatch(expr, x):
+def _fullmatch(expr: str, x: Any) -> bool:
     fm = re.fullmatch(expr, x) is not None
     return fm
 
