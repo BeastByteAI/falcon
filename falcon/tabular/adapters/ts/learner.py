@@ -35,6 +35,7 @@ class TSAdapterLearner(Learner, ONNXConvertible):
             dataset_size=self.dataset_size,
             **self.wrapped_pipeline_options
         )
+        self.data_shape = [None, X.shape[1]]
         self._pipeline.fit(X - mean, y - mean)
 
     def predict(self, X: np.ndarray, *args: Any, **kwargs: Any) -> np.ndarray:
