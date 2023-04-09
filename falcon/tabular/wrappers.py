@@ -39,12 +39,10 @@ class SklearnRegressorWrapper(_Model, _ONNXConvertible):
         SerializedModelRepr
         """
         initial_type = [("model_input", FloatTensorType(self._shape))]
-        options = self._get_onnx_options()
         onnx_model = convert_sklearn(
-            self.estimator,
+            self._model,
             initial_types=initial_type,
             target_opset={"": ONNX_OPSET_VERSION, "ai.onnx.ml": ML_ONNX_OPSET_VERSION},
-            options=options,
         )
         n_inputs = len(onnx_model.graph.input)
         n_outputs = len(onnx_model.graph.output)
