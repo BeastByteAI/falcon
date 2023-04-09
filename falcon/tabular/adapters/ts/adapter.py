@@ -16,7 +16,7 @@ class TSAdapter:
         target: str,
         window_size: int = 8,
         adapt_for: str = "tabular_regression",
-        config: str = "PlainLearner",
+        config: Union[str, Dict] = "PlainLearner",
         eval_size: float = 0.2,
     ):
         self.dataframe = dataframe
@@ -49,7 +49,10 @@ class TSAdapter:
         data = self.dataframe[self.target].astype(np.float32)
         df = pd.DataFrame({"y": data})
         df = _create_window(df, self.window_size)
-        config = get_task_configuration(self._adapt_for, self.config)
+        if isinstance(self.config, str):
+            config = get_task_configuration(self._adapt_for, self.config)
+        else:
+            config = self.config
         eval_strategy_fn = lambda X, y: _split_fn(X, y, self.eval_size)
         wrapped_pipeline = config["pipeline"]
         wrapped_pipeline_options = config["extra_pipeline_options"]
@@ -72,7 +75,9 @@ class TSAdapter:
     def bind(self, manager: TaskManager) -> None:
         self._manager = manager
 
-    def evaluate(self, forecast_period: int = 1, visualize: bool = False) -> Optional[pd.DataFrame]:
+    def evaluate(
+        self, forecast_period: int = 1, visualize: bool = False
+    ) -> Optional[pd.DataFrame]:
         if self._manager is None:
             raise ValueError("Manager is not bound. Please call .bind() method first")
         if not hasattr(self._manager, "_eval_set"):
