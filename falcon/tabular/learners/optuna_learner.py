@@ -136,7 +136,7 @@ class OptunaLearner(Learner, ONNXConvertible):
         large_threshold = 16_000_000  # 1_000_000 samples with 16 features
 
         if volume < min_threshold:
-            self.n_trials = 20
+            self.n_trials = 1000
         elif volume < mid_threshold:
             self.n_trials = 500
         elif volume < large_threshold:
