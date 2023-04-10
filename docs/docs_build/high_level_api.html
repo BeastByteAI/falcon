@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>High level functions &mdash; Falcon  documentation</title>
+  <title>High level API &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,10 +17,12 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/design-tabs.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Abstract" href="abstract/index.html" />
+    <link rel="next" title="Scikit-learn API" href="sklearn_api.html" />
     <link rel="prev" title="API reference" href="api.html" /> 
 </head>
 
@@ -46,9 +49,16 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api.html">API reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">High level functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">High level API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#falcon.AutoML"><code class="docutils literal notranslate"><span class="pre">AutoML()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#falcon.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#falcon.run_model"><code class="docutils literal notranslate"><span class="pre">run_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="abstract/index.html">Abstract</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tabular/index.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="registry.html">Task Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
@@ -69,7 +79,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="api.html">API reference</a></li>
-      <li class="breadcrumb-item active">High level functions</li>
+      <li class="breadcrumb-item active">High level API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/high_level_api.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -79,8 +89,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="high-level-functions">
-<h1>High level functions<a class="headerlink" href="#high-level-functions" title="Permalink to this heading"></a></h1>
+  <section id="high-level-api">
+<h1>High level API<a class="headerlink" href="#high-level-api" title="Permalink to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="falcon.AutoML">
 <span class="sig-prename descclassname"><span class="pre">falcon.</span></span><span class="sig-name descname"><span class="pre">AutoML</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="abstract/task_manager.html#falcon.abstract.TaskManager" title="falcon.abstract.task_manager.TaskManager"><span class="pre">TaskManager</span></a></span></span><a class="headerlink" href="#falcon.AutoML" title="Permalink to this definition"></a></dt>
@@ -170,7 +180,7 @@ This argument is ignored if <cite>pipeline_options</cite> is not None</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="api.html" class="btn btn-neutral float-left" title="API reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="abstract/index.html" class="btn btn-neutral float-right" title="Abstract" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sklearn_api.html" class="btn btn-neutral float-right" title="Scikit-learn API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,5 +1,5 @@
 from falcon import initialize
-from falcon.utils import run_falcon, run_onnx
+from falcon.utils import run_onnx
 import numpy as np
 from sklearn.metrics import r2_score 
 import random
@@ -19,9 +19,7 @@ def eval_saved_model(manager, is_regr=False, format="onnx", prefix = ''):
         pred_ = pred_[0].squeeze()
         print(pred_.shape)
     else:
-        with open(f"{prefix}test_model.{format}", "rb") as f:
-            model_r = f.read()
-        pred_ = run_falcon(model_r, X)
+        ValueError("Non onnx format was selected. Currently only onnx is supported.")
     if not is_regr:
         eq_ = np.equal(pred, pred_)
         print(eq_)
@@ -49,8 +47,9 @@ def inference_classification(config, config_name):
         task="tabular_classification", data="tests/extra_files/iris.csv", **config
     )
     manager.train(pre_eval=False)
+    print('model ', manager._pipeline._pipeline[1].model)
+    print('task ', manager._pipeline._pipeline[1].task)
     assert eval_saved_model(manager=manager, is_regr=False, format="onnx", prefix = f"clf_{config_name}_")
-    assert eval_saved_model(manager=manager, is_regr=False, format="falcon", prefix = f"clf_{config_name}_")
     
 
 def inference_regression(config, config_name):
@@ -62,9 +61,6 @@ def inference_regression(config, config_name):
     )
     manager.train(pre_eval=False, **config)
     ac, msec, data =  eval_saved_model(manager=manager, is_regr=True, format="onnx", prefix = f"regr_{config_name}_")
-    assert ac
-    assert msec 
-    ac, msec, data = eval_saved_model(manager=manager, is_regr=True, format="falcon", prefix = f"regr_{config_name}_")
     assert ac
     assert msec 
 
@@ -125,3 +121,20 @@ def test_inference_regr_optuna_hgbt():
     config = get_task_configuration(task = 'tabular_regression', configuration_name='OptunaLearner.hgbt')
     config['extra_pipeline_options']['learner_kwargs']['n_trials'] = 2
     inference_regression(config=config, config_name='OptunaLearnerHGBT')
+
+def test_inference_clf_plain():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='PlainLearner')
+    inference_classification(config=config, config_name='PlainLearner')
+
+def test_inference_regr_plain():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='PlainLearner')
+    inference_regression(config=config, config_name='PlainLearner')
+
+def test_inference_clf_plain_hgbt():
+    config = get_task_configuration(task = 'tabular_classification', configuration_name='PlainLearner.hgbt')
+    inference_classification(config=config, config_name='PlainLearnerHGBT')
+
+def test_inference_regr_plain_hgbt():
+    config = get_task_configuration(task = 'tabular_regression', configuration_name='PlainLearner.hgbt')
+    inference_regression(config=config, config_name='PlainLearnerHGBT')
+

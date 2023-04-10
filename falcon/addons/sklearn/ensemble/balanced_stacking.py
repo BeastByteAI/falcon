@@ -23,6 +23,9 @@ from types import MethodType
 from falcon.addons.sklearn.model_selection.balanced_strat_kfold import (
     BalancedStratifiedKFold,
 )
+from sklearn.preprocessing import LabelEncoder
+from sklearn import __version__ as sklearn_version
+from packaging import version
 
 # Slightly modified version of StackingClassifier from sklearn that upsamples the minority class during training
 # The .fit() method was adopted from https://github.com/scikit-learn/scikit-learn/blob/36958fb24/sklearn/ensemble/_stacking.py
@@ -138,10 +141,27 @@ def _fit(self, X, y, sample_weight=None):
 
     return self
 
+class _EncoderPlaceholder(LabelEncoder):
+    
+    def fit(self, y, **args):
+        return self
+    
+    def transform(self, y, **args):
+        return y
+    
+    def fit_transform(self, y, **args):
+        return y
+    
+    def inverse_transform(self, y, **args):
+        return y
+
+
 
 # the object is being patched with a new method instead of subclassing
 # so the estimator can be converted to ONNX using the default converter
 def BalancedStackingClassifier(estimators, final_estimator, **kwargs):
     clf = StackingClassifier(estimators, final_estimator, **kwargs)
     clf.fit = MethodType(_fit, clf)
+    if version.parse(sklearn_version) >= version.parse("1.2.0"):
+        clf._label_encoder = _EncoderPlaceholder()
     return clf

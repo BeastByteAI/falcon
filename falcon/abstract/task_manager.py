@@ -2,8 +2,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from numpy import typing as npt
 from .task_pipeline import Pipeline
-from typing import Dict, Optional, Any, Callable, Type
+from typing import Dict, Optional, Any, Callable, Type, List
 from falcon.serialization import SerializedModelRepr
+from onnx import ModelProto
+from onnx import save_model as onnx_save_model
+
 
 class TaskManager(ABC):
     """
@@ -41,8 +44,12 @@ class TaskManager(ABC):
         self.task: str = task
         self.features = features
         self.target = target
+        self.dataset_size = ()
+        self.feature_names_to_save: List[Any] = []
         self._data = self._prepare_data(data)
-        self._extra_pipeline_options = extra_pipeline_options
+        if self.dataset_size is None: 
+            raise RuntimeError('It seems like prepare_data() method did not set dataset_size attribute.')
+        self._extra_pipeline_options: Optional[Dict] = extra_pipeline_options
         self._create_pipeline(pipeline=pipeline, options=pipeline_options)
 
     @abstractmethod
@@ -84,6 +91,7 @@ class TaskManager(ABC):
         pass
 
     @property
+    @abstractmethod
     def default_pipeline_options(self) -> Dict:
         """
         Default pipeline options. Can be chosen dynamically.
@@ -122,6 +130,7 @@ class TaskManager(ABC):
 
         # if pipeline is not None and options is None:
         #     self._pipeline = pipeline(task=self.task)
+
         if pipeline is None:
             pipeline = self.default_pipeline
         if options is None:
@@ -129,34 +138,27 @@ class TaskManager(ABC):
             if self._extra_pipeline_options is not None:
                 for k, v in self._extra_pipeline_options.items():
                     options[k] = v
-        self._pipeline = pipeline(task=self.task, **options)
+        self._pipeline: Pipeline = pipeline(task=self.task, dataset_size = self.dataset_size, **options)
 
-    def save_model(self, format: str = "auto", filename: Optional[str] = None) -> bytes:
+    def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> ModelProto:
         """
         Serializes and saves the model.
 
         Parameters
         ----------
-        format : str, optional
-            "auto", "onnx" or "falcon"; "falcon" format should only be used in rare cases when converting to onnx is not possible, by default "auto"
         filename : Optional[str], optional
             filename for the model file, by default None. If filename is not specified, the model is not saved on disk and only returned as bytes object
-
         Returns
         -------
-        bytes
-            serialized model as bytes
+        ModelProto
+            ONNX ModelProto of the model
         """
-        if format not in {"falcon", "onnx", "auto"}:
-            raise ValueError(
-                f"expected one of [onnx, falcon] as output format, got {format}"
-            )
-        serialized_model, format = self._pipeline.save(format=format)
+
+        serialized_model = self._pipeline.save(feature_names=self.feature_names_to_save)
         if filename is not None:
-            if not filename.endswith(f".{format}"):
-                filename += f".{format}"
-            with open(filename, "wb+") as f:
-                f.write(serialized_model)
+            if not filename.endswith(f".onnx"):
+                filename += f".onnx"
+            onnx_save_model(serialized_model, filename, save_as_external_data=True, all_tensors_to_one_file=True, location=f"{filename}.tensors", size_threshold=0, convert_attribute=True)
         return serialized_model
 
     @abstractmethod

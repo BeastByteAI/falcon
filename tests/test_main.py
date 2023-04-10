@@ -12,5 +12,5 @@ def test_initialize():
     )
     assert isinstance(manager1, TabularTaskManager)
     assert isinstance(manager2, TabularTaskManager)
-    with pytest.raises(ValueError, match="Invalid task"):
+    with pytest.raises(ValueError, match="Unknown task"):
         manager1 = initialize(data="tests/extra_files/iris.csv", task="unknown_task")

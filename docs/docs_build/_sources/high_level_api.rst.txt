@@ -1,4 +1,4 @@
-High level functions
+High level API
 ========================
 
 .. autofunction:: falcon.AutoML

@@ -24,20 +24,20 @@ class LabelDecoder(Processor, ONNXConvertible):
         """
         self.le = LabelEncoder()
 
-    def fit_pipe(self, _: Any, __: Any) -> None:  # Do nothing
+    def fit_pipe(self, X: Any, y: Any, *args: Any, **kwargs: Any) -> None:  # Do nothing
         """
         Since label decoder should initially be fitted and applied before the main training phase of pipeline, this method does nothing. 
 
         Parameters
         ----------
-        _ : Any
+        X : Any
             dummy argument
-        __ : Any
+        y : Any
             dummy argument
         """
         return
 
-    def fit(self, X: npt.NDArray, _: Any = None) -> None:
+    def fit(self, X: npt.NDArray, y: Any = None, *args: Any, **kwargs: Any) -> None:
         """
         Fits the decoder.
 
@@ -45,12 +45,12 @@ class LabelDecoder(Processor, ONNXConvertible):
         ----------
         X : npt.NDArray
             labels to be encoded as integers
-        _ : Any, optional
+        y : Any, optional
             dummy argument, by default None
         """
         self.le.fit(X)
 
-    def predict(self, X: npt.NDArray, inverse: bool = True) -> npt.NDArray:
+    def predict(self, X: npt.NDArray, inverse: bool = True, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Equivalent of `.transform()`.
 
@@ -68,7 +68,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         """
         return self.transform(X, inverse=inverse)
 
-    def transform(self, X: npt.NDArray, inverse: bool = True) -> npt.NDArray:
+    def transform(self, X: npt.NDArray, inverse: bool = True, *args: Any, **kwargs: Any) -> npt.NDArray:
         """
         Encodes/decodes the labels.
 
@@ -103,7 +103,7 @@ class LabelDecoder(Processor, ONNXConvertible):
         Returns
         -------
         Type
-            NDArray[np.str_]
+            NDArray[str]
         """
         return NDArray[np.str_]
 
@@ -131,10 +131,10 @@ class LabelDecoder(Processor, ONNXConvertible):
         graph = h.make_graph([node], f"decoder", inputs, outputs)
         op = h.make_operatorsetid("ai.onnx.ml", ML_ONNX_OPSET_VERSION)
         model = h.make_model(graph, producer_name="falcon", opset_imports = [op])
-        return SerializedModelRepr(model.SerializeToString(), 1, 1, ["INT64"], [[None]])
+        return SerializedModelRepr(model, 1, 1, ["INT64"], [[None]])
 
     def forward(
-        self, X: npt.NDArray
+        self, X: npt.NDArray, *args: Any, **kwargs: Any
     ) -> npt.NDArray:  # Inside pipeline used as post-processor to decode labels back to strings
         """
         Equivalent to `.transform(X, inverse=True)`.

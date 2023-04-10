@@ -1,12 +1,8 @@
 import os
 import sys
 import warnings
-import bson
-from bson import BSON
-from falcon.runtime import ONNXRuntime, FalconRuntime
+from falcon.runtime import ONNXRuntime
 from typing import List, Optional, Dict
-import bson
-from bson import BSON
 from typing import List, Tuple, Optional
 from numpy import typing as npt
 import numpy as np
@@ -32,12 +28,7 @@ def run_model(model_path: str, X: npt.NDArray) -> Union[List[npt.NDArray], np.nd
     if model_path.endswith("onnx"):
         return run_onnx(model_path, X, "final")
     else:
-        return run_falcon(model_path, X)
-
-
-def run_falcon(model: Union[bytes, str], X: npt.NDArray) -> Union[List[npt.NDArray], np.ndarray]:
-    runtime = FalconRuntime(model=model)
-    return runtime.run(X)
+        raise ValueError("Invalid model path")
 
 
 def run_onnx(
@@ -64,3 +55,16 @@ def disable_warnings() -> None:
     if not sys.warnoptions:
         warnings.simplefilter("ignore")
         os.environ["PYTHONWARNINGS"] = "ignore"
+    return None
+
+
+def set_eval_strategy(
+    eval_strategy: Any, manager_configuration_: Dict, test_data: Any = None
+) -> None:
+    if "eval_strategy" in manager_configuration_.keys():
+        if not eval_strategy == "dynamic":
+            manager_configuration_["eval_strategy"] = eval_strategy
+    else:
+        if eval_strategy == "dynamic":
+            eval_strategy = "auto" if test_data is None else None
+        manager_configuration_["eval_strategy"] = eval_strategy

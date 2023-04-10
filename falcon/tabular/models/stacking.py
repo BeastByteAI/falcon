@@ -45,7 +45,7 @@ class _StackingBase(Model, ONNXConvertible):
             else np.int64
         )
 
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model
 
@@ -59,7 +59,7 @@ class _StackingBase(Model, ONNXConvertible):
         self._shape = [None, *X.shape[1:]]
         self.estimator.fit(X, y)
 
-    def predict(self, X: Float32Array) -> Float32Array:
+    def predict(self, X: Float32Array, *args: Any, **kwargs: Any) -> Float32Array:
         """
         Predicts the target for the given input
 
@@ -98,7 +98,7 @@ class _StackingBase(Model, ONNXConvertible):
         n_outputs = len(onnx_model.graph.output)
 
         return SerializedModelRepr(
-            onnx_model.SerializeToString(),
+            onnx_model,
             n_inputs,
             n_outputs,
             ["FLOAT32"],

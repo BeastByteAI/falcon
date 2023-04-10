@@ -7,6 +7,7 @@
   <title>HistGradientBoostingClassifier &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,11 +17,13 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/design-tabs.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="HistGradientBoostingRegressor" href="hgbt_regr.html" />
-    <link rel="prev" title="OptunaLearner" href="../learners/optuna_learner.html" /> 
+    <link rel="prev" title="PlainLearner" href="../learners/plain_learner.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,21 +49,28 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../high_level_api.html">High level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../abstract/index.html">Abstract</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">Tabular</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../tab_manager.html">TabularTaskManager</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../pipelines/simple_pipeline.html">SimpleTabularPipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/scaler_and_encoder.html">ScalerAndEncoder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../processors/mm_encoder.html">MultiModalEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../processors/label_decoder.html">LabelDecoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../learners/super_learner.html">SuperLearner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../learners/optuna_learner.html">OptunaLearner</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">HistGradientBoostingClassifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../learners/plain_learner.html">PlainLearner</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">HistGradientBoostingClassifier</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#falcon.tabular.models.HistGradientBoostingClassifier"><code class="docutils literal notranslate"><span class="pre">HistGradientBoostingClassifier</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="hgbt_regr.html">HistGradientBoostingRegressor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stacking_clf.html">StackingClassifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stacking_regr.html">StackingRegressor</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../registry.html">Task Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
@@ -116,7 +126,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.models.HistGradientBoostingClassifier.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.models.HistGradientBoostingClassifier.fit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#falcon.tabular.models.HistGradientBoostingClassifier.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fits the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,7 +161,7 @@ Optionally, the search space can be adjusted based on the provided training data
 
 <dl class="py method">
 <dt class="sig sig-object py" id="falcon.tabular.models.HistGradientBoostingClassifier.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.models.HistGradientBoostingClassifier.predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#falcon.tabular.models.HistGradientBoostingClassifier.predict" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>X</strong> (<em>npt.NDArray</em>) – features</p>
@@ -184,7 +194,7 @@ Optionally, the search space can be adjusted based on the provided training data
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../learners/optuna_learner.html" class="btn btn-neutral float-left" title="OptunaLearner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../learners/plain_learner.html" class="btn btn-neutral float-left" title="PlainLearner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="hgbt_regr.html" class="btn btn-neutral float-right" title="HistGradientBoostingRegressor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -2,7 +2,6 @@ from numpy import typing as npt
 from typing import Dict
 import numpy as np
 from sklearn import metrics
-from falcon.tabular.utils import calculate_model_score
 
 def scale_acc(acc: float, n_classes: int) -> float: 
     if acc < 0. or acc > 1.:

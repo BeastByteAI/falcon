@@ -26,6 +26,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx_design"
 ]
 napoleon_numpy_docstring = True
 templates_path = ["_templates"]

@@ -7,6 +7,7 @@
   <title>Available Configurations &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,10 +17,12 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/design-tabs.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="StackingRegressor" href="tabular/models/stacking_regr.html" /> 
+    <link rel="prev" title="Task Registry" href="registry.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,10 +48,15 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api.html">API reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="high_level_api.html">High level functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="high_level_api.html">High level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="abstract/index.html">Abstract</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tabular/index.html">Tabular</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Available Configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="registry.html">Task Registry</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Available Configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configurations-for-tabular-regression-tabular-classification-tasks">Configurations for tabular_regression/tabular_classification tasks</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -80,76 +88,132 @@
              
   <section id="available-configurations">
 <h1>Available Configurations<a class="headerlink" href="#available-configurations" title="Permalink to this heading"></a></h1>
-<table class="colwidths-given docutils align-default" id="id1">
-<caption><span class="caption-text">configurations for tabular_regression/tabular_classification tasks</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<p>The tables below list both main and additional configurations that can be used.
+Additional configurations should be used with caution as they may not be suitable for certain datasets. It is reccomended to always choose one of the main configurations.</p>
+<section id="configurations-for-tabular-regression-tabular-classification-tasks">
+<h2>Configurations for tabular_regression/tabular_classification tasks<a class="headerlink" href="#configurations-for-tabular-regression-tabular-classification-tasks" title="Permalink to this heading"></a></h2>
+<table class="colwidths-given docutils align-default" style="width: 100%">
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
+<col style="width: 18%" />
+<col style="width: 12%" />
+<col style="width: 70%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Extension</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>SuperLearner</p></td>
+<td><p>–</p></td>
 <td><div class="line-block">
 <div class="line">Uses <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> to build a stacking ensemble of base estimators.</div>
-<div class="line">The sub-config is determined by the dataset size.</div>
+<div class="line">SuperLearner combines multiple individual estimators to make predictions with greater accuracy than any of the individual estimators alone.</div>
+<div class="line">Additionaly, it learns to weigh the predictions of each individual model, optimizing the combination to maximize performance on the given task.</div>
+<div class="line">SuperLearner is more suitable for smaller datasets, but the produced models tend to be relatively large.</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td><p>SuperLearner.mini</p></td>
+<tr class="row-odd"><td><p>OptunaLearner</p></td>
+<td><p>–</p></td>
+<td><div class="line-block">
+<div class="line">Uses <a class="reference internal" href="tabular/learners/optuna_learner.html"><span class="doc">OptunaLearner</span></a>.</div>
+<div class="line">It builds a model and optimizes its hyperparameters using Optuna framework; <a class="reference internal" href="tabular/models/hgbt_clf.html"><span class="doc">HistGradientBoostingClassifier</span></a>/<a class="reference internal" href="tabular/models/hgbt_regr.html"><span class="doc">HistGradientBoostingRegressor</span></a> is used as a default model.</div>
+<div class="line">Since OptunaLearner focuses on finetuning a single model, the produced model is not very large in size, but the optimization procedure can be very long.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>PlainLearner</p></td>
+<td><p>–</p></td>
+<td><div class="line-block">
+<div class="line">Uses <a class="reference internal" href="tabular/learners/plain_learner.html"><span class="doc">PlainLearner</span></a>.</div>
+<div class="line">It builds a model using default hyperparameters; <a class="reference internal" href="tabular/models/hgbt_clf.html"><span class="doc">HistGradientBoostingClassifier</span></a>/<a class="reference internal" href="tabular/models/hgbt_regr.html"><span class="doc">HistGradientBoostingRegressor</span></a> is used as a default model.</div>
+<div class="line">PlainLearner is very fast, thus it is a good choice for building initial baselines or automizing preprocessing steps.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Additional configurations<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<table class="colwidths-given docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 12%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Name</p></th>
+<th class="head"><p class="sd-card-text">Extension</p></th>
+<th class="head"><p class="sd-card-text">Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text">SuperLearner.mini</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
 <div class="line">Uses <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> with a config for small datasets.</div>
 <div class="line">The dataset is considered small when the number of cells after preprocessing [n_rows*n_columns] is &lt; 80k.</div>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td><p>SuperLearner.mid</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">SuperLearner.mid</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
 <div class="line">Uses <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> with a config for mid datasets.</div>
 <div class="line">The dataset is considered small when the number of cells after preprocessing [n_rows*n_columns] is &lt; 4kk.</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td><p>SuperLearner.large</p></td>
+<tr class="row-even"><td><p class="sd-card-text">SuperLearner.large</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
 <div class="line">Uses <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> with a config for large datasets.</div>
 <div class="line">The dataset is considered small when the number of cells after preprocessing [n_rows*n_columns] is &lt; 16kk.</div>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td><p>SuperLearner.xlarge</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">SuperLearner.xlarge</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
 <div class="line">Uses <a class="reference internal" href="tabular/learners/super_learner.html"><span class="doc">SuperLearner</span></a> with a config for x-large datasets.</div>
 <div class="line">The dataset is considered small when the number of cells after preprocessing [n_rows*n_columns] is &gt;= 16kk.</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td><p>OptunaLearner</p></td>
+<tr class="row-even"><td><p class="sd-card-text">OptunaLearner.hgbt</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
-<div class="line">Uses <a class="reference internal" href="tabular/learners/optuna_learner.html"><span class="doc">OptunaLearner</span></a>;</div>
-<div class="line">builds a model with hyperparameters optimized by Optuna framework and HistGradientBoosting as default model.</div>
+<div class="line">Uses <a class="reference internal" href="tabular/learners/optuna_learner.html"><span class="doc">OptunaLearner</span></a>.</div>
+<div class="line">It builds a <a class="reference internal" href="tabular/models/hgbt_clf.html"><span class="doc">HistGradientBoostingClassifier</span></a>/<a class="reference internal" href="tabular/models/hgbt_regr.html"><span class="doc">HistGradientBoostingRegressor</span></a> model with hyperparameters optimized by Optuna framework.</div>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td><p>OptunaLearner.hgbt</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">PlainLearner.hgbt</p></td>
+<td><p class="sd-card-text">–</p></td>
 <td><div class="line-block">
-<div class="line">Alias for ‘OptunaLearner’;</div>
-<div class="line">HistGradientBoosting is used explicitly instead of relying on <a class="reference internal" href="tabular/learners/optuna_learner.html"><span class="doc">OptunaLearner</span></a> default choice.</div>
+<div class="line">Uses <a class="reference internal" href="tabular/learners/plain_learner.html"><span class="doc">PlainLearner</span></a>.</div>
+<div class="line">It builds a <a class="reference internal" href="tabular/models/hgbt_clf.html"><span class="doc">HistGradientBoostingClassifier</span></a>/<a class="reference internal" href="tabular/models/hgbt_regr.html"><span class="doc">HistGradientBoostingRegressor</span></a> model with default hyperparameters.</div>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
+</div>
+</details></section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tabular/models/stacking_regr.html" class="btn btn-neutral float-left" title="StackingRegressor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="registry.html" class="btn btn-neutral float-left" title="Task Registry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

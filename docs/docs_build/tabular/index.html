@@ -7,6 +7,7 @@
   <title>Tabular &mdash; Falcon  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/customStyles.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,6 +17,8 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/design-tabs.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,21 +49,25 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#making-predictions-with-trained-models">Making predictions with trained models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html#manually-selecting-a-configuration">Manually selecting a configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../high_level_api.html">High level functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../high_level_api.html">High level API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sklearn_api.html">Scikit-learn API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../abstract/index.html">Abstract</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Tabular</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tab_manager.html">TabularTaskManager</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pipelines/simple_pipeline.html">SimpleTabularPipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="processors/scaler_and_encoder.html">ScalerAndEncoder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="processors/mm_encoder.html">MultiModalEncoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="processors/label_decoder.html">LabelDecoder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="learners/super_learner.html">SuperLearner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="learners/optuna_learner.html">OptunaLearner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="learners/plain_learner.html">PlainLearner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/hgbt_clf.html">HistGradientBoostingClassifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/hgbt_regr.html">HistGradientBoostingRegressor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/stacking_clf.html">StackingClassifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/stacking_regr.html">StackingRegressor</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../registry.html">Task Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../available_configurations.html">Available Configurations</a></li>
 </ul>
 </li>
@@ -108,14 +115,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="processors/scaler_and_encoder.html#falcon.tabular.processors.ScalerAndEncoder" title="falcon.tabular.processors.ScalerAndEncoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processors.ScalerAndEncoder</span></code></a>(mask)</p></td>
 <td><p>Applies OneHotEncoder/OrdinalEncoder on low/high cardinality categorical features and StandardScaler on numerical features.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="processors/label_decoder.html#falcon.tabular.processors.LabelDecoder" title="falcon.tabular.processors.LabelDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processors.LabelDecoder</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="processors/mm_encoder.html#falcon.tabular.processors.MultiModalEncoder" title="falcon.tabular.processors.MultiModalEncoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processors.MultiModalEncoder</span></code></a>(mask)</p></td>
+<td><p>Applies different types of encodings on numerical, categorical, text and date/datetime features.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="processors/label_decoder.html#falcon.tabular.processors.LabelDecoder" title="falcon.tabular.processors.LabelDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">processors.LabelDecoder</span></code></a>()</p></td>
 <td><p>Label encoder/decoder to be used for encoding labels as integers and vice versa.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="learners/super_learner.html#falcon.tabular.learners.SuperLearner" title="falcon.tabular.learners.SuperLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.SuperLearner</span></code></a>(task[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="learners/super_learner.html#falcon.tabular.learners.SuperLearner" title="falcon.tabular.learners.SuperLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.SuperLearner</span></code></a>(task[, ...])</p></td>
 <td><p>Tabular learner which employs StackingModel for construction of meta estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner" title="falcon.tabular.learners.OptunaLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.OptunaLearner</span></code></a>(task[, model_class, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="learners/optuna_learner.html#falcon.tabular.learners.OptunaLearner" title="falcon.tabular.learners.OptunaLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.OptunaLearner</span></code></a>(task[, model_class, ...])</p></td>
 <td><p>OptunaLerner select the best hyperparameters for the given model using the Optuna Framework.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="learners/plain_learner.html#falcon.tabular.learners.PlainLearner" title="falcon.tabular.learners.PlainLearner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learners.PlainLearner</span></code></a>(task[, model_class, ...])</p></td>
+<td><p>PlainLearner trains a model using provided or default hyperparameters.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="models/hgbt_clf.html#falcon.tabular.models.HistGradientBoostingClassifier" title="falcon.tabular.models.HistGradientBoostingClassifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models.HistGradientBoostingClassifier</span></code></a>([...])</p></td>
 <td><p>Wrapper around <cite>sklearn.ensemble.HistGradientBoostingClassifier</cite>.</p></td>

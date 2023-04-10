@@ -492,7 +492,6 @@ _default_estimators: Dict = {
                 {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
         ],
-
     },
     "tabular_classification": {
         "mini": [
@@ -923,7 +922,6 @@ _default_estimators: Dict = {
                 },
             ),
         ],
-
         "x-large": [
             ("HistGradientBoostingClassifier_100", HistGradientBoostingClassifier, {}),
             (
@@ -941,7 +939,6 @@ _default_estimators: Dict = {
                 RandomForestClassifier,
                 {"min_samples_split": 0.003, "n_jobs": 1, "verbose": _SKLEARN_VERBOSE},
             ),
-            
         ],
     },
 }
@@ -959,6 +956,8 @@ class SuperLearner(Learner, ONNXConvertible):
         base_score_threshold: Optional[float] = None,
         cv: Any = None,
         filter_estimators: Optional[bool] = None,
+        dataset_size: Optional[Tuple[int, ...]] = None,
+        **kwargs: Any,
     ) -> None:
         """
         Constructs a meta model which is trained on cross-validated predictions of base estimators.
@@ -975,6 +974,8 @@ class SuperLearner(Learner, ONNXConvertible):
             number of CV folds or CV custom object, by default None
         filter_estimators : Optional[bool], optional
             when True, the perfomance of the estimators pre-estimated on the subset of training, estimators with the performance below the threshold will not be used for meta model construction, by default None
+        dataset_size : Optional[Tuple[int]], optional
+            size of the dataset, by default None
         """
 
         if task not in ["tabular_classification", "tabular_regression"]:
@@ -983,6 +984,7 @@ class SuperLearner(Learner, ONNXConvertible):
             )
 
         self.base_estimators = base_estimators
+        self.dataset_size: Optional[Tuple[int, ...]] = dataset_size
         self.task = task
         self.base_score_threshold = base_score_threshold
         self.cv = cv
@@ -1014,12 +1016,13 @@ class SuperLearner(Learner, ONNXConvertible):
             return (r2_score(y, y_hat) + 1) / 2
 
     def _set_size_optimized_config(self, X: Float32Array) -> None:
-
-        volume = X.shape[0] * X.shape[1]
+        if self.dataset_size is None:
+            self.dataset_size = X.shape
+        volume = self.dataset_size[0] * self.dataset_size[1]
 
         min_threshold = 80_000  # 5_000 samples with 16 features
         mid_threshold = 4_000_000  # 125_000 samples with 32 featrues / 250_000 samples with 16 features
-        large_threshold = 16_000_000 # 1_000_000 samples with 16 features
+        large_threshold = 16_000_000  # 1_000_000 samples with 16 features
 
         if volume < min_threshold:
             print_("Setting up learner config [small dataset]")
@@ -1031,7 +1034,7 @@ class SuperLearner(Learner, ONNXConvertible):
             cv = 5
             base_estimators = _default_estimators[self.task]["mid"]
             filter_estimators = True
-        elif volume < large_threshold: 
+        elif volume < large_threshold:
             print_("Setting up learner config [large dataset]")
             base_estimators = _default_estimators[self.task]["large"]
             cv = 3
@@ -1097,7 +1100,7 @@ class SuperLearner(Learner, ONNXConvertible):
                 selected_estimators.append((estimator[0], estimator[1](**estimator[2])))
         return selected_estimators
 
-    def fit(self, X: Float32Array, y: Float32Array) -> None:
+    def fit(self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any) -> None:
         """
         Fits the model. The hyperparameters that were not passed to the `__init__` will be automatically determined based on the size of the training set.
         For classification tasks, the dataset will be balanced by upsampling the minority class(es).
@@ -1112,8 +1115,8 @@ class SuperLearner(Learner, ONNXConvertible):
         print_("Fitting stacked model... ")
         self._set_size_optimized_config(X)
         estimators: List[Tuple[str, Callable]] = self._preselect(X, y)
-        stacked_estimator: SklearnBaseEstimator
         print_(f"\t -> Fitting the final estimator")
+        stacked_estimator: Union[StackingClassifier, StackingRegressor]
         if self.task == "tabular_classification":
             stacked_estimator = StackingClassifier(
                 estimators=estimators, final_estimator=LogisticRegression(), cv=self.cv
@@ -1126,7 +1129,9 @@ class SuperLearner(Learner, ONNXConvertible):
         stacked_estimator.fit(X, y)
         self.model = stacked_estimator
 
-    def predict(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def predict(
+        self, X: Float32Array, *args: Any, **kwargs: Any
+    ) -> Union[Float32Array, Int64Array]:
         """
         Makes a prediction for given X.
 
@@ -1160,7 +1165,9 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return Float32Array if self.task == "tabular_regression" else Int64Array
 
-    def forward(self, X: Float32Array) -> Union[Float32Array, Int64Array]:
+    def forward(
+        self, X: Float32Array, *args: Any, **kwargs: Any
+    ) -> Union[Float32Array, Int64Array]:
         """
         Equivalen to `.predict(X)`
 
@@ -1176,7 +1183,9 @@ class SuperLearner(Learner, ONNXConvertible):
         """
         return self.model.predict(X)
 
-    def fit_pipe(self, X: Float32Array, y: Float32Array) -> None:
+    def fit_pipe(
+        self, X: Float32Array, y: Float32Array, *args: Any, **kwargs: Any
+    ) -> None:
         """
         Equivalent to `.fit(X, y)`
 
