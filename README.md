@@ -1,10 +1,27 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/OKUA1/falcon/main/docs/source/logo_cropped.png" width="256" height="217"/>
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_black.svg" >
+  <source media="(prefers-color-scheme: dark)" srcset="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_white.svg">
+  <img alt="Hashnode logo" src="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_black.svg" height = "250">
+</picture>
 </p>
 
 
 # FALCON: A Lightweight AutoML Library
 Falcon is a lightweight python library that allows to train production-ready machine learning models in a single line of code. 
+
+## Why Falcon ? 🔍
+
+- Simplicity: With Falcon, training a comprehensive Machine Learning pipeline is as easy as writing a single line of code.
+- Flexibility: Falcon offers a range of pre-set configurations, enabling swift interchangeability of internal components with just a minor parameter change.
+- Extendability: Falcon's modular design, along with its extension registration procedure, allows seamless integration with virtually any framework.
+- Portability: A standout feature of Falcon is its deep native support for [ONNX](https://onnx.ai/) models. This lets you export complex pipelines into a single ONNX graph, irrespective of the underlying frameworks. As a result, your model can be conveniently deployed on any platform or with almost any programming language, all without dependence on the training environment.
+
+## Future Developments 🔮
+
+Falcon ML is under active development. We've already implemented a robust and production-ready core functionality, but there's much more to come. We plan to introduce many new features by the end of the year, so stay tuned!
+
+⭐ If you liked the project, please support us with a star!
 
 ## Quick Start 🚀
 
