@@ -54,7 +54,13 @@ Additionally, it is also possible to explicitly specify the feature/target colum
 
     from falcon import AutoML
 
-    manager = AutoML(task = 'tabular_classification', train_data = 'titanic.csv', test_data = 'titanic_test.csv', features = ['sex', 'gender', 'class', 'age'], target = 'survived')
+    manager = AutoML(
+        task="tabular_classification",
+        train_data=df,
+        test_data=(X_test, y_test),
+        features=["sex", "gender", "class", "age"],
+        target="survived",
+    )
 
 
 It is also possible to provide train/test data as a pandas dataframe, numpy array, or tuple containing X and y. In order to do that, simply pass the required object as an argument. This might be relevant in cases when custom data preparation is needed or data itself comes from non-conventional source. 
@@ -68,7 +74,13 @@ It is also possible to provide train/test data as a pandas dataframe, numpy arra
     X_test = pd.read_csv('X_test.csv')
     y_test = pd.read_csv('y_test.csv')
 
-    manager = AutoML(task = 'tabular_classification', train_data = df, test_data = (X_test, y_test), features = ['sex', 'gender', 'class', 'age'], target = 'survived')
+    manager = AutoML(
+        task="tabular_classification",
+        train_data=df,
+        test_data=(X_test, y_test),
+        features=["sex", "gender", "class", "age"],
+        target="survived",
+    )
 
 
 While AutoML function enables extremely fast experimentation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using :code:`initialize` helper function.
@@ -81,7 +93,7 @@ While AutoML function enables extremely fast experimentation, it does not provid
     test_df = pd.read_csv('titanic_test.csv')
 
     manager = initialize(task='tabular_classification', data='titanic.csv')
-    manager.train(make_eval_subset = True)
+    manager.train()
     manager.performance_summary(test_df)
     
 
@@ -95,7 +107,8 @@ You can try out falcon using one of the built-in demo datasets.
 ..  code-block:: python
 
     from falcon import AutoML
-    from falcon.datasets import load_churn_dataset, load_insurance_dataset # churn -> classification; insurance -> regression
+    # churn -> classification; insurance -> regression
+    from falcon.datasets import load_churn_dataset, load_insurance_dataset 
 
     df = load_churn_dataset()
 
