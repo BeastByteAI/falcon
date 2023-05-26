@@ -33,7 +33,7 @@ class TSAdapter:
             raise ValueError(f"Provided target {target} was not found")
         if window_size <= 1 or window_size >= dataframe.shape[0] - 1:
             raise ValueError(
-                "Invalid window size. Minumum value is 2, maximum value is (the number of rows in the dataframe - 1)"
+                "Invalid window size. Minimum value is 2, maximum value is (the number of rows in the dataframe - 1)"
             )
         self.target = target
         self._adapt_for = adapt_for
