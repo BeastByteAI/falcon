@@ -68,7 +68,7 @@ pip3 install falcon-ml
 ```
 
 ## Documentation 📚
-You can find a more detailed guide as well as an API reference in our [official docs](https://okua1.github.io/falcon/intro.html#).
+You can find a more detailed guide as well as an API reference in our [official docs](https://beastbyteai.github.io/falcon/intro.html#).
 
 ## Authors & Contributors ✨
 <table>
