@@ -1,8 +1,6 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_black.svg" >
-  <source media="(prefers-color-scheme: dark)" srcset="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_white.svg">
-  <img alt="Hashnode logo" src="https://gist.githubusercontent.com/OKUA1/43d26803ba9cccd1ea478bb491fd9b83/raw/c02f02a0c570360cf56897cf9d3165a7ad909b3f/falcon_black.svg" height = "250">
+  <img alt="Falcon logo" src="https://gist.githubusercontent.com/OKUA1/55e2fb9dd55673ec05281e0247de6202/raw/41063fcd620d9091662fc6473f9331a7651b4465/falcon.svg" height = "250">
 </picture>
 </p>
 
