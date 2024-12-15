@@ -12,6 +12,7 @@ class TaskManager(ABC):
     """
     Base class for all Task Managers.
     """
+
     def __init__(
         self,
         task: str,
@@ -47,8 +48,11 @@ class TaskManager(ABC):
         self.dataset_size = ()
         self.feature_names_to_save: List[Any] = []
         self._data = self._prepare_data(data)
-        if self.dataset_size is None: 
-            raise RuntimeError('It seems like prepare_data() method did not set dataset_size attribute.')
+        self._cached_performance_summary = None
+        if self.dataset_size is None:
+            raise RuntimeError(
+                "It seems like prepare_data() method did not set dataset_size attribute."
+            )
         self._extra_pipeline_options: Optional[Dict] = extra_pipeline_options
         self._create_pipeline(pipeline=pipeline, options=pipeline_options)
 
@@ -138,9 +142,11 @@ class TaskManager(ABC):
             if self._extra_pipeline_options is not None:
                 for k, v in self._extra_pipeline_options.items():
                     options[k] = v
-        self._pipeline: Pipeline = pipeline(task=self.task, dataset_size = self.dataset_size, **options)
+        self._pipeline: Pipeline = pipeline(
+            task=self.task, dataset_size=self.dataset_size, **options
+        )
 
-    def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> ModelProto:
+    def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> bytes:
         """
         Serializes and saves the model.
 
@@ -154,11 +160,16 @@ class TaskManager(ABC):
             ONNX ModelProto of the model
         """
 
-        serialized_model = self._pipeline.save(feature_names=self.feature_names_to_save)
+        serializer = self._pipeline.save(feature_names=self.feature_names_to_save)
+
+        if self._cached_performance_summary is not None:
+            serializer.metadata_payload["metrics"] = self._cached_performance_summary
+        serialized_model = serializer.serialize()
         if filename is not None:
-            if not filename.endswith(f".onnx"):
-                filename += f".onnx"
-            onnx_save_model(serialized_model, filename, save_as_external_data=True, all_tensors_to_one_file=True, location=f"{filename}.tensors", size_threshold=0, convert_attribute=True)
+            if not filename.endswith(f".fnnx"):
+                filename += f".fnnx"
+            with open(filename, "wb") as f:
+                f.write(serialized_model)
         return serialized_model
 
     @abstractmethod
@@ -170,7 +181,7 @@ class TaskManager(ABC):
         ----------
         test_data : Any
             data to be used for evaluation
-            
+
 
         Returns
         -------
@@ -180,10 +191,10 @@ class TaskManager(ABC):
         pass
 
     @abstractmethod
-    def performance_summary(self, test_data: Any) -> Any: 
+    def performance_summary(self, test_data: Any) -> Any:
         """
         Prints the performance summary of the trained pipeline.
-    
+
 
         Parameters
         ----------

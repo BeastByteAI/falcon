@@ -12,12 +12,7 @@ Falcon is a lightweight python library that allows to train production-ready mac
 
 - Simplicity: With Falcon, training a comprehensive Machine Learning pipeline is as easy as writing a single line of code.
 - Flexibility: Falcon offers a range of pre-set configurations, enabling swift interchangeability of internal components with just a minor parameter change.
-- Extendability: Falcon's modular design, along with its extension registration procedure, allows seamless integration with virtually any framework.
-- Portability: A standout feature of Falcon is its deep native support for [ONNX](https://onnx.ai/) models. This lets you export complex pipelines into a single ONNX graph, irrespective of the underlying frameworks. As a result, your model can be conveniently deployed on any platform or with almost any programming language, all without dependence on the training environment.
-
-## Future Developments 🔮
-
-Falcon ML is under active development. We've already implemented a robust and production-ready core functionality, but there's much more to come. We plan to introduce many new features by the end of the year, so stay tuned!
+- Portability: A standout feature of Falcon is its deep native support for [FNNX](https://github.com/BeastByteAI/FNNX)/[ONNX](https://onnx.ai/) models. This lets you export complex pipelines into a single production-ready file, irrespective of the underlying frameworks. As a result, your model can be conveniently deployed without any dependency on the training environment.
 
 ⭐ If you liked the project, please support us with a star!
 

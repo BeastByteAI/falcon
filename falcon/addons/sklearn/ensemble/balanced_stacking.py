@@ -17,7 +17,7 @@ from sklearn.utils import Bunch
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.validation import check_scalar
-from sklearn.utils.fixes import delayed
+from sklearn.utils.parallel import delayed
 from sklearn.ensemble import StackingClassifier
 from types import MethodType
 from falcon.addons.sklearn.model_selection.balanced_strat_kfold import (

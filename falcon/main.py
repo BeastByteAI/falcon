@@ -149,7 +149,7 @@ def AutoML(
     manager.performance_summary(test_data=test_data)
     print("Saving the model ...")
     ts = datetime.datetime.now().strftime("%Y%m%d.%H%M%S")
-    filename = f"falcon_{ts}.onnx"
-    manager.save_model(format="onnx", filename=filename)
+    filename = f"falcon_{task}_{ts}.fnnx"
+    manager.save_model(filename=filename)
     print(f"The model was saved as `{filename}`")
     return manager

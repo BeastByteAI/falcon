@@ -1,7 +1,7 @@
-__version__ = '0.6.0'
-__author__ = 'Oleg Kostromin, Marco Pasini, Iryna Kondrashchenko'
+__version__ = "0.8.0"
+__author__ = "Oleh Kostromin, Iryna Kondrashchenko"
 
 from falcon.main import initialize, AutoML
-from falcon.utils import disable_warnings, run_model
+from falcon.utils import disable_warnings
 
 disable_warnings()

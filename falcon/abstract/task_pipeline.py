@@ -1,9 +1,9 @@
 from abc import abstractmethod
-from typing import Any, Type, Union, Optional, List, Tuple
+from typing import Any, Type, Union, Optional, List, Tuple, Dict
 from onnx import ModelProto
 from falcon.abstract.model import Model
 from falcon.abstract.onnx_convertible import ONNXConvertible
-from falcon.serialization import SerializedModelRepr, serialize_to_onnx
+from falcon.serialization import SerializedModelRepr, serialize_to_onnx, FNNXSerializer
 
 
 class PipelineElement(Model):
@@ -99,7 +99,10 @@ class Pipeline(Model):
             raise ValueError("Cannot add self to the pipeline")
         self._pipeline.append(element)
 
-    def save(self, feature_names: Optional[List] = None) -> ModelProto:
+    def save(
+        self,
+        feature_names: Optional[List] = None,
+    ) -> FNNXSerializer:
         """
         Exports the pipeline to ONNX ModelProto
 
@@ -119,10 +122,11 @@ class Pipeline(Model):
             else:
                 raise RuntimeError("Encountered non convertible pipeline element")
 
-        serialized_model = serialize_to_onnx(
-            serialized_pipeline_elements,
+        fnnx_serializer = FNNXSerializer(
+            models=serialized_pipeline_elements,
             task=self.task,
             init_types=self.mask,
             init_feature_names=feature_names,
         )
-        return serialized_model
+
+        return fnnx_serializer

@@ -71,9 +71,10 @@ class _FalconBaseEstimator(_BaseEstimator):
         """
         if filename is None:
             ts = datetime.now().strftime("%Y%m%d.%H%M%S")
-            filename = f"falcon_{ts}.onnx"
-        print("Saving the model ...")
-        self.manager_.save_model(format="onnx", filename=filename)
+            filename = f"falcon_{ts}.fnnx"
+        elif not filename.endswith(".fnnx"):
+            filename = f"{filename}.fnnx"
+        self.manager_.save_model(filename=filename)
         print(f"The model was saved as `{filename}`")
 
 

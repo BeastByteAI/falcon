@@ -107,8 +107,9 @@ class TabularTaskManager(TaskManager):
             and self.features is None
             and self.target is not None
         ):
-            self.features: Optional[Union[List[str], List[int]]] = [c for c in data.columns if c != self.target]
-
+            self.features: Optional[Union[List[str], List[int]]] = [
+                c for c in data.columns if c != self.target
+            ]
 
     def _prepare_data(
         self, data: Union[str, npt.NDArray, pd.DataFrame, Tuple], training: bool = True
@@ -325,6 +326,7 @@ class TabularTaskManager(TaskManager):
             metrics_["test"] = self.evaluate(test_data, silent=True)
         df = pd.DataFrame.from_dict(metrics_, orient="index")
         print("\n", df, "\n")
+        self._cached_performance_summary = metrics_
         return metrics_
 
     def evaluate(

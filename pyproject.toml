@@ -5,34 +5,37 @@ build-backend = "setuptools.build_meta"
 
 [project]
 dependencies = [
-"skl2onnx>=1.12.0",
-"scikit-learn>=1.1.0",
+"skl2onnx>=1.17.0",
+"scikit-learn>=1.5.0",
 "numpy>=1.18.0",
-"onnx>=1.12.0",
-"onnxruntime>=1.12.1",
+"onnx>=1.16.0",
+"onnxruntime>=1.17.0",
 "pandas>=1.0.0", 
 "imbalanced-learn>=0.8.1",
 "pyarrow>=8.0.0",
 "optuna>=3.0.0", 
 "packaging>=20.0.0",
-"phonnx>=0.0.1",
 ]
 name = "falcon-ml"
-version = "0.7.0"
+version = "0.8.0"
 authors = [
-  { name="Oleg Kostromin", email="kostromin97@gmail.com" },
-  { name="Iryna Kondrashchenko", email="iryna230520@gmail.com" },
-  { name="Marco Pasini", email="marco.pasini.98@gmail.com" },
+  { name="Oleh Kostromin", email="oleh@beastbyte.ai" },
+  { name="Iryna Kondrashchenko", email="iryna@beastbyte.ai" },
 ]
 description = "AutoML library for fast experementations."
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+
+[project.optional-dependencies]
+fnnx = ["fnnx[core]<1.0.0"]
+
 [tool.pytest.ini_options]
 pythonpath = [
   "."

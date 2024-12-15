@@ -68,7 +68,7 @@ _default_estimators: Dict = {
                 "BaggingRegressor_10",
                 BaggingRegressor,
                 {
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "estimator": DecisionTreeRegressor(min_samples_split=2),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -112,7 +112,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "estimator": DecisionTreeRegressor(min_samples_split=2),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -122,7 +122,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 50,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "estimator": DecisionTreeRegressor(min_samples_split=2),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -132,7 +132,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 100,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=2),
+                    "estimator": DecisionTreeRegressor(min_samples_split=2),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -246,7 +246,7 @@ _default_estimators: Dict = {
                 "BaggingRegressor_10",
                 BaggingRegressor,
                 {
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.001),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -283,7 +283,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.003),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -293,7 +293,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 50,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.003),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -303,7 +303,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 100,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.003),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.003),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -381,7 +381,7 @@ _default_estimators: Dict = {
                 "BaggingRegressor_10",
                 BaggingRegressor,
                 {
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.001),
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -408,7 +408,7 @@ _default_estimators: Dict = {
                 BaggingRegressor,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeRegressor(min_samples_split=0.001),
+                    "estimator": DecisionTreeRegressor(min_samples_split=0.001),
                     "n_jobs": 2,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -516,7 +516,7 @@ _default_estimators: Dict = {
                 "BaggingClassifier_10",
                 BaggingClassifier,
                 {
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -597,7 +597,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -607,7 +607,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 50,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -617,7 +617,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 100,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": -1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -698,7 +698,7 @@ _default_estimators: Dict = {
                 "BaggingClassifier_10",
                 BaggingClassifier,
                 {
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -760,7 +760,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -770,7 +770,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 50,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -780,7 +780,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 100,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 4,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -840,7 +840,7 @@ _default_estimators: Dict = {
                 "BaggingClassifier_10",
                 BaggingClassifier,
                 {
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },
@@ -886,7 +886,7 @@ _default_estimators: Dict = {
                 BaggingClassifier,
                 {
                     "n_estimators": 25,
-                    "base_estimator": DecisionTreeClassifier(min_samples_split=0.001),
+                    "estimator": DecisionTreeClassifier(min_samples_split=0.001),
                     "n_jobs": 1,
                     "verbose": _SKLEARN_VERBOSE,
                 },

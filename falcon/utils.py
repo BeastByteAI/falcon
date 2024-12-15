@@ -1,41 +1,12 @@
 import os
 import sys
 import warnings
-from falcon.runtime import ONNXRuntime
 from typing import List, Optional, Dict
 from typing import List, Tuple, Optional
 from numpy import typing as npt
 import numpy as np
 from typing import Any, Dict, Union
 
-
-def run_model(model_path: str, X: npt.NDArray) -> Union[List[npt.NDArray], np.ndarray]:
-    """
-    Runs input data through the saved model.
-
-    Parameters
-    ----------
-    model_path : str
-        model path
-    X : npt.NDArray
-        model inputs
-
-    Returns
-    -------
-    Union[List[npt.NDArray], np.ndarray]
-        model predictions
-    """
-    if model_path.endswith("onnx"):
-        return run_onnx(model_path, X, "final")
-    else:
-        raise ValueError("Invalid model path")
-
-
-def run_onnx(
-    model: Union[bytes, str], X: npt.NDArray, outputs: str = "final"
-) -> List[npt.NDArray]:
-    runtime = ONNXRuntime(model=model)
-    return runtime.run(X, outputs=outputs)
 
 
 def set_verbosity_level(level: int = 1) -> None:
