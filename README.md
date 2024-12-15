@@ -50,26 +50,6 @@ Latest version from [GitHub](https://github.com/OKUA1/falcon)
 pip install git+https://github.com/OKUA1/falcon
 ```
 
-Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using [Conda](https://docs.conda.io/en/latest/)
-
-```bash 
-conda create -n falcon_env
-conda activate falcon_env
-conda config --env --set subdir osx-64
-conda install python=3.9
-pip3 install falcon-ml
-```
-
 ## Documentation 📚
 You can find a more detailed guide as well as an API reference in our [official docs](https://beastbyteai.github.io/falcon/intro.html#).
 
-## Authors & Contributors ✨
-<table>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://www.linkedin.com/in/oleh-kostromin-b671a4157/"><img src="https://avatars.githubusercontent.com/u/48349467?v=4" width="100px;" alt=""/><br /><sub><b>Oleg Kostromin</b></sub></a><br /></td>
-      <td align="center"><a href="https://www.linkedin.com/in/iryna-kondrashchenko-673800155/"><img src="https://avatars.githubusercontent.com/u/72279145?v=4" width="100px;" alt=""/><br /><sub><b>Iryna Kondrashchenko</b></sub></a><br /></td>
-      <td align="center"><a href="https://www.linkedin.com/in/pasinimarco/"><img src="https://avatars.githubusercontent.com/u/50598094?v=4" width="100px;" alt=""/><br /><sub><b>Marco Pasini</b></sub></a><br /></td>
-    </tr>
-  </tbody>
-</table>
