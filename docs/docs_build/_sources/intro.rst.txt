@@ -5,7 +5,7 @@ Getting started
 
 Falcon is a simple and lightweight AutoML library designed for people who want to train a model on a custom dataset in an instant even without specific data-science knowledge. Simply give Falcon your dataset and specify which feature you want the ML model to predict. Falcon will do the rest!
 
-Falcon allows the trained models to be immediately used in production by saving them in the widely used ONNX format. No need to write custom code to save complicated models to ONNX anymore!
+Falcon allows the trained models to be immediately used in production by saving them in a self-contained FNNX format.
 
 Installation
 ===================
@@ -15,22 +15,6 @@ Stable release from `PyPi <https://pypi.org/project/falcon-ml/>`_
 ..  code-block:: bash
 
     pip install falcon-ml
-
-Latest version from `GitHub <https://github.com/OKUA1/falcon>`_
-
-..  code-block:: bash
-
-    pip install git+https://github.com/OKUA1/falcon
-
-Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using `Conda <https://docs.conda.io/en/latest/>`_
-
-..  code-block:: bash
-
-    conda create -n falcon_env
-    conda activate falcon_env
-    conda config --env --set subdir osx-64
-    conda install python=3.9
-    pip3 install falcon-ml
 
 Usage
 ==================
@@ -46,7 +30,7 @@ The easiest way to use the library is by using the highest level API as shown be
     AutoML(task = 'tabular_classification', train_data = 'titanic.csv')
     
 
-This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save it as ONNX file for future inference. 
+This single line of code will read and prepare the dataset, scale/encode the features, encode the labels, train the model and save it as a single self-contained FNNX file for future inference. 
 
 Additionally, it is also possible to explicitly specify the feature/target columns (otherwise the last column will be used as target and all other as features) and test data (otherwise 25% of training set will be kept) for evaluation report.
 
@@ -54,7 +38,13 @@ Additionally, it is also possible to explicitly specify the feature/target colum
 
     from falcon import AutoML
 
-    manager = AutoML(task = 'tabular_classification', train_data = 'titanic.csv', test_data = 'titanic_test.csv', features = ['sex', 'gender', 'class', 'age'], target = 'survived')
+    manager = AutoML(
+        task="tabular_classification",
+        train_data=df,
+        test_data=(X_test, y_test),
+        features=["sex", "gender", "class", "age"],
+        target="survived",
+    )
 
 
 It is also possible to provide train/test data as a pandas dataframe, numpy array, or tuple containing X and y. In order to do that, simply pass the required object as an argument. This might be relevant in cases when custom data preparation is needed or data itself comes from non-conventional source. 
@@ -68,7 +58,13 @@ It is also possible to provide train/test data as a pandas dataframe, numpy arra
     X_test = pd.read_csv('X_test.csv')
     y_test = pd.read_csv('y_test.csv')
 
-    manager = AutoML(task = 'tabular_classification', train_data = df, test_data = (X_test, y_test), features = ['sex', 'gender', 'class', 'age'], target = 'survived')
+    manager = AutoML(
+        task="tabular_classification",
+        train_data=df,
+        test_data=(X_test, y_test),
+        features=["sex", "gender", "class", "age"],
+        target="survived",
+    )
 
 
 While AutoML function enables extremely fast experimentation, it does not provide enough control over the training steps and might be not flexible enough for more advanced users. As an alternative, it is possible to use the relevant TaskManager class either directly or by using :code:`initialize` helper function.
@@ -81,7 +77,7 @@ While AutoML function enables extremely fast experimentation, it does not provid
     test_df = pd.read_csv('titanic_test.csv')
 
     manager = initialize(task='tabular_classification', data='titanic.csv')
-    manager.train(make_eval_subset = True)
+    manager.train()
     manager.performance_summary(test_df)
     
 
@@ -95,7 +91,8 @@ You can try out falcon using one of the built-in demo datasets.
 ..  code-block:: python
 
     from falcon import AutoML
-    from falcon.datasets import load_churn_dataset, load_insurance_dataset # churn -> classification; insurance -> regression
+    # churn -> classification; insurance -> regression
+    from falcon.datasets import load_churn_dataset, load_insurance_dataset 
 
     df = load_churn_dataset()
 
@@ -122,19 +119,24 @@ The recommended approach is to provide the data as a numpy array.
 
 While this solution is straight-forward, in real-world applications the new/unlabeled data is not always available right away. Therefore, it is desirable to train a model and reuse it in the future. 
 
-One of the key features of falcon is native `ONNX <https://onnx.ai/>`_ support. ONNX (Open Neural Network Exchange) is an open standard for representing machine learning algorithms. This means that once the model is exported to ONNX, it can be run on any platform with available ONNX implementation. 
-For example, `Microsoft ONNX Rutime (ORT) <https://onnxruntime.ai/>`_ is available for Python, C, C++, Java, JavaScript and multiple other languages which allows to run the model virtually everywhere. There are also alternative implementations, but there is a high chance they do not support all the required operators.
+One of the key features of falcon is its ability to export models in a universal and deployment-ready `FNNX <https://github.com/BeastByteAI/FNNX>`_ format without any additional configuration.
 
-In order to simplify the interaction with ONNX Runtime, falcon provides a `run_model` function that takes the path to the ONNX model, the input data as a numpy array and returns the predictions. 
+In order to simplify the interaction with FNNX, falcon provides a thin wrapper. The model can be loaded and used for inference in a single line of code.
+
+Note: Runtime dependencies are not installed by default. To install the runtime dependencies, use the following command: 
+
+..  code-block:: bash
+
+    pip install falcon-ml[runtime]
 
 ..  code-block:: python
 
-    from falcon import run_model
+    from falcon.runtime import Runtime
     import pandas as pd
 
-    unlabeled_data = pd.read_csv('unlabeled_data.csv').to_numpy() # ONLY NUMPY ARRAYS ARE ACCEPTED AS INPUT !!!
+    unlabeled_data = pd.read_csv('unlabeled_data.csv').to_numpy()
 
-    predictions = run_model(model_path = "/path/to/model.onnx", X = unlabeled_data)
+    predictions = Runtime("/path/to/model.fnnx").predict(unlabeled_data)
 
     print(predictions)
 
@@ -148,14 +150,14 @@ Below is the complete example of model training and inference using the built-in
 
     df = load_churn_dataset(mode = "training")
     AutoML(task = "tabular_classification", train_data = df) 
-    # onnx model name will be printed after the training is done, use it instead of <FILENAME> during infernce
+    # FNNX model name will be printed after the training is done, use it instead of <FILENAME> during infernce
 
     ############################################ inference.py ##########################################################
-    from falcon import run_model
+    from falcon.runtime import Runtime
     from falcon.datasets import load_churn_dataset
 
     X = load_churn_dataset(mode = "inference") # for this example we are reusing training dataset but without labels
-    predictions = run_model(model_path = "<FILENAME>.onnx", X = X)
+    predictions = Runtime("<FILENAME>.fnnx").predict(X)
     print(predictions)
 
 Manually selecting a configuration
