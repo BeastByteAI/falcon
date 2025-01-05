@@ -482,7 +482,7 @@ _default_estimators: Dict = {
                 {"max_iter": 200},
             ),
             (
-                "HistGradientBoostingRegressor_200",
+                "HistGradientBoostingRegressor_50",
                 HistGradientBoostingRegressor,
                 {"max_iter": 50},
             ),

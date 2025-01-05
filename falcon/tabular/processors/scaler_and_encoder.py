@@ -3,7 +3,6 @@ from numpy import typing as npt
 from falcon.types import Float32Array, ColumnTypes
 from sklearn.base import BaseEstimator
 from sklearn import __version__ as sklearn_version
-from packaging import version
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
@@ -33,10 +32,7 @@ class ScalerAndEncoder(Processor, ONNXConvertible):
         self.mask = mask
 
     def _get_ohe(self) -> BaseEstimator:
-        if version.parse(sklearn_version) < version.parse("1.2.0"):
-            not_sparse = {"sparse": False}
-        else:
-            not_sparse = {"sparse_output": False}
+        not_sparse = {"sparse_output": False}
 
         method = SKLPipeline(
             steps=[

@@ -102,6 +102,7 @@ class Pipeline(Model):
     def save(
         self,
         feature_names: Optional[List] = None,
+        producer_extra_tags: Optional[List[str]] = None,
     ) -> FNNXSerializer:
         """
         Exports the pipeline to ONNX ModelProto
@@ -110,6 +111,8 @@ class Pipeline(Model):
         ----------
         feature_names : Optional[List], optional
             feature names, by default None
+        producer_extra_tags : Optional[List[str]], optional
+            extra tags, by default None
         Returns
         -------
         ModelProto
@@ -127,6 +130,7 @@ class Pipeline(Model):
             task=self.task,
             init_types=self.mask,
             init_feature_names=feature_names,
+            producer_extra_tags=producer_extra_tags,
         )
 
         return fnnx_serializer

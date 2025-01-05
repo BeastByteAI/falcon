@@ -392,6 +392,7 @@ class TarHandler:
             directory_name += "/"
         folder_info = tarfile.TarInfo(name=directory_name)
         folder_info.type = tarfile.DIRTYPE
+        folder_info.mode = 0o755
         self.tar.addfile(tarinfo=folder_info)
 
     def add_file(self, file_path, content):
@@ -401,10 +402,11 @@ class TarHandler:
         file_data = io.BytesIO(content)
         file_info = tarfile.TarInfo(name=file_path)
         file_info.size = len(file_data.getvalue())
+        file_info.mode = 0o644
         self.tar.addfile(tarinfo=file_info, fileobj=file_data)
 
     def add_json(self, file_path, data):
-        json_content = json.dumps(data, indent=None)
+        json_content = json.dumps(data, indent=4)
         self.add_file(file_path, json_content)
 
     def finalize(self):

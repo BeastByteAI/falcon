@@ -38,11 +38,18 @@ class _FalconBaseEstimator(_BaseEstimator):
         self.config = config
         self.eval_strategy = eval_strategy
 
+    def __sklearn_tags__(self) -> Dict:
+        tags = super().__sklearn_tags__()
+        tags.input_tags.string = True
+        tags.non_deterministic = True
+        return tags
+
+    # needed to support sklearn 1.5
     def _get_tags(self) -> Dict:
         tags = super()._get_tags()
         if "string" not in tags["X_types"]:
             tags["X_types"].append("string")
-        tags["non_deterministic"] = True
+        tags["non_determenistic"] = True
         return tags
 
     def _get_task_config(self) -> Dict:

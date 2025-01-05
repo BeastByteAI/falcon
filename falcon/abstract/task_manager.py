@@ -48,7 +48,7 @@ class TaskManager(ABC):
         self.dataset_size = ()
         self.feature_names_to_save: List[Any] = []
         self._data = self._prepare_data(data)
-        self._cached_performance_summary = None
+        self._cached_metrics = {}
         if self.dataset_size is None:
             raise RuntimeError(
                 "It seems like prepare_data() method did not set dataset_size attribute."
@@ -146,7 +146,12 @@ class TaskManager(ABC):
             task=self.task, dataset_size=self.dataset_size, **options
         )
 
-    def save_model(self, filename: Optional[str] = None, **kwargs: Any) -> bytes:
+    def save_model(
+        self,
+        filename: Optional[str] = None,
+        extra_tags: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> bytes:
         """
         Serializes and saves the model.
 
@@ -155,15 +160,19 @@ class TaskManager(ABC):
         filename : Optional[str], optional
             filename for the model file, by default None. If filename is not specified, the model is not saved on disk and only returned as bytes object
         Returns
+        extra_tags : Optional[List[str]], optional
+            extra tags to be added to the model, by default None
         -------
         ModelProto
             ONNX ModelProto of the model
         """
 
-        serializer = self._pipeline.save(feature_names=self.feature_names_to_save)
+        serializer = self._pipeline.save(
+            feature_names=self.feature_names_to_save, producer_extra_tags=extra_tags
+        )
 
-        if self._cached_performance_summary is not None:
-            serializer.metadata_payload["metrics"] = self._cached_performance_summary
+        if len(self._cached_metrics.keys()) > 0:
+            serializer.metadata_payload["metrics"] = self._cached_metrics
         serialized_model = serializer.serialize()
         if filename is not None:
             if not filename.endswith(f".fnnx"):

@@ -24,14 +24,12 @@ from falcon.addons.sklearn.model_selection.balanced_strat_kfold import (
     BalancedStratifiedKFold,
 )
 from sklearn.preprocessing import LabelEncoder
-from sklearn import __version__ as sklearn_version
-from packaging import version
 
 # Slightly modified version of StackingClassifier from sklearn that upsamples the minority class during training
 # The .fit() method was adopted from https://github.com/scikit-learn/scikit-learn/blob/36958fb24/sklearn/ensemble/_stacking.py
 
 
-def _fit(self, X, y, sample_weight=None):
+def _fit(self, X, y, fit_params=None):
     check_classification_targets(y)
     self._le = LabelEncoder().fit(y)
     self.classes_ = self._le.classes_
@@ -61,7 +59,7 @@ def _fit(self, X, y, sample_weight=None):
         X_resampled, y_resampled = RandomOverSampler().fit_resample(X, y)
         self.estimators_ = Parallel(n_jobs=self.n_jobs)(
             delayed(_fit_single_estimator)(
-                clone(est), X_resampled, y_resampled, sample_weight
+                clone(est), X_resampled, y_resampled, fit_params or {}
             )
             for est in all_estimators
             if est != "drop"
@@ -105,9 +103,7 @@ def _fit(self, X, y, sample_weight=None):
         if hasattr(cv, "random_state") and cv.random_state is None:
             cv.random_state = np.random.RandomState()
 
-        fit_params = (
-            {"sample_weight": sample_weight} if sample_weight is not None else None
-        )
+        fit_params = fit_params or {}
 
         predictions = Parallel(n_jobs=self.n_jobs)(
             delayed(cross_val_predict)(
@@ -117,7 +113,7 @@ def _fit(self, X, y, sample_weight=None):
                 cv=deepcopy(cv),
                 method=meth,
                 n_jobs=self.n_jobs,
-                fit_params=fit_params,
+                params=fit_params,
                 verbose=self.verbose,
             )
             for est, meth in zip(all_estimators, self.stack_method_)
@@ -136,25 +132,24 @@ def _fit(self, X, y, sample_weight=None):
         self.final_estimator_,
         X_meta_resampled,
         y_meta_resampled,
-        sample_weight=sample_weight,
+        fit_params=fit_params
     )
 
     return self
 
+
 class _EncoderPlaceholder(LabelEncoder):
-    
     def fit(self, y, **args):
         return self
-    
+
     def transform(self, y, **args):
         return y
-    
+
     def fit_transform(self, y, **args):
         return y
-    
+
     def inverse_transform(self, y, **args):
         return y
-
 
 
 # the object is being patched with a new method instead of subclassing
@@ -162,6 +157,5 @@ class _EncoderPlaceholder(LabelEncoder):
 def BalancedStackingClassifier(estimators, final_estimator, **kwargs):
     clf = StackingClassifier(estimators, final_estimator, **kwargs)
     clf.fit = MethodType(_fit, clf)
-    if version.parse(sklearn_version) >= version.parse("1.2.0"):
-        clf._label_encoder = _EncoderPlaceholder()
+    clf._label_encoder = _EncoderPlaceholder()
     return clf

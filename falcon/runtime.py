@@ -12,9 +12,6 @@ import numpy as np
 
 
 class Runtime:
-    """
-    Runtime for ONNX models based on PHONNX.
-    """
 
     def __init__(self, model_path: str):
         if _Runtime is None:

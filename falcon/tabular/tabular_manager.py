@@ -8,10 +8,13 @@ from falcon.type_guessing import determine_column_types
 from falcon import types as ft
 from falcon.types import ColumnTypes
 from typing import Union, Optional, List, Tuple, Type, Dict, Any
+import numpy as np
+from numpy.random import default_rng
 from numpy import typing as npt
 import pandas as pd
 from falcon.utils import print_, set_verbosity_level
 from sklearn.model_selection import train_test_split
+from sklearn import metrics
 import os
 import pandas as pd
 
@@ -88,6 +91,9 @@ class TabularTaskManager(TaskManager):
             raise ValueError(
                 f"Invalid value for `eval_strategy` argument: {self.eval_strategy}"
             )
+
+        self._cached_perm_importance_test = None
+        self._cached_perm_importance_train = None
 
     def _validate_eval_strategy(self) -> bool:
         if self.eval_strategy is None:
@@ -326,7 +332,7 @@ class TabularTaskManager(TaskManager):
             metrics_["test"] = self.evaluate(test_data, silent=True)
         df = pd.DataFrame.from_dict(metrics_, orient="index")
         print("\n", df, "\n")
-        self._cached_performance_summary = metrics_
+        self._cached_metrics["performance"] = metrics_
         return metrics_
 
     def evaluate(
@@ -351,3 +357,106 @@ class TabularTaskManager(TaskManager):
             return print_classification_report(y, y_hat, silent=silent)
         else:
             return print_regression_report(y, y_hat, silent=silent)
+
+    def get_permutation_importance(
+        self,
+        X: Optional[npt.NDArray] = None,
+        y: Optional[npt.NDArray] = None,
+        n_repeats: int = 10,
+        random_state: int = 42,
+    ) -> Dict[str, npt.NDArray]:
+        """
+        Calculate permutation feature importance scores.
+
+        Parameters
+        ----------
+        X : Optional[npt.NDArray]
+            Features to calculate importance for. If None, uses training data.
+        y : Optional[npt.NDArray]
+            Target values. If None, uses training data target.
+        n_repeats : int
+            Number of times to permute each feature
+        random_state : Optional[int]
+            Random seed for reproducibility
+
+        Returns
+        -------
+        Dict[str, npt.NDArray]
+            Dictionary containing:
+            - 'importances_mean': Mean importance for each feature
+            - 'importances_std': Standard deviation of importance for each feature
+            - 'feature_names': List of feature names if available
+        """
+
+        if X is None or y is None:
+            X = self._data[0]
+            y = self._data[1]
+            dataset = "train"
+        else:
+            dataset = "test"
+
+        if self.task == "tabular_classification":
+            y = y.astype(np.str_)
+
+        rng = default_rng(random_state)
+
+        if self.task == "tabular_classification":
+            scoring = metrics.balanced_accuracy_score
+        else:
+            scoring = metrics.r2_score
+
+        baseline_score = scoring(y, self.predict(X))
+
+        n_features = X.shape[1]
+        importances = np.zeros((n_repeats, n_features))
+
+        for feat_idx in range(n_features):
+            for rep_idx in range(n_repeats):
+                X_permuted = X.copy()
+                permuted_idx = rng.permutation(len(X))
+                X_permuted[:, feat_idx] = X_permuted[permuted_idx, feat_idx]
+
+                permuted_score = scoring(y, self.predict(X_permuted))
+                importances[rep_idx, feat_idx] = baseline_score - permuted_score
+
+        means = np.mean(importances, axis=0)
+        stds = np.std(importances, axis=0)
+
+        scaled_means = means / np.abs(np.sum(means))
+
+        if hasattr(self, "feature_names_to_save"):
+            feature_names = self.feature_names_to_save
+        else:
+            feature_names = [f"f_{i}" for i in range(n_features)]
+
+        final_importances = [
+            {
+                "feature_name": feat,
+                "importance": float(imp),
+                "std": float(std),
+                "scaled_importance": float(simp),
+            }
+            for feat, imp, std, simp in zip(feature_names, means, stds, scaled_means)
+        ]
+
+        # sort by importance
+
+        final_importances = sorted(
+            final_importances, key=lambda x: x["importance"], reverse=True
+        )
+
+        result = {
+            "n_repeats": n_repeats,
+            "random_state": random_state,
+            "scoring_fn": (
+                "balanced_accuracy" if self.task == "tabular_classification" else "r2"
+            ),
+            "importances": final_importances,
+        }
+
+        if dataset == "train":
+            self._cached_metrics["permutation_feature_importance_train"] = result
+        else:
+            self._cached_metrics["permutation_feature_importance_test"] = result
+
+        return final_importances

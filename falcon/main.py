@@ -78,6 +78,7 @@ def AutoML(
     manager_configuration: Optional[Union[Dict, str]] = None,
     config: Optional[Union[Dict, str]] = None,
     eval_strategy: Optional[Union[str, Callable, BaseCrossValidator]] = "dynamic",
+    save_model: bool = True,
 ) -> TaskManager:
     """
     High level API for one line model training and evaluation.
@@ -113,6 +114,8 @@ def AutoML(
         - None - no evaluation will be done
         - Callable - custom function for performing train/eval split
         - BaseCrossValidator - custom cross validator
+    save_model: bool, optional
+        if True, the model will be auto-saved as an fnnx file, by default True
 
     Returns
     -------
@@ -147,9 +150,10 @@ def AutoML(
 
     manager.train()
     manager.performance_summary(test_data=test_data)
-    print("Saving the model ...")
-    ts = datetime.datetime.now().strftime("%Y%m%d.%H%M%S")
-    filename = f"falcon_{task}_{ts}.fnnx"
-    manager.save_model(filename=filename)
-    print(f"The model was saved as `{filename}`")
+    if save_model:
+        print("Saving the model ...")
+        ts = datetime.datetime.now().strftime("%Y%m%d.%H%M%S")
+        filename = f"falcon_{task}_{ts}.fnnx"
+        manager.save_model(filename=filename)
+        print(f"The model was saved as `{filename}`")
     return manager
