@@ -887,7 +887,7 @@ class GreedyWeightedEnsemble:
             self._member_prediction(member, X) * np.float32(member.weight)
             for member in self.members
         ]
-        return np.sum(np.stack(weighted, axis=0), axis=0, dtype=np.float32)
+        return np.asarray(np.sum(np.stack(weighted, axis=0), axis=0, dtype=np.float32))
 
     def serialize(self) -> SerializedModelRepr:
         return serialize_parallel_ensemble(

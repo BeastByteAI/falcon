@@ -1,7 +1,9 @@
+import importlib.util
 import json
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -61,6 +63,51 @@ def test_ci_workflow_runs_the_matrix_through_the_local_entry_point() -> None:
     assert "jq -c '.include' ci/matrix.json" in workflow
     assert "python scripts/run_matrix.py ${{ matrix.name }}" in workflow
     assert (REPOSITORY_ROOT / "scripts/run_matrix.py").is_file()
+
+
+def _load_matrix_runner() -> Any:
+    spec = importlib.util.spec_from_file_location(
+        "falcon_run_matrix", REPOSITORY_ROOT / "scripts/run_matrix.py"
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    # dataclasses resolves field types through sys.modules[cls.__module__].
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_every_entry_lints_and_typechecks_in_its_own_environment() -> None:
+    """mypy's verdict depends on the installed stubs, not just on the source.
+
+    numpy 2.2 types `np.arange` as strictly 1-D where 2.5 does not, so one shared
+    environment cannot speak for the whole support range: the checks belong to the
+    entries. A standalone job would report green while an entry was broken.
+    """
+    runner = _load_matrix_runner()
+    workflow = (REPOSITORY_ROOT / ".github/workflows/tests.yml").read_text(
+        encoding="utf-8"
+    )
+    venv = Path("/tmp/venv")
+
+    for item in _matrix_entries():
+        entry = runner.Entry(
+            name=str(item["name"]),
+            python=str(item["python"]),
+            resolution=str(item["resolution"]),
+            extras=tuple(item.get("extras", ())),  # type: ignore[arg-type]
+        )
+        stages = dict(entry.quality_commands(venv))
+
+        assert set(stages) == {"format", "lint", "mypy"}
+        assert stages["mypy"][1:] == ["-m", "mypy", "falcon"]
+        assert stages["lint"][1:] == ["-m", "ruff", "check", "falcon", "tests"]
+        if entry.resolution != "locked":
+            installed = " ".join(sum(entry.install_commands(venv), []))
+            assert "mypy" in installed and "ruff" in installed
+
+    steps = [line for line in workflow.splitlines() if not line.strip().startswith("#")]
+    assert [line for line in steps if "ruff" in line or "mypy" in line] == []
 
 
 def test_runtime_extra_pins_string_op_compatible_onnxruntime() -> None:

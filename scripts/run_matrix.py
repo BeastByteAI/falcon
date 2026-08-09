@@ -76,8 +76,24 @@ class Entry:
                 "install",
                 *target,
                 "pytest",
+                "mypy",
+                "ruff",
                 "tomli ; python_full_version < '3.11'",
             ],
+        ]
+
+    def quality_commands(self, venv: Path) -> list[tuple[str, list[str]]]:
+        """Lint and typecheck inside the entry's own environment.
+
+        mypy resolves third-party stubs from what is installed, so its result depends
+        on the entry: numpy 2.2 types `np.arange` as strictly 1-D where 2.5 does not.
+        Running it per entry is what makes a green local run mean a green CI leg.
+        """
+        runner = str(venv / "bin" / "python")
+        return [
+            ("format", [runner, "-m", "ruff", "format", "--check", "falcon", "tests"]),
+            ("lint", [runner, "-m", "ruff", "check", "falcon", "tests"]),
+            ("mypy", [runner, "-m", "mypy", "falcon"]),
         ]
 
     def pytest_command(self, venv: Path) -> list[str]:
@@ -157,6 +173,24 @@ def run_entry(entry: Entry, *, workspace: Path, verbose: bool) -> Result:
 
     result.versions = installed_versions(venv)
     print(f"    {result.versions}", flush=True)
+
+    for stage, command in entry.quality_commands(venv):
+        check = subprocess.run(
+            command,
+            cwd=REPOSITORY_ROOT,
+            env=environment,
+            capture_output=not verbose,
+            text=True,
+        )
+        if check.returncode != 0:
+            result.stage = stage
+            result.returncode = check.returncode
+            if not verbose:
+                output = f"{check.stdout}\n{check.stderr}"
+                result.failures = [
+                    line for line in output.strip().splitlines() if line
+                ][-12:]
+            return result
 
     tests = subprocess.run(
         entry.pytest_command(venv),

@@ -244,7 +244,7 @@ def ingest_data_with_row_selection(
 
     X, y = _validate_shapes(X, y, column_names)
     source_row_count = X.shape[0]
-    row_indices = np.arange(source_row_count, dtype=np.int64)
+    row_indices: npt.NDArray[np.int64] = np.arange(source_row_count, dtype=np.int64)
     X, y, row_indices = _drop_missing_targets(X, y, row_indices)
     column_types = tuple(determine_column_types(X))
     schema = DatasetSchema(

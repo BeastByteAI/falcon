@@ -99,7 +99,7 @@ def _tune_multiclass(
     n_classes: int,
 ) -> tuple[npt.NDArray[np.float32], float]:
     log_weights = np.zeros(n_classes, dtype=np.float64)
-    best_weights = np.ones(n_classes, dtype=np.float32)
+    best_weights: npt.NDArray[np.float32] = np.ones(n_classes, dtype=np.float32)
     best_score = _metric_score(
         metric,
         targets,

@@ -345,18 +345,20 @@ class CandidateLearner:
         run = self._ensemble_run or self._evaluation_run
         if run is None:
             return None
-        weighted = np.sum(
-            np.stack(
-                [
-                    candidate.oof_predictions * np.float32(weight)
-                    for candidate, weight in zip(
-                        run.candidates, run.ensemble.weights, strict=True
-                    )
-                ],
+        weighted = np.asarray(
+            np.sum(
+                np.stack(
+                    [
+                        candidate.oof_predictions * np.float32(weight)
+                        for candidate, weight in zip(
+                            run.candidates, run.ensemble.weights, strict=True
+                        )
+                    ],
+                    axis=0,
+                ),
                 axis=0,
-            ),
-            axis=0,
-            dtype=np.float32,
+                dtype=np.float32,
+            )
         )
         return run.evaluation_indices.copy(), weighted
 
