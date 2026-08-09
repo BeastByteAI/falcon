@@ -5,35 +5,77 @@ build-backend = "setuptools.build_meta"
 
 [project]
 dependencies = [
-"skl2onnx>=1.12.0",
-"scikit-learn>=1.1.0",
-"numpy>=1.18.0",
-"onnx>=1.12.0",
-"onnxruntime>=1.12.1",
-"pandas>=1.0.0", 
-"imbalanced-learn>=0.8.1",
-"pyarrow>=8.0.0",
-"optuna>=3.0.0", 
-"packaging>=20.0.0",
-"phonnx>=0.0.1",
+    "skl2onnx>=1.20.0,<1.21.0",
+    "scikit-learn>=1.5.0,<1.10.0",
+    "numpy>=1.23.0,<3.0.0",
+    "onnx>=1.16.0,<2.0.0",
+    "pandas>=2.0.0,<3.0.0",
+    "pyarrow>=12.0.0",
+    "scipy>=1.9.0",
+    # skl2onnx's tree converters put Python bools in the int64 attributes of
+    # TreeEnsemble nodes, which protobuf rejects from 7.34 onwards. Until that is
+    # fixed upstream, exporting any tree model needs the older protobuf.
+    "protobuf>=4.25.1,<7.34",
 ]
+
 name = "falcon-ml"
-version = "0.7.0"
+version = "1.0.0"
 authors = [
-  { name="Oleg Kostromin", email="kostromin97@gmail.com" },
-  { name="Iryna Kondrashchenko", email="iryna230520@gmail.com" },
-  { name="Marco Pasini", email="marco.pasini.98@gmail.com" },
+  { name="Oleh Kostromin", email="oleh@dataforce.solutions" },
+  { name="Iryna Kondrashchenko", email="iryna@dataforce.solutions" },
 ]
-description = "AutoML library for fast experementations."
+description = "AutoML library for fast experimentation."
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+[project.optional-dependencies]
+runtime = [
+    "fnnx[core]>=0.0.3,<0.1.0",
+    "onnxruntime<1.24.0 ; python_full_version < '3.11'",
+    "onnxruntime>=1.18.1",
+]
+gbdt = [
+    "catboost>=1.2.10",
+    "lightgbm>=4.7.0",
+    "onnxmltools>=1.16.0",
+    "xgboost>=3.2.0",
+]
+hpo = [
+    "optuna>=3.0.0,<5.0.0",
+    "tqdm>=4.0.0",
+]
+
+
 [tool.pytest.ini_options]
 pythonpath = [
   "."
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["ANN", "B", "E", "F", "I", "LOG", "UP"]
+ignore = ["ANN401", "E501"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.setuptools.packages.find]
+include = ["falcon*"]
+exclude = ["benchmarks*", "tests*"]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.1",
+    "tomli>=2.0.0 ; python_full_version < '3.11'",
 ]

@@ -1,21 +1,28 @@
-from sklearn.decomposition import TruncatedSVD as _TruncatedSVD
-from skl2onnx.operator_converters.decomposition import convert_truncated_svd as _convert_truncated_svd
-from skl2onnx.shape_calculators.svd import calculate_sklearn_truncated_svd_output_shapes as _calculate_sklearn_truncated_svd_output_shapes
+from __future__ import annotations
+
+from typing import Any
+
 from skl2onnx import update_registered_converter as _update_registered_converter
+from skl2onnx.operator_converters.decomposition import (
+    convert_truncated_svd as _convert_truncated_svd,
+)
+from skl2onnx.shape_calculators.svd import (
+    calculate_sklearn_truncated_svd_output_shapes as _calculate_sklearn_truncated_svd_output_shapes,
+)
+from sklearn.decomposition import TruncatedSVD as _TruncatedSVD
 
 
 class ConditionalSVD(_TruncatedSVD):
-
-    def _svd(self, X) -> _TruncatedSVD:
+    def _svd(self, X: Any) -> Any:
         self._mode = "svd"
         return super().fit_transform(X)
-    
-    def _identity(self, X):
+
+    def _identity(self, X: Any) -> Any:
         self._mode = "identity"
         self.out_dim = X.shape[-1]
         return X
-        
-    def fit(self, X) -> _TruncatedSVD:
+
+    def fit(self, X: Any, y: Any = None) -> ConditionalSVD:
         if X.shape[1] > self.n_components:
             self._svd(X)
         else:
@@ -23,22 +30,23 @@ class ConditionalSVD(_TruncatedSVD):
         self.fit_ = True
         return self
 
-    def transform(self, X):
+    def transform(self, X: Any) -> Any:
         if self._mode == "svd":
             return super().transform(X)
         else:
             return X
 
-    def fit_transform(self, X, y=None):
+    def fit_transform(self, X: Any, y: Any = None) -> Any:
         self.fit_ = True
         if X.shape[1] > self.n_components:
             return self._svd(X)
         else:
             return self._identity(X)
 
-def _svd_shape_calc(operator):
+
+def _svd_shape_calc(operator: Any) -> None:
     if operator.raw_operator._mode == "svd":
-        operator.type = 'SklearnTruncatedSVD'
+        operator.type = "SklearnTruncatedSVD"
         _calculate_sklearn_truncated_svd_output_shapes(operator=operator)
     else:
         cls_type = operator.inputs[0].type.__class__
@@ -47,9 +55,9 @@ def _svd_shape_calc(operator):
         operator.outputs[0].type = cls_type([N, K])
 
 
-def _svd_converter(scope, operator, container):
+def _svd_converter(scope: Any, operator: Any, container: Any) -> None:
     if operator.raw_operator._mode == "svd":
-        operator.type = 'SklearnTruncatedSVD'
+        operator.type = "SklearnTruncatedSVD"
         _convert_truncated_svd(scope, operator, container)
     else:
         in_name = operator.inputs[0].full_name

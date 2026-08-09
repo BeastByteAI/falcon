@@ -1,137 +1,57 @@
-from sklearn.utils.estimator_checks import check_estimator
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression, LogisticRegression
+from __future__ import annotations
+
 import numpy as np
+import pytest
+
+from falcon.config import PortfolioSource, RunConfig
 from falcon.sklapi import (
-    FalconRegressor,
-    FalconTabularRegressor,
     FalconClassifier,
+    FalconRegressor,
     FalconTabularClassifier,
+    FalconTabularRegressor,
 )
-from falcon.abstract import Model, ONNXConvertible, Pipeline
-from falcon.tabular.pipelines import SimpleTabularPipeline
-from falcon.tabular.learners import PlainLearner
-from unittest.case import SkipTest
+from falcon.tabular.candidates import EstimatorSpec
 
 
-class DummyTestPipeline(Pipeline):
-    def __init__(self, task, learner, learner_kwargs, dataset_size, **kwargs):
-        mask = kwargs.get("mask", [])
-        super().__init__(task=task, dataset_size=dataset_size, mask = mask)
-        self.add_element(learner(task=task, **learner_kwargs))
-
-    def fit(self, X, y) -> None:
-        if self.task == "tabular_classification":
-            y = y.astype(np.str_)
-        for p in self._pipeline:
-            p.fit_pipe(X, y) 
-            X = p.forward(X)
-
-    def predict(self, X, *args, **kwargs):
-        for p in self._pipeline:
-            X = p.forward(X)
-        return X
+def _linear_config() -> RunConfig:
+    return RunConfig(
+        candidate_sources=(
+            PortfolioSource(specs=(EstimatorSpec("linear", "linear"),)),
+        ),
+        ensemble_enabled=False,
+        eval_strategy=None,
+    )
 
 
-class FalconSklModelWrapper(Model, ONNXConvertible):
-    def __init__(self, model, **kwargs):
-        self._model = model
-        self._kwargs = kwargs
-        # kwargs['random_state'] = 42
+def test_sklapi_regressor_uses_predictor_for_the_regression_task() -> None:
+    X = np.arange(120, dtype=np.float64).reshape(60, 2)
+    y = 2 * X[:, 0] - X[:, 1]
+    estimator = FalconTabularRegressor(preset=_linear_config())
 
-    def fit(self, X, y):
-        self.model_ = self._model(**self._kwargs)
-        self.model_.fit(X, y)
+    result = estimator.fit(X, y)
 
-    def predict(self, X):
-        return self.model_.predict(X)
-
-    def to_onnx(self):
-        pass
+    assert result is estimator
+    assert estimator.predictor_.task == "tabular_regression"
+    assert estimator.n_features_in_ == 2
+    assert estimator.predict(X[:4]).shape == (4,)
+    assert FalconRegressor is FalconTabularRegressor
 
 
-class FalconR(FalconSklModelWrapper):
-    def __init__(self, **kwargs):
-        super().__init__(model=LinearRegression, **kwargs)
+def test_sklapi_classifier_exposes_native_probabilities() -> None:
+    rng = np.random.default_rng(42)
+    X = rng.normal(size=(80, 3))
+    y = np.where(X[:, 0] > 0, "positive", "negative")
+    estimator = FalconTabularClassifier(preset=_linear_config())
 
-    def fit(self, X, y):
-        self.model_ = self._model(**self._kwargs)
-        self.model_.fit(X, y)
+    estimator.fit(X, y)
+    probabilities = estimator.predict_proba(X[:5])
 
-    def predict(self, X):
-        return self.model_.predict(X)
-
-    def to_onnx(self):
-        pass
-
-
-class FalconC(FalconSklModelWrapper):
-    def __init__(self, **kwargs):
-        super().__init__(model=LogisticRegression)
+    assert estimator.predictor_.task == "tabular_classification"
+    assert probabilities.shape == (5, 2)
+    np.testing.assert_allclose(probabilities.sum(axis=1), 1.0, atol=1e-6)
+    assert FalconClassifier is FalconTabularClassifier
 
 
-def _test_regr(est):
-    tests = check_estimator(est, generate_only=True)
-    for t in tests:
-        if t[1].func.__name__ in [
-            "check_no_attributes_set_in_init",
-            "check_fit_score_takes_y",
-            "check_estimators_fit_returns_self",
-            "check_estimator_get_tags_default_keys",
-            "check_regressors_train",
-            "check_estimators_unfitted",
-            "check_set_params",
-            "check_dont_overwrite_parameters",
-            "check_n_features_in"
-        ]:
-            print(t)
-            try:
-                t[1](t[0])
-            except SkipTest:
-                pass
-
-
-def _test_clf(est):
-    tests = check_estimator(est, generate_only=True)
-    for t in tests:
-        if t[1].func.__name__ in [
-            "check_no_attributes_set_in_init",
-            "check_fit_score_takes_y",
-            "check_estimators_fit_returns_self",
-            "check_estimator_get_tags_default_keys",
-            "check_classification_train",
-            "check_estimators_unfitted",
-            "check_set_params",
-            "check_dont_overwrite_parameters",
-            "check_n_features_in"
-        ]:
-            print(t)
-            try:
-                t[1](t[0])
-            except SkipTest:
-                pass
-
-
-def test_skl_regr():
-    config = {
-        "pipeline": DummyTestPipeline,
-        "extra_pipeline_options": {
-            "learner": PlainLearner,
-            "learner_kwargs": {"model_class": FalconR},
-        },
-    }
-
-    _test_regr(FalconRegressor(config=config, eval_strategy='auto'))
-    _test_regr(FalconTabularRegressor(config=config, eval_strategy='auto'))
-
-
-def test_skl_clf():
-    config = {
-        "pipeline": DummyTestPipeline,
-        "extra_pipeline_options": {
-            "learner": PlainLearner,
-            "learner_kwargs": {"model_class": FalconC},
-        },
-    }
-    _test_clf(FalconClassifier(config=config, eval_strategy='auto'))
-    _test_clf(FalconTabularClassifier(config=config, eval_strategy='auto'))
+def test_sklapi_replaces_config_with_preset() -> None:
+    with pytest.raises(TypeError, match="unexpected keyword argument 'config'"):
+        FalconRegressor(config="PlainLearner")  # type: ignore[call-arg]

@@ -12,12 +12,7 @@ Falcon is a lightweight python library that allows to train production-ready mac
 
 - Simplicity: With Falcon, training a comprehensive Machine Learning pipeline is as easy as writing a single line of code.
 - Flexibility: Falcon offers a range of pre-set configurations, enabling swift interchangeability of internal components with just a minor parameter change.
-- Extendability: Falcon's modular design, along with its extension registration procedure, allows seamless integration with virtually any framework.
-- Portability: A standout feature of Falcon is its deep native support for [ONNX](https://onnx.ai/) models. This lets you export complex pipelines into a single ONNX graph, irrespective of the underlying frameworks. As a result, your model can be conveniently deployed on any platform or with almost any programming language, all without dependence on the training environment.
-
-## Future Developments 🔮
-
-Falcon ML is under active development. We've already implemented a robust and production-ready core functionality, but there's much more to come. We plan to introduce many new features by the end of the year, so stay tuned!
+- Portability: A standout feature of Falcon is its deep native support for [FNNX](https://github.com/BeastByteAI/FNNX)/[ONNX](https://onnx.ai/) models. This lets you export complex pipelines into a single production-ready file, irrespective of the underlying frameworks. As a result, your model can be conveniently deployed without any dependency on the training environment.
 
 ⭐ If you liked the project, please support us with a star!
 
@@ -55,26 +50,14 @@ Latest version from [GitHub](https://github.com/OKUA1/falcon)
 pip install git+https://github.com/OKUA1/falcon
 ```
 
-Installing some of the dependencies on **Apple Silicon Macs** might not work, the workaround is to create an X86 environment using [Conda](https://docs.conda.io/en/latest/)
+Optional extras add the FNNX runtime, the gradient boosting candidates and hyperparameter search.
 
-```bash 
-conda create -n falcon_env
-conda activate falcon_env
-conda config --env --set subdir osx-64
-conda install python=3.9
-pip3 install falcon-ml
+```bash
+pip install "falcon-ml[runtime]"
+pip install "falcon-ml[gbdt]"
+pip install "falcon-ml[hpo]"
 ```
 
 ## Documentation 📚
-You can find a more detailed guide as well as an API reference in our [official docs](https://beastbyteai.github.io/falcon/intro.html#).
+The [user guide](docs/guide.md) covers configuration, evaluation, export and inference.
 
-## Authors & Contributors ✨
-<table>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://www.linkedin.com/in/oleh-kostromin-b671a4157/"><img src="https://avatars.githubusercontent.com/u/48349467?v=4" width="100px;" alt=""/><br /><sub><b>Oleg Kostromin</b></sub></a><br /></td>
-      <td align="center"><a href="https://www.linkedin.com/in/iryna-kondrashchenko-673800155/"><img src="https://avatars.githubusercontent.com/u/72279145?v=4" width="100px;" alt=""/><br /><sub><b>Iryna Kondrashchenko</b></sub></a><br /></td>
-      <td align="center"><a href="https://www.linkedin.com/in/pasinimarco/"><img src="https://avatars.githubusercontent.com/u/50598094?v=4" width="100px;" alt=""/><br /><sub><b>Marco Pasini</b></sub></a><br /></td>
-    </tr>
-  </tbody>
-</table>

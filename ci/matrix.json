@@ -1,0 +1,57 @@
+{
+  "comment": "Test environments, shared by .github/workflows/tests.yml and scripts/run_matrix.py. Run one locally with `python scripts/run_matrix.py <name>`. Python and dependency versions are not independent: an old interpreter cannot install the newest scientific stack, so each entry pairs them explicitly rather than forming a cross product.",
+  "include": [
+    {
+      "name": "locked-3.10",
+      "python": "3.10",
+      "resolution": "locked",
+      "extras": ["runtime"]
+    },
+    {
+      "name": "locked-3.11",
+      "python": "3.11",
+      "resolution": "locked",
+      "extras": ["runtime"]
+    },
+    {
+      "name": "locked-3.12",
+      "python": "3.12",
+      "resolution": "locked",
+      "extras": ["runtime"]
+    },
+    {
+      "name": "locked-3.13",
+      "python": "3.13",
+      "resolution": "locked",
+      "extras": ["runtime"]
+    },
+    {
+      "name": "gbdt-3.12",
+      "python": "3.12",
+      "resolution": "locked",
+      "extras": ["runtime", "gbdt"]
+    },
+    {
+      "name": "hpo-3.12",
+      "python": "3.12",
+      "resolution": "locked",
+      "extras": ["runtime", "hpo"],
+      "tests": ["tests/test_hpo.py", "tests/test_hpo_optional.py"]
+    },
+    {
+      "name": "floor-3.10",
+      "python": "3.10",
+      "resolution": "lowest-direct",
+      "extras": ["runtime"],
+      "description": "Oldest dependencies the project claims to support, so the declared lower bounds are exercised rather than merely asserted."
+    },
+    {
+      "name": "latest-3.13",
+      "python": "3.13",
+      "resolution": "highest",
+      "extras": ["runtime", "gbdt"],
+      "allow_failure": true,
+      "description": "Newest resolvable dependencies, ignoring the lock. Advisory: this is the leg that catches an upstream release breaking us before users do."
+    }
+  ]
+}
