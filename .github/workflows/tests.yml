@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Ruff and mypy run inside every matrix entry rather than in a job of their own:
+  # mypy's result depends on the installed dependency versions, so a single
+  # environment cannot speak for the whole support range.
+  #
+  # The matrix lives in ci/matrix.json so that this workflow and
+  # `python scripts/run_matrix.py` cannot describe different environments.
+  matrix:
+    name: Load matrix
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.load.outputs.include }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: load
+        run: echo "include=$(jq -c '.include' ci/matrix.json)" >> "$GITHUB_OUTPUT"
+
+  pytest:
+    name: ${{ matrix.name }}
+    needs: matrix
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow_failure == true }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.matrix.outputs.include) }}
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv and Python ${{ matrix.python }}
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      # The same entry point a developer runs locally, so a green CI leg and a green
+      # local run mean the same thing.
+      - name: Run ${{ matrix.name }}
+        run: python scripts/run_matrix.py ${{ matrix.name }} --verbose

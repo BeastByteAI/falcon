@@ -1,117 +1,116 @@
-from falcon import initialize
+from __future__ import annotations
+
+from typing import Any, NoReturn
+
 import numpy as np
-from sklearn.model_selection import KFold
 import pytest
+from numpy import typing as npt
+from sklearn.model_selection import KFold
+
+from falcon import Predictor
+from falcon.config import PortfolioSource, RunConfig
+from falcon.tabular.candidates import EstimatorSpec
+
 
 class _BrokenKFold(KFold):
-    def split(self, *args, **kwargs): 
+    def split(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise ValueError("pytest :: Broken KFold")
 
-def _broken_split(*args, **kwargs):
+
+def _broken_split(*args: Any, **kwargs: Any) -> NoReturn:
     raise ValueError("pytest :: Broken split")
 
-def test_auto_eval_strategy():
 
-    m = initialize(
-        task="tabular_classification",
+def _config() -> RunConfig:
+    return RunConfig(
+        candidate_sources=(
+            PortfolioSource(
+                specs=(EstimatorSpec("linear", "linear", {"max_iter": 200}),)
+            ),
+        ),
+        ensemble_enabled=False,
+        oof_folds=3,
+    )
+
+
+def _classification_data(
+    n_rows: int,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.int64]]:
+    rng = np.random.default_rng(42)
+    X = rng.normal(size=(n_rows, 2))
+    y = (X[:, 0] > 0).astype(np.int64)
+    return X, y
+
+
+def test_auto_eval_strategy() -> None:
+    small_X, small_y = _classification_data(250)
+    small = Predictor(
+        "tabular_classification",
+        config=_config(),
         eval_strategy="auto",
-        data=(np.random.rand(250, 2), np.random.randint(0, 2, 250).reshape(-1, 1)),
-        config = 'PlainLearner'
-    )
+    ).fit((small_X, small_y))
 
-    m.train()
+    assert "eval_cv" in small._performance_metrics
+    assert "eval" not in small._performance_metrics
 
-    s = m.performance_summary(None)
-
-    assert 'eval_cv' in s.keys()
-    assert 'eval' not in s.keys()
-
-
-    m = initialize(
-        task="tabular_classification",
+    large_X, large_y = _classification_data(2_500)
+    large = Predictor(
+        "tabular_classification",
+        config=_config(),
         eval_strategy="auto",
-        data=(np.random.rand(2500, 2), np.random.randint(0, 2, 2500).reshape(-1, 1)),
-        config = 'PlainLearner'
+    ).fit((large_X, large_y))
+
+    assert "eval" in large._performance_metrics
+    assert "eval_cv" not in large._performance_metrics
+
+
+@pytest.mark.parametrize(
+    ("strategy", "expected_key"),
+    [("cv", "eval_cv"), ("holdout", "eval")],
+)
+def test_named_eval_strategy(strategy: str, expected_key: str) -> None:
+    X, y = _classification_data(100)
+    predictor = Predictor(
+        "tabular_classification",
+        config=_config(),
+        eval_strategy=strategy,
+    ).fit((X, y))
+
+    assert expected_key in predictor._performance_metrics
+
+
+def test_custom_cv_eval_strategy() -> None:
+    X, y = _classification_data(100)
+    predictor = Predictor(
+        "tabular_classification",
+        config=_config(),
+        eval_strategy=_BrokenKFold(n_splits=5, shuffle=True, random_state=42),
     )
-
-    m.train()
-
-    s = m.performance_summary(None)
-
-    assert 'eval' in s.keys()
-    assert 'eval_cv' not in s.keys()
-
-def test_cv_eval_strategy():
-
-    m = initialize(
-        task="tabular_classification",
-        eval_strategy="cv",
-        data=(np.random.rand(100, 2), np.random.randint(0, 2, 100).reshape(-1, 1)),
-        config = 'PlainLearner'
-    )
-
-    m.train()
-
-    s = m.performance_summary(None)
-
-    assert 'eval_cv' in s.keys()
-    assert 'eval' not in s.keys()
-
-def test_holdout_eval_strategy():
-
-    m = initialize(
-        task="tabular_classification",
-        eval_strategy="holdout",
-        data=(np.random.rand(100, 2), np.random.randint(0, 2, 100).reshape(-1, 1)),
-        config = 'PlainLearner'
-    )
-
-    m.train()
-
-    s = m.performance_summary(None)
-
-    assert 'eval_cv' not in s.keys()
-    assert 'eval' in s.keys()
-
-def test_custom_cv_eval_strategy():
-
-    cv = _BrokenKFold(n_splits=5, shuffle=True, random_state=42)
-
-    m = initialize(
-        task="tabular_classification",
-        eval_strategy=cv,
-        data=(np.random.rand(100, 2), np.random.randint(0, 2, 100).reshape(-1, 1)),
-        config = 'PlainLearner'
-    )
-
 
     with pytest.raises(ValueError, match="pytest :: Broken KFold"):
-        m.train()
+        predictor.fit((X, y))
 
-def test_custom_holdout_eval_strategy():
-    m = initialize(
-        task="tabular_classification",
+
+def test_custom_holdout_eval_strategy() -> None:
+    X, y = _classification_data(100)
+    predictor = Predictor(
+        "tabular_classification",
+        config=_config(),
         eval_strategy=_broken_split,
-        data=(np.random.rand(100, 2), np.random.randint(0, 2, 100).reshape(-1, 1)),
-        config = 'PlainLearner'
     )
 
     with pytest.raises(ValueError, match="pytest :: Broken split"):
-        m.train()
+        predictor.fit((X, y))
 
-def test_no_eval_strategy():
-    m = initialize(
-        task="tabular_classification",
+
+def test_no_eval_strategy() -> None:
+    X, y = _classification_data(100)
+    predictor = Predictor(
+        "tabular_classification",
+        config=_config(),
         eval_strategy=None,
-        data=(np.random.rand(100, 2), np.random.randint(0, 2, 100).reshape(-1, 1)),
-        config = 'PlainLearner'
-    )
+    ).fit((X, y))
 
-    m.train()
-
-    s = m.performance_summary(None)
-
-    assert 'eval_cv' not in s.keys()
-    assert 'eval' not in s.keys()
-    assert 'train' in s.keys()
-    assert len(s.keys()) == 1
+    assert set(predictor._performance_metrics) == {"train"}
+    assert predictor.predict(X).shape == (len(X),)
+    assert predictor.save()

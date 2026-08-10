@@ -1,128 +1,109 @@
-from abc import abstractmethod
-from typing import Any, Type, Union, Optional, List, Tuple
-from onnx import ModelProto
-from falcon.abstract.model import Model
-from falcon.abstract.onnx_convertible import ONNXConvertible
-from falcon.serialization import SerializedModelRepr, serialize_to_onnx
+from __future__ import annotations
+
+from typing import Any, Protocol, runtime_checkable
+
+from numpy import typing as npt
+
+from falcon.serialization import FNNXSerializer, SerializedModelRepr
+from falcon.types import DatasetSchema
 
 
-class PipelineElement(Model):
-    """
-    Base class for all pipeline elements.
-    """
+@runtime_checkable
+class PipelineStep(Protocol):
+    def fit(
+        self,
+        X: npt.NDArray[Any],
+        y: npt.NDArray[Any],
+        schema: DatasetSchema,
+        *,
+        groups: npt.ArrayLike | None = None,
+    ) -> None: ...
 
-    @abstractmethod
-    def get_input_type(self) -> Type:
-        """
-        Returns
-        -------
-        Type
-            Input types
-        """
-        pass
+    def transform(self, X: npt.NDArray[Any]) -> npt.NDArray[Any]: ...
 
-    @abstractmethod
-    def get_output_type(self) -> Type:
-        """
-        Returns
-        -------
-        Type
-            Output types
-        """
-        pass
+    def serialize(self) -> SerializedModelRepr: ...
 
-    def forward(self, X: Any, *args: Any, **kwargs: Any) -> Any:
-        """
-        Equivalent of `predict` method that is used for elements chaining inside pipeline during inference.
+    def get_input_type(self) -> object: ...
 
-        Parameters
-        ----------
-        X : Any
-            featrues
-
-        Returns
-        -------
-        Any
-            predictions
-        """
-        return self.predict(X)
-
-    def fit_pipe(self, X: Any, y: Any, *args: Any, **kwargs: Any) -> Any:
-        """
-        Equivalent of `fit` method that is used for elements chaining inisde pipeline during training.
-
-        Parameters
-        ----------
-        X : Any
-            features
-        y : Any
-            targets
-
-        Returns
-        -------
-        Any
-            usually None
-        """
-        self.fit(X, y)
+    def get_output_type(self) -> object: ...
 
 
-class Pipeline(Model):
-    """
-    Base class for all pipelines.
-    """
-
+class Pipeline:
     def __init__(
-        self, task: str, dataset_size: Tuple[int, ...], mask: List[Any], **kwargs: Any
+        self,
+        task: str,
+        dataset_size: tuple[int, ...],
+        schema: DatasetSchema | None = None,
+        **kwargs: Any,
     ) -> None:
         self.task = task
-        self._pipeline: List[PipelineElement] = []
         self.dataset_size = dataset_size
-        self.mask = mask
+        self.schema = schema
+        self._steps: list[PipelineStep] = []
 
-    def add_element(self, element: PipelineElement) -> None:
-        """
-        Adds element to pipeline. The input type of added element should match the output type of the last element in the pipeline.
+    @property
+    def steps(self) -> tuple[PipelineStep, ...]:
+        return tuple(self._steps)
 
-        Parameters
-        ----------
-        element : PipelineElement
-            element to be added to the end of the pipeline
-        """
-        if (
-            len(self._pipeline) > 1
-            and element.get_input_type() != self._pipeline[-1].get_output_type()
-        ):
-            raise RuntimeError(
-                "The element cannot be added to pipeline due to input type missmatch."
+    def clear_steps(self) -> None:
+        self._steps.clear()
+
+    def add_step(self, step: PipelineStep) -> None:
+        if step is self:
+            raise ValueError("Cannot add the pipeline to itself")
+        if not isinstance(step, PipelineStep):
+            raise TypeError(
+                "Pipeline steps must implement fit, transform, serialize, and type metadata"
             )
-        if element is self:
-            raise ValueError("Cannot add self to the pipeline")
-        self._pipeline.append(element)
+        if self._steps and step.get_input_type() != self._steps[-1].get_output_type():
+            raise RuntimeError(
+                "The step cannot be added to the pipeline because its input type "
+                "does not match the previous output type."
+            )
+        self._steps.append(step)
 
-    def save(self, feature_names: Optional[List] = None) -> ModelProto:
-        """
-        Exports the pipeline to ONNX ModelProto
-
-        Parameters
-        ----------
-        feature_names : Optional[List], optional
-            feature names, by default None
-        Returns
-        -------
-        ModelProto
-            Pipeline as ONNX ModelProto
-        """
-        serialized_pipeline_elements: List[SerializedModelRepr] = []
-        for p in self._pipeline:
-            if isinstance(p, ONNXConvertible):
-                serialized_pipeline_elements.append(p.to_onnx())
+    def fit(
+        self,
+        X: npt.NDArray[Any],
+        y: npt.NDArray[Any],
+        schema: DatasetSchema,
+        *,
+        groups: npt.ArrayLike | None = None,
+    ) -> None:
+        if X.ndim != 2 or X.shape[1] != schema.n_features:
+            raise ValueError("Feature data does not match the dataset schema")
+        self.schema = schema
+        transformed = X
+        for step in self._steps:
+            fit_transform = getattr(step, "fit_transform", None)
+            if fit_transform is None:
+                step.fit(transformed, y, schema, groups=groups)
+                transformed = step.transform(transformed)
             else:
-                raise RuntimeError("Encountered non convertible pipeline element")
+                transformed = fit_transform(transformed, y, schema, groups=groups)
 
-        serialized_model = serialize_to_onnx(
-            serialized_pipeline_elements,
+    def predict(self, X: npt.NDArray[Any]) -> npt.NDArray[Any]:
+        transformed = X
+        for step in self._steps:
+            transformed = step.transform(transformed)
+        return transformed
+
+    def save(
+        self,
+        feature_names: list[Any] | None = None,
+        producer_extra_tags: list[str] | None = None,
+        schema: DatasetSchema | None = None,
+    ) -> FNNXSerializer:
+        serialized_steps = [step.serialize() for step in self._steps]
+        resolved_schema = schema if schema is not None else self.schema
+        if resolved_schema is None:
+            raise RuntimeError("A dataset schema is required to save a pipeline")
+
+        return FNNXSerializer(
+            models=serialized_steps,
             task=self.task,
-            init_types=self.mask,
+            init_types=list(resolved_schema.column_types),
             init_feature_names=feature_names,
+            producer_extra_tags=producer_extra_tags,
+            schema=resolved_schema,
         )
-        return serialized_model

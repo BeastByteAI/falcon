@@ -1,9 +1,11 @@
-from numpy import typing as npt
+import re
+from typing import Any
+
 import numpy as np
 import pandas as pd
-from typing import List, Optional, Any
+from numpy import typing as npt
+
 from falcon.types import ColumnTypes
-import re
 
 NUM_CAT_THRESHOLD: int = 10
 HIGH_CARD_THRESHOLD: int = 100
@@ -19,7 +21,7 @@ def _fullmatch(expr: str, x: Any) -> bool:
     return fm
 
 
-def _determine_date_type(X: pd.DataFrame, column: int) -> Optional[ColumnTypes]:
+def _determine_date_type(X: pd.DataFrame, column: int) -> ColumnTypes | None:
     if (
         pd.to_datetime(X.iloc[:, column], format=r"%Y-%m-%d", errors="coerce")
         .notnull()
@@ -29,32 +31,35 @@ def _determine_date_type(X: pd.DataFrame, column: int) -> Optional[ColumnTypes]:
     return None
 
 
-def determine_column_types(data: npt.NDArray) -> List[ColumnTypes]:
-    mask: List[ColumnTypes] = []
+def determine_column_types(data: npt.NDArray[Any]) -> list[ColumnTypes]:
+    mask: list[ColumnTypes] = []
     tmp_df: pd.DataFrame = pd.DataFrame(data).infer_objects()
-    # print(tmp_df.dtypes.apply(lambda x: x.name).to_dict())
     for col in range(tmp_df.shape[-1]):
+        values = tmp_df.iloc[:, col].dropna()
+        if values.empty:
+            raise ValueError(f"Cannot infer type for all-missing column {col}")
         determined_type = None
-        if tmp_df.iloc[:, col].map(lambda x: isinstance(x, NP_NUMERIC_TYPES)).all():
-            if len(tmp_df.iloc[:, col].unique().tolist()) > NUM_CAT_THRESHOLD:
+        if values.map(lambda x: isinstance(x, NP_NUMERIC_TYPES)).all():
+            if values.nunique() > NUM_CAT_THRESHOLD:
                 determined_type = ColumnTypes.NUMERIC_REGULAR
             else:
                 determined_type = ColumnTypes.CAT_LOW_CARD
         if determined_type is None:
-            tmp_df[tmp_df.columns[col]] = tmp_df.iloc[:, col].astype(str)
-            if tmp_df.iloc[:, col].map(lambda x: _fullmatch(REGEX_MAYBE_DATE, x)).all():
-                determined_type = _determine_date_type(tmp_df, col)
-            elif tmp_df.iloc[:, col].map(lambda x: _fullmatch(REGEX_UTC_LIKE, x)).all():
+            string_values = values.astype(str)
+            if string_values.map(lambda x: _fullmatch(REGEX_MAYBE_DATE, x)).all():
+                date_frame = string_values.to_frame()
+                determined_type = _determine_date_type(date_frame, 0)
+            elif string_values.map(lambda x: _fullmatch(REGEX_UTC_LIKE, x)).all():
                 determined_type = ColumnTypes.DATETIME_YMDHMS_ISO8601
             elif (
-                tmp_df.iloc[:, col]
-                .map(lambda x: len(re.findall(REGEX_UTF_TOKEN, x)))
-                .median()
+                string_values.map(
+                    lambda x: len(re.findall(REGEX_UTF_TOKEN, x))
+                ).median()
                 > 5
             ):
                 determined_type = ColumnTypes.TEXT_UTF8
         if determined_type is None:
-            if len(tmp_df.iloc[:, col].unique().tolist()) > HIGH_CARD_THRESHOLD:
+            if values.nunique() > HIGH_CARD_THRESHOLD:
                 determined_type = ColumnTypes.CAT_HIGH_CARD
             else:
                 determined_type = ColumnTypes.CAT_LOW_CARD
